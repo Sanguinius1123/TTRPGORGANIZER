@@ -1,0 +1,255 @@
+export type Json = string | number | boolean | null | { [key: string]: Json } | Json[]
+
+export interface Database {
+  public: {
+    Tables: {
+      factions: {
+        Row: {
+          id: string
+          name: string
+          parent_faction_id: string | null
+          disposition: string | null
+          goal: string | null
+          description: string | null
+          image_url: string | null
+          visible: boolean
+          created_at: string
+        }
+        Insert: Omit<Database['public']['Tables']['factions']['Row'], 'id' | 'created_at'>
+        Update: Partial<Database['public']['Tables']['factions']['Insert']>
+      }
+      locations: {
+        Row: {
+          id: string
+          name: string
+          type: string | null
+          status: string | null
+          area: string | null
+          description: string | null
+          parent_location_id: string | null
+          image_url: string | null
+          visible: boolean
+          created_at: string
+        }
+        Insert: Omit<Database['public']['Tables']['locations']['Row'], 'id' | 'created_at'>
+        Update: Partial<Database['public']['Tables']['locations']['Insert']>
+      }
+      location_connections: {
+        Row: {
+          id: string
+          from_location_id: string
+          to_location_id: string
+          travel_time: string | null
+          travel_cost: string | null
+          bidirectional: boolean
+          notes: string | null
+          created_at: string
+        }
+        Insert: Omit<Database['public']['Tables']['location_connections']['Row'], 'id' | 'created_at'>
+        Update: Partial<Database['public']['Tables']['location_connections']['Insert']>
+      }
+      player_characters: {
+        Row: {
+          id: string
+          name: string
+          player_name: string | null
+          species: string | null
+          background: string | null
+          notes: string | null
+          image_url: string | null
+          visible: boolean
+          created_at: string
+        }
+        Insert: Omit<Database['public']['Tables']['player_characters']['Row'], 'id' | 'created_at'>
+        Update: Partial<Database['public']['Tables']['player_characters']['Insert']>
+      }
+      npcs: {
+        Row: {
+          id: string
+          name: string
+          species: string | null
+          profession: string | null
+          culture: string | null
+          background: string | null
+          disposition: string | null
+          notes: string | null
+          image_url: string | null
+          visible: boolean
+          created_at: string
+        }
+        Insert: Omit<Database['public']['Tables']['npcs']['Row'], 'id' | 'created_at'>
+        Update: Partial<Database['public']['Tables']['npcs']['Insert']>
+      }
+      npc_facts: {
+        Row: {
+          id: string
+          npc_id: string
+          fact_text: string
+          revealed: boolean
+          created_at: string
+        }
+        Insert: Omit<Database['public']['Tables']['npc_facts']['Row'], 'id' | 'created_at'>
+        Update: Partial<Database['public']['Tables']['npc_facts']['Insert']>
+      }
+      npc_factions: {
+        Row: {
+          id: string
+          npc_id: string
+          faction_id: string
+          role: string | null
+          created_at: string
+        }
+        Insert: Omit<Database['public']['Tables']['npc_factions']['Row'], 'id' | 'created_at'>
+        Update: Partial<Database['public']['Tables']['npc_factions']['Insert']>
+      }
+      npc_locations: {
+        Row: {
+          id: string
+          npc_id: string
+          location_id: string
+          relationship_type: string
+          notes: string | null
+          created_at: string
+        }
+        Insert: Omit<Database['public']['Tables']['npc_locations']['Row'], 'id' | 'created_at'>
+        Update: Partial<Database['public']['Tables']['npc_locations']['Insert']>
+      }
+      character_relationships: {
+        Row: {
+          id: string
+          from_npc_id: string | null
+          from_pc_id: string | null
+          to_npc_id: string | null
+          to_pc_id: string | null
+          relationship_type: string
+          notes: string | null
+          created_at: string
+        }
+        Insert: Omit<Database['public']['Tables']['character_relationships']['Row'], 'id' | 'created_at'>
+        Update: Partial<Database['public']['Tables']['character_relationships']['Insert']>
+      }
+      items: {
+        Row: {
+          id: string
+          name: string
+          description: string | null
+          base_price: number | null
+          item_type: string | null
+          created_at: string
+        }
+        Insert: Omit<Database['public']['Tables']['items']['Row'], 'id' | 'created_at'>
+        Update: Partial<Database['public']['Tables']['items']['Insert']>
+      }
+      shops: {
+        Row: {
+          id: string
+          name: string
+          location_id: string
+          created_at: string
+        }
+        Insert: Omit<Database['public']['Tables']['shops']['Row'], 'id' | 'created_at'>
+        Update: Partial<Database['public']['Tables']['shops']['Insert']>
+      }
+      shop_inventory: {
+        Row: {
+          id: string
+          shop_id: string
+          item_id: string
+          price_override: number | null
+          available: boolean
+          created_at: string
+        }
+        Insert: Omit<Database['public']['Tables']['shop_inventory']['Row'], 'id' | 'created_at'>
+        Update: Partial<Database['public']['Tables']['shop_inventory']['Insert']>
+      }
+      sessions: {
+        Row: {
+          id: string
+          session_number: number
+          title: string | null
+          summary: string | null
+          loose_threads: string | null
+          created_at: string
+        }
+        Insert: Omit<Database['public']['Tables']['sessions']['Row'], 'id' | 'created_at'>
+        Update: Partial<Database['public']['Tables']['sessions']['Insert']>
+      }
+      encounters: {
+        Row: {
+          id: string
+          title: string
+          location_id: string | null
+          session_id: string | null
+          status: string
+          summary: string | null
+          notes: string | null
+          created_at: string
+        }
+        Insert: Omit<Database['public']['Tables']['encounters']['Row'], 'id' | 'created_at'>
+        Update: Partial<Database['public']['Tables']['encounters']['Insert']>
+      }
+      encounter_participants: {
+        Row: {
+          id: string
+          encounter_id: string
+          npc_id: string | null
+          label: string
+          count: number
+          role: string | null
+          notes: string | null
+          created_at: string
+        }
+        Insert: Omit<Database['public']['Tables']['encounter_participants']['Row'], 'id' | 'created_at'>
+        Update: Partial<Database['public']['Tables']['encounter_participants']['Insert']>
+      }
+      lore_entries: {
+        Row: {
+          id: string
+          title: string
+          category: string | null
+          description: string | null
+          visible: boolean
+          created_at: string
+        }
+        Insert: Omit<Database['public']['Tables']['lore_entries']['Row'], 'id' | 'created_at'>
+        Update: Partial<Database['public']['Tables']['lore_entries']['Insert']>
+      }
+      plot_threads: {
+        Row: {
+          id: string
+          title: string
+          type: string
+          description: string | null
+          status: string
+          notes: string | null
+          parent_id: string | null
+          visible: boolean
+          created_at: string
+        }
+        Insert: Omit<Database['public']['Tables']['plot_threads']['Row'], 'id' | 'created_at'>
+        Update: Partial<Database['public']['Tables']['plot_threads']['Insert']>
+      }
+    }
+  }
+}
+
+export type Tables<T extends keyof Database['public']['Tables']> =
+  Database['public']['Tables'][T]['Row']
+
+export type Faction            = Tables<'factions'>
+export type Location           = Tables<'locations'>
+export type LocationConnection = Tables<'location_connections'>
+export type PlayerCharacter    = Tables<'player_characters'>
+export type NPC                = Tables<'npcs'>
+export type NPCFact            = Tables<'npc_facts'>
+export type NPCFaction         = Tables<'npc_factions'>
+export type NPCLocation        = Tables<'npc_locations'>
+export type CharacterRelationship = Tables<'character_relationships'>
+export type Item               = Tables<'items'>
+export type Shop               = Tables<'shops'>
+export type ShopInventory      = Tables<'shop_inventory'>
+export type Session            = Tables<'sessions'>
+export type Encounter          = Tables<'encounters'>
+export type EncounterParticipant = Tables<'encounter_participants'>
+export type LoreEntry          = Tables<'lore_entries'>
+export type PlotThread         = Tables<'plot_threads'>
