@@ -15,8 +15,9 @@ export interface Database {
           visible: boolean
           created_at: string
         }
-        Insert: Omit<Database['public']['Tables']['factions']['Row'], 'id' | 'created_at'>
+        Insert: Partial<Omit<Database['public']['Tables']['factions']['Row'], 'id' | 'created_at'>>
         Update: Partial<Database['public']['Tables']['factions']['Insert']>
+        Relationships: []
       }
       locations: {
         Row: {
@@ -31,8 +32,9 @@ export interface Database {
           visible: boolean
           created_at: string
         }
-        Insert: Omit<Database['public']['Tables']['locations']['Row'], 'id' | 'created_at'>
+        Insert: Partial<Omit<Database['public']['Tables']['locations']['Row'], 'id' | 'created_at'>>
         Update: Partial<Database['public']['Tables']['locations']['Insert']>
+        Relationships: []
       }
       location_connections: {
         Row: {
@@ -45,8 +47,9 @@ export interface Database {
           notes: string | null
           created_at: string
         }
-        Insert: Omit<Database['public']['Tables']['location_connections']['Row'], 'id' | 'created_at'>
+        Insert: Partial<Omit<Database['public']['Tables']['location_connections']['Row'], 'id' | 'created_at'>>
         Update: Partial<Database['public']['Tables']['location_connections']['Insert']>
+        Relationships: []
       }
       player_characters: {
         Row: {
@@ -60,8 +63,9 @@ export interface Database {
           visible: boolean
           created_at: string
         }
-        Insert: Omit<Database['public']['Tables']['player_characters']['Row'], 'id' | 'created_at'>
+        Insert: Partial<Omit<Database['public']['Tables']['player_characters']['Row'], 'id' | 'created_at'>>
         Update: Partial<Database['public']['Tables']['player_characters']['Insert']>
+        Relationships: []
       }
       npcs: {
         Row: {
@@ -77,8 +81,9 @@ export interface Database {
           visible: boolean
           created_at: string
         }
-        Insert: Omit<Database['public']['Tables']['npcs']['Row'], 'id' | 'created_at'>
+        Insert: Partial<Omit<Database['public']['Tables']['npcs']['Row'], 'id' | 'created_at'>>
         Update: Partial<Database['public']['Tables']['npcs']['Insert']>
+        Relationships: []
       }
       npc_facts: {
         Row: {
@@ -88,8 +93,9 @@ export interface Database {
           revealed: boolean
           created_at: string
         }
-        Insert: Omit<Database['public']['Tables']['npc_facts']['Row'], 'id' | 'created_at'>
+        Insert: Partial<Omit<Database['public']['Tables']['npc_facts']['Row'], 'id' | 'created_at'>>
         Update: Partial<Database['public']['Tables']['npc_facts']['Insert']>
+        Relationships: []
       }
       npc_factions: {
         Row: {
@@ -99,8 +105,9 @@ export interface Database {
           role: string | null
           created_at: string
         }
-        Insert: Omit<Database['public']['Tables']['npc_factions']['Row'], 'id' | 'created_at'>
+        Insert: Partial<Omit<Database['public']['Tables']['npc_factions']['Row'], 'id' | 'created_at'>>
         Update: Partial<Database['public']['Tables']['npc_factions']['Insert']>
+        Relationships: []
       }
       npc_locations: {
         Row: {
@@ -111,8 +118,9 @@ export interface Database {
           notes: string | null
           created_at: string
         }
-        Insert: Omit<Database['public']['Tables']['npc_locations']['Row'], 'id' | 'created_at'>
+        Insert: Partial<Omit<Database['public']['Tables']['npc_locations']['Row'], 'id' | 'created_at'>>
         Update: Partial<Database['public']['Tables']['npc_locations']['Insert']>
+        Relationships: []
       }
       character_relationships: {
         Row: {
@@ -125,8 +133,9 @@ export interface Database {
           notes: string | null
           created_at: string
         }
-        Insert: Omit<Database['public']['Tables']['character_relationships']['Row'], 'id' | 'created_at'>
+        Insert: Partial<Omit<Database['public']['Tables']['character_relationships']['Row'], 'id' | 'created_at'>>
         Update: Partial<Database['public']['Tables']['character_relationships']['Insert']>
+        Relationships: []
       }
       items: {
         Row: {
@@ -137,8 +146,9 @@ export interface Database {
           item_type: string | null
           created_at: string
         }
-        Insert: Omit<Database['public']['Tables']['items']['Row'], 'id' | 'created_at'>
+        Insert: Partial<Omit<Database['public']['Tables']['items']['Row'], 'id' | 'created_at'>>
         Update: Partial<Database['public']['Tables']['items']['Insert']>
+        Relationships: []
       }
       shops: {
         Row: {
@@ -147,8 +157,9 @@ export interface Database {
           location_id: string
           created_at: string
         }
-        Insert: Omit<Database['public']['Tables']['shops']['Row'], 'id' | 'created_at'>
+        Insert: Partial<Omit<Database['public']['Tables']['shops']['Row'], 'id' | 'created_at'>>
         Update: Partial<Database['public']['Tables']['shops']['Insert']>
+        Relationships: []
       }
       shop_inventory: {
         Row: {
@@ -159,8 +170,9 @@ export interface Database {
           available: boolean
           created_at: string
         }
-        Insert: Omit<Database['public']['Tables']['shop_inventory']['Row'], 'id' | 'created_at'>
+        Insert: Partial<Omit<Database['public']['Tables']['shop_inventory']['Row'], 'id' | 'created_at'>>
         Update: Partial<Database['public']['Tables']['shop_inventory']['Insert']>
+        Relationships: []
       }
       sessions: {
         Row: {
@@ -171,8 +183,9 @@ export interface Database {
           loose_threads: string | null
           created_at: string
         }
-        Insert: Omit<Database['public']['Tables']['sessions']['Row'], 'id' | 'created_at'>
+        Insert: Partial<Omit<Database['public']['Tables']['sessions']['Row'], 'id' | 'created_at'>>
         Update: Partial<Database['public']['Tables']['sessions']['Insert']>
+        Relationships: []
       }
       encounters: {
         Row: {
@@ -185,8 +198,9 @@ export interface Database {
           notes: string | null
           created_at: string
         }
-        Insert: Omit<Database['public']['Tables']['encounters']['Row'], 'id' | 'created_at'>
+        Insert: Partial<Omit<Database['public']['Tables']['encounters']['Row'], 'id' | 'created_at'>>
         Update: Partial<Database['public']['Tables']['encounters']['Insert']>
+        Relationships: []
       }
       encounter_participants: {
         Row: {
@@ -199,8 +213,9 @@ export interface Database {
           notes: string | null
           created_at: string
         }
-        Insert: Omit<Database['public']['Tables']['encounter_participants']['Row'], 'id' | 'created_at'>
+        Insert: Partial<Omit<Database['public']['Tables']['encounter_participants']['Row'], 'id' | 'created_at'>>
         Update: Partial<Database['public']['Tables']['encounter_participants']['Insert']>
+        Relationships: []
       }
       lore_entries: {
         Row: {
@@ -211,8 +226,9 @@ export interface Database {
           visible: boolean
           created_at: string
         }
-        Insert: Omit<Database['public']['Tables']['lore_entries']['Row'], 'id' | 'created_at'>
+        Insert: Partial<Omit<Database['public']['Tables']['lore_entries']['Row'], 'id' | 'created_at'>>
         Update: Partial<Database['public']['Tables']['lore_entries']['Insert']>
+        Relationships: []
       }
       plot_threads: {
         Row: {
@@ -226,10 +242,15 @@ export interface Database {
           visible: boolean
           created_at: string
         }
-        Insert: Omit<Database['public']['Tables']['plot_threads']['Row'], 'id' | 'created_at'>
+        Insert: Partial<Omit<Database['public']['Tables']['plot_threads']['Row'], 'id' | 'created_at'>>
         Update: Partial<Database['public']['Tables']['plot_threads']['Insert']>
+        Relationships: []
       }
     }
+    Views: Record<string, never>
+    Functions: Record<string, never>
+    Enums: Record<string, never>
+    CompositeTypes: Record<string, never>
   }
 }
 
