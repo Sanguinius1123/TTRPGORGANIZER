@@ -182,12 +182,42 @@ const locations = (results[0].data ?? []) as Array<{ id: string; name: string }>
 const sessions  = (results[1].data ?? []) as Array<{ id: string; session_number: number }>
 ```
 
+## Planned schema additions (not yet migrated)
+
+These changes are designed but not yet applied to the database or wired into the UI:
+
+### New columns
+- `items.location_id FK locations(id)` — where the item currently is (nullable)
+- `npcs.current_location_id FK locations(id)` — where the NPC is expected to be found (nullable)
+- `npcs.origin_location_id FK locations(id)` — where the NPC came from (nullable)
+- `player_characters.origin_location_id FK locations(id)` — where the PC came from (nullable)
+
+### New tables
+- `pc_factions (id, pc_id FK, faction_id FK, role, created_at)` — PCs can belong to multiple factions (mirrors `npc_factions`)
+- `lore_locations (id, lore_id FK, location_id FK, notes, created_at)` — lore entries can be tied to one or more locations
+
+### "Unknown" convention
+`NULL` means unknown/nowhere for all location FKs. Never create a fake "Unknown" location row. UI displays `NULL` as "Unknown" or "Nomadic" depending on context.
+
+### @mention / rich text (large feature, do separately)
+- Replace textarea fields with Tiptap rich-text editor
+- `@` triggers autocomplete searching across all entity types by name
+- Mentions stored by entity ID internally so renames don't break links
+- Rendered as clickable links navigating to the entity's detail page
+
+### Player portal distance calculator (after portal is built)
+- When party's current location is known, show travel distance/cost to other visible locations
+- Uses `location_connections` graph with Dijkstra shortest-path traversal
+- Requires a way to track party's current location — needs design (candidate: `party_location_id` on a global settings table)
+
 ## Next steps
 
-1. **Test the GM app end-to-end** — start the dev server (`pnpm --filter gm dev`), create some data, verify all CRUD flows work against the live Supabase database.
-2. **Build the player portal** (`apps/player`) — new Next.js app using `createBrowserClient()` from `packages/db`, reads only `visible = true` rows. Pages needed: locations list, location detail (with shops/inventory), NPC list (visible NPCs with only revealed facts showing), lore list.
-3. **Deploy player portal to Vercel** — connect GitHub repo, set env vars (`NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`).
-4. **Future features** (after player portal is functional):
+1. **Test the GM app end-to-end** — dev server is running (`pnpm --filter gm dev`). Walk through CRUD for each entity type and note any UI issues.
+2. **Apply planned schema additions** — write and run the Supabase migration, update `packages/db/src/types.ts`, wire up the new fields in GM app forms and detail pages.
+3. **Build the player portal** (`apps/player`) — new Next.js app using `createBrowserClient()` from `packages/db`, reads only `visible = true` rows. Pages needed: locations list, location detail (with shops/inventory), NPC list (visible NPCs with only revealed facts showing), lore list.
+4. **Deploy player portal to Vercel** — connect GitHub repo, set env vars (`NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`).
+5. **Future features** (after player portal is functional):
    - Map image overlay with pin positions (`x, y` on `locations`)
    - NPC portrait / image upload
    - Shop inventory management UI (currently schema exists but no UI for `shop_inventory`)
+   - @mention / rich text editor (Tiptap)
