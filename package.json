@@ -1,0 +1,9 @@
+{
+  "name": "ttrpg-organizer",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "dev:gm": "pnpm --filter gm dev",
+    "build:gm": "pnpm --filter gm build"
+  }
+}
