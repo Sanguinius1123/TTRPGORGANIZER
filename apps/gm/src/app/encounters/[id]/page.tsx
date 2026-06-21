@@ -8,8 +8,25 @@ import { notFound } from 'next/navigation'
 const input = 'block w-full rounded-md border border-zinc-300 px-3 py-2 text-sm text-zinc-900 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none'
 const label = 'block text-sm font-medium text-zinc-700 mb-1'
 
-interface EncParticipant { id: string; label: string; count: number; role: string | null; npc_id: string | null }
+interface EncParticipant {
+  id: string
+  label: string
+  count: number
+  role: string | null
+  dr: number | null
+  npc_id: string | null
+}
 interface SimpleNPC { id: string; name: string }
+
+const roleColor: Record<string, string> = {
+  enemy:   'text-red-600',
+  ally:    'text-green-600',
+  neutral: 'text-zinc-500',
+}
+
+function formatDr(dr: number): string {
+  return Number.isInteger(dr) ? String(dr) : dr.toFixed(2).replace(/\.?0+$/, '')
+}
 
 export default async function EncounterPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
@@ -20,18 +37,26 @@ export default async function EncounterPage({ params }: { params: Promise<{ id: 
   const enc = raw as Encounter
 
   const [r1, r2, r3, r4] = await Promise.all([
-    supabase.from('encounter_participants').select('id, label, count, role, npc_id').eq('encounter_id', id).order('created_at'),
+    supabase.from('encounter_participants').select('id, label, count, role, dr, npc_id').eq('encounter_id', id).order('created_at'),
     supabase.from('locations').select('id, name').order('name'),
     supabase.from('sessions').select('id, session_number, title').order('session_number', { ascending: false }),
     supabase.from('npcs').select('id, name').order('name'),
   ])
 
-  const parts = (r1.data ?? []) as EncParticipant[]
+  const parts    = (r1.data ?? []) as EncParticipant[]
   const locations = (r2.data ?? []) as Array<{ id: string; name: string }>
-  const sessions = (r3.data ?? []) as Array<{ id: string; session_number: number; title: string | null }>
-  const npcs = (r4.data ?? []) as SimpleNPC[]
+  const sessions  = (r3.data ?? []) as Array<{ id: string; session_number: number; title: string | null }>
+  const npcs      = (r4.data ?? []) as SimpleNPC[]
+  const npcById   = Object.fromEntries(npcs.map((n) => [n.id, n]))
 
-  const npcById = Object.fromEntries(npcs.map((n) => [n.id, n]))
+  // Compute net DR: enemies add (dr × count), allies subtract (dr × count)
+  const netDr = parts.reduce((sum, p) => {
+    if (!p.dr) return sum
+    if (p.role === 'enemy') return sum + p.dr * p.count
+    if (p.role === 'ally')  return sum - p.dr * p.count
+    return sum
+  }, 0)
+  const hasDr = parts.some(p => p.dr !== null)
 
   return (
     <div className="p-8 max-w-3xl">
@@ -40,7 +65,21 @@ export default async function EncounterPage({ params }: { params: Promise<{ id: 
         <span className="text-zinc-300">/</span>
         <span className="text-sm text-zinc-900 font-medium">{enc.title}</span>
       </div>
-      <h1 className="text-2xl font-bold text-zinc-900 mb-6">{enc.title}</h1>
+
+      <div className="flex items-center gap-4 mb-6">
+        <h1 className="text-2xl font-bold text-zinc-900">{enc.title}</h1>
+        {hasDr && (
+          <span className={`inline-flex items-center rounded-md px-2.5 py-1 text-sm font-semibold border ${
+            netDr > 0
+              ? 'bg-red-50 text-red-700 border-red-200'
+              : netDr < 0
+              ? 'bg-green-50 text-green-700 border-green-200'
+              : 'bg-zinc-50 text-zinc-600 border-zinc-200'
+          }`}>
+            Net DR {formatDr(netDr)}
+          </span>
+        )}
+      </div>
 
       <form action={updateEncounter} className="bg-white rounded-lg border border-zinc-200 p-6 space-y-5 mb-8">
         <input type="hidden" name="id" value={enc.id} />
@@ -98,6 +137,7 @@ export default async function EncounterPage({ params }: { params: Promise<{ id: 
                 <tr className="border-b border-zinc-200 bg-zinc-50">
                   <th className="text-left px-4 py-2.5 font-medium text-zinc-600">Label</th>
                   <th className="text-left px-4 py-2.5 font-medium text-zinc-600">Count</th>
+                  <th className="text-left px-4 py-2.5 font-medium text-zinc-600">DR</th>
                   <th className="text-left px-4 py-2.5 font-medium text-zinc-600">Role</th>
                   <th className="text-left px-4 py-2.5 font-medium text-zinc-600">NPC</th>
                   <th />
@@ -110,7 +150,10 @@ export default async function EncounterPage({ params }: { params: Promise<{ id: 
                     <tr key={p.id} className="border-b border-zinc-100 last:border-0">
                       <td className="px-4 py-2.5 font-medium text-zinc-900">{p.label}</td>
                       <td className="px-4 py-2.5 text-zinc-500">{p.count}</td>
-                      <td className="px-4 py-2.5 text-zinc-500">{p.role ?? '—'}</td>
+                      <td className="px-4 py-2.5 text-zinc-500">{p.dr !== null ? formatDr(p.dr) : '—'}</td>
+                      <td className={`px-4 py-2.5 font-medium ${roleColor[p.role ?? ''] ?? 'text-zinc-500'}`}>
+                        {p.role ?? '—'}
+                      </td>
                       <td className="px-4 py-2.5">
                         {linkedNpc
                           ? <Link href={`/npcs/${linkedNpc.id}`} className="text-indigo-600 hover:text-indigo-700">{linkedNpc.name}</Link>
@@ -133,26 +176,36 @@ export default async function EncounterPage({ params }: { params: Promise<{ id: 
 
         <form action={addParticipant} className="bg-white rounded-lg border border-zinc-200 p-4 space-y-3">
           <input type="hidden" name="encounter_id" value={id} />
-          <div className="grid grid-cols-3 gap-3">
-            <div>
+          <div className="grid grid-cols-4 gap-3">
+            <div className="col-span-2">
               <label className={label}>Label</label>
-              <input name="label" required placeholder="6 guards, The Warlord…" className={input} />
+              <input name="label" required placeholder="6 Guards, The Warlord…" className={input} />
             </div>
             <div>
               <label className={label}>Count</label>
               <input name="count" type="number" min="1" defaultValue="1" className={input} />
             </div>
             <div>
-              <label className={label}>Role</label>
-              <input name="role" placeholder="enemy, ally, boss…" className={input} />
+              <label className={label}>DR</label>
+              <input name="dr" type="number" min="0" step="any" placeholder="—" className={input} />
             </div>
           </div>
-          <div>
-            <label className={label}>Linked NPC <span className="text-xs text-zinc-400">(optional)</span></label>
-            <select name="npc_id" className={input}>
-              <option value="">— None —</option>
-              {npcs.map((n) => <option key={n.id} value={n.id}>{n.name}</option>)}
-            </select>
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label className={label}>Role</label>
+              <select name="role" className={input}>
+                <option value="enemy">Enemy</option>
+                <option value="neutral">Neutral</option>
+                <option value="ally">Ally</option>
+              </select>
+            </div>
+            <div>
+              <label className={label}>Linked NPC <span className="text-xs text-zinc-400">(optional)</span></label>
+              <select name="npc_id" className={input}>
+                <option value="">— None —</option>
+                {npcs.map((n) => <option key={n.id} value={n.id}>{n.name}</option>)}
+              </select>
+            </div>
           </div>
           <button type="submit" className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-medium text-white hover:bg-indigo-700">
             Add Participant

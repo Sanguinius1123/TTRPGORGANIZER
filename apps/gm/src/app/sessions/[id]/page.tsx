@@ -11,6 +11,7 @@ const label = 'block text-sm font-medium text-zinc-700 mb-1'
 const smallInput = 'block w-full rounded border border-zinc-300 px-2 py-1.5 text-xs text-zinc-900 focus:border-indigo-500 outline-none'
 
 interface EncounterRow { id: string; title: string; status: string }
+interface ParticipantDrRow { encounter_id: string; role: string | null; dr: number | null; count: number }
 interface SessionNoteRow { id: string; author_name: string | null; notes_text: string | null; pc: { name: string } | null }
 interface SessionPlotThreadRow { id: string; plot_thread_id: string }
 interface PlotThreadRow { id: string; title: string; status: string }
@@ -29,6 +30,10 @@ const encounterStatusColor: Record<string, string> = {
 
 function stripMentions(text: string): string {
   return text.replace(/\[\[[^\]]+\|([^\]]+)\]\]/g, '$1')
+}
+
+function formatDr(dr: number): string {
+  return Number.isInteger(dr) ? String(dr) : dr.toFixed(2).replace(/\.?0+$/, '')
 }
 
 export default async function SessionPage({ params }: { params: Promise<{ id: string }> }) {
@@ -51,14 +56,32 @@ export default async function SessionPage({ params }: { params: Promise<{ id: st
   const playerNotes        = (r2.data ?? []) as unknown as SessionNoteRow[]
   const factions           = (r3.data ?? []) as Array<{ id: string; name: string }>
   const sessionThreadLinks = (r4.data ?? []) as SessionPlotThreadRow[]
-  // neq() excludes NULLs in postgres, so also fetch unassigned ones separately
   const otherEncounters    = (r5.data ?? []) as EncounterRow[]
   const allThreads         = (r6.data ?? []) as PlotThreadRow[]
 
-  // Also fetch encounters with no session assigned
-  const { data: unassignedRaw } = await supabase.from('encounters').select('id, title, status').is('session_id', null).order('title')
+  // neq() excludes NULLs in postgres — fetch unassigned separately
+  const { data: unassignedRaw } = await supabase
+    .from('encounters').select('id, title, status').is('session_id', null).order('title')
   const unassignedEncounters = (unassignedRaw ?? []) as EncounterRow[]
   const availableEncounters  = [...unassignedEncounters, ...otherEncounters]
+
+  // Fetch participant DR data for all encounters linked to this session
+  const encounterIds = encounters.map(e => e.id)
+  let netDrByEncounter: Record<string, number> = {}
+  if (encounterIds.length > 0) {
+    const { data: drRaw } = await supabase
+      .from('encounter_participants')
+      .select('encounter_id, role, dr, count')
+      .in('encounter_id', encounterIds)
+    const drRows = (drRaw ?? []) as ParticipantDrRow[]
+    for (const p of drRows) {
+      if (p.dr === null) continue
+      const prev = netDrByEncounter[p.encounter_id] ?? 0
+      if (p.role === 'enemy') netDrByEncounter[p.encounter_id] = prev + p.dr * p.count
+      else if (p.role === 'ally') netDrByEncounter[p.encounter_id] = prev - p.dr * p.count
+      else netDrByEncounter[p.encounter_id] = prev
+    }
+  }
 
   const linkedEncounterIds = new Set(encounters.map(e => e.id))
   const linkedThreadIds    = new Set(sessionThreadLinks.map(l => l.plot_thread_id))
@@ -169,23 +192,36 @@ export default async function SessionPage({ params }: { params: Promise<{ id: st
               {encounters.length === 0 && (
                 <p className="text-xs text-zinc-400 px-1 py-1">No encounters linked.</p>
               )}
-              {encounters.map((e) => (
-                <div key={e.id} className="flex items-center gap-2 group rounded px-1 py-1.5 hover:bg-zinc-50">
-                  <div className="flex-1 min-w-0">
-                    <Link href={`/encounters/${e.id}`} className="text-sm font-medium text-zinc-900 hover:text-indigo-600 block truncate">
-                      {e.title}
-                    </Link>
-                    <span className={`inline-flex rounded-full px-1.5 py-0.5 text-xs font-medium ${encounterStatusColor[e.status] ?? 'bg-zinc-100 text-zinc-600'}`}>
-                      {e.status}
-                    </span>
+              {encounters.map((e) => {
+                const netDr = netDrByEncounter[e.id]
+                const hasDr = netDr !== undefined
+                return (
+                  <div key={e.id} className="flex items-center gap-2 group rounded px-1 py-1.5 hover:bg-zinc-50">
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-1.5 min-w-0">
+                        <Link href={`/encounters/${e.id}`} className="text-sm font-medium text-zinc-900 hover:text-indigo-600 truncate">
+                          {e.title}
+                        </Link>
+                        {hasDr && (
+                          <span className={`shrink-0 inline-flex rounded px-1 py-0.5 text-xs font-semibold ${
+                            netDr > 0 ? 'bg-red-50 text-red-600' : netDr < 0 ? 'bg-green-50 text-green-700' : 'bg-zinc-100 text-zinc-500'
+                          }`}>
+                            DR {formatDr(netDr)}
+                          </span>
+                        )}
+                      </div>
+                      <span className={`inline-flex rounded-full px-1.5 py-0.5 text-xs font-medium ${encounterStatusColor[e.status] ?? 'bg-zinc-100 text-zinc-600'}`}>
+                        {e.status}
+                      </span>
+                    </div>
+                    <form action={removeEncounterFromSession}>
+                      <input type="hidden" name="id" value={e.id} />
+                      <input type="hidden" name="session_id" value={id} />
+                      <button type="submit" className="opacity-0 group-hover:opacity-100 text-zinc-300 hover:text-red-500 text-xs shrink-0">✕</button>
+                    </form>
                   </div>
-                  <form action={removeEncounterFromSession}>
-                    <input type="hidden" name="id" value={e.id} />
-                    <input type="hidden" name="session_id" value={id} />
-                    <button type="submit" className="opacity-0 group-hover:opacity-100 text-zinc-300 hover:text-red-500 text-xs shrink-0">✕</button>
-                  </form>
-                </div>
-              ))}
+                )
+              })}
             </div>
           </div>
 
@@ -196,17 +232,15 @@ export default async function SessionPage({ params }: { params: Promise<{ id: st
               <Link href="/plot-threads/new" className="text-xs text-indigo-600 hover:text-indigo-700 font-medium">+ New</Link>
             </div>
             {availableThreads.length > 0 && (
-              <form action={addSessionPlotThread} className="px-3 pt-2.5 pb-2 border-b border-zinc-100 space-y-1.5">
+              <form action={addSessionPlotThread} className="px-3 pt-2.5 pb-2 border-b border-zinc-100 flex gap-1.5">
                 <input type="hidden" name="session_id" value={id} />
-                <div className="flex gap-1.5">
-                  <select name="plot_thread_id" required className={`${smallInput} flex-1`}>
-                    <option value="">Link existing…</option>
-                    {availableThreads.map(t => <option key={t.id} value={t.id}>{t.title}</option>)}
-                  </select>
-                  <button type="submit" className="rounded bg-indigo-600 px-2.5 py-1.5 text-xs font-medium text-white hover:bg-indigo-700 whitespace-nowrap">
-                    Add
-                  </button>
-                </div>
+                <select name="plot_thread_id" required className={`${smallInput} flex-1`}>
+                  <option value="">Link existing…</option>
+                  {availableThreads.map(t => <option key={t.id} value={t.id}>{t.title}</option>)}
+                </select>
+                <button type="submit" className="rounded bg-indigo-600 px-2.5 py-1.5 text-xs font-medium text-white hover:bg-indigo-700 whitespace-nowrap">
+                  Add
+                </button>
               </form>
             )}
             <div className="p-3 space-y-1">

@@ -228,6 +228,7 @@ export interface Database {
           label: string
           count: number
           role: string | null
+          dr: number | null
           notes: string | null
           created_at: string
         }

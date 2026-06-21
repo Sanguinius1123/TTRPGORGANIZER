@@ -73,12 +73,14 @@ export async function addParticipant(formData: FormData) {
   const supabase = db()
   const encounter_id = formData.get('encounter_id') as string
   const count = formData.get('count') as string
+  const dr    = formData.get('dr') as string
   const { error } = await supabase.from('encounter_participants').insert({
     encounter_id,
     npc_id: (formData.get('npc_id') as string) || null,
     label: formData.get('label') as string,
     count: count ? parseInt(count) : 1,
     role: (formData.get('role') as string) || null,
+    dr: dr ? parseFloat(dr) : null,
     notes: (formData.get('notes') as string) || null,
   })
   if (error) throw new Error(error.message)
