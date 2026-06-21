@@ -204,14 +204,19 @@ export default async function SessionPage({ params }: { params: Promise<{ id: st
               })}
             </div>
             {availableThreads.length > 0 && (
-              <form action={addSessionPlotThread} className="px-3 pb-3 pt-2 border-t border-zinc-100 space-y-1.5">
+              <form action={addSessionPlotThread} className="px-3 pb-3 pt-2 border-t border-zinc-100 space-y-2">
                 <input type="hidden" name="session_id" value={id} />
-                <select name="plot_thread_id" required className={smallInput}>
-                  <option value="">Add thread…</option>
-                  {availableThreads.map(t => <option key={t.id} value={t.id}>{t.title}</option>)}
-                </select>
+                <p className="text-xs text-zinc-500 font-medium">Add threads:</p>
+                <div className="space-y-1 max-h-48 overflow-y-auto">
+                  {availableThreads.map(t => (
+                    <label key={t.id} className="flex items-center gap-2 rounded px-1 py-1 hover:bg-zinc-50 cursor-pointer">
+                      <input type="checkbox" name="plot_thread_id" value={t.id} className="rounded border-zinc-300 text-indigo-600 focus:ring-indigo-500" />
+                      <span className="text-xs text-zinc-800 truncate">{t.title}</span>
+                    </label>
+                  ))}
+                </div>
                 <button type="submit" className="w-full rounded bg-indigo-600 px-2.5 py-1.5 text-xs font-medium text-white hover:bg-indigo-700">
-                  Add
+                  Add Selected
                 </button>
               </form>
             )}

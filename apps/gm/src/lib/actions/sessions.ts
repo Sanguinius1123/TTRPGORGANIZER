@@ -43,11 +43,13 @@ export async function updateSession(formData: FormData) {
 
 export async function addSessionPlotThread(formData: FormData) {
   const supabase = db()
-  const session_id     = formData.get('session_id') as string
-  const plot_thread_id = formData.get('plot_thread_id') as string
+  const session_id      = formData.get('session_id') as string
+  const plot_thread_ids = formData.getAll('plot_thread_id') as string[]
+  if (!plot_thread_ids.length) return
+  const rows = plot_thread_ids.map(plot_thread_id => ({ session_id, plot_thread_id }))
   const { error } = await supabase
     .from('session_plot_threads')
-    .upsert({ session_id, plot_thread_id }, { onConflict: 'session_id,plot_thread_id', ignoreDuplicates: true })
+    .upsert(rows, { onConflict: 'session_id,plot_thread_id', ignoreDuplicates: true })
   if (error) throw new Error(error.message)
   revalidatePath(`/sessions/${session_id}`)
 }
