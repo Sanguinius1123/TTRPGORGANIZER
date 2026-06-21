@@ -43,6 +43,15 @@ export async function updateEncounter(formData: FormData) {
   revalidatePath('/encounters')
 }
 
+export async function addEncounterToSession(formData: FormData) {
+  const supabase = db()
+  const id         = formData.get('id') as string
+  const session_id = formData.get('session_id') as string
+  const { error } = await supabase.from('encounters').update({ session_id }).eq('id', id)
+  if (error) throw new Error(error.message)
+  revalidatePath(`/sessions/${session_id}`)
+}
+
 export async function removeEncounterFromSession(formData: FormData) {
   const supabase = db()
   const id         = formData.get('id') as string
