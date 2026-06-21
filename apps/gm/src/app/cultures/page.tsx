@@ -1,6 +1,11 @@
 import { db } from '@/lib/db'
 import { Culture } from '@ttrpg/db'
+import { ClickableRow, SubLink } from '@/components/TableRow'
 import Link from 'next/link'
+
+function stripMentions(text: string): string {
+  return text.replace(/\[\[[^\]]+\|([^\]]+)\]\]/g, '$1')
+}
 
 export default async function CulturesPage() {
   const supabase = db()
@@ -29,12 +34,14 @@ export default async function CulturesPage() {
             </thead>
             <tbody>
               {cultures.map((c) => (
-                <tr key={c.id} className="border-b border-zinc-100 last:border-0 hover:bg-zinc-50">
+                <ClickableRow key={c.id} href={`/cultures/${c.id}`} className="border-b border-zinc-100 last:border-0 hover:bg-zinc-50">
                   <td className="px-4 py-2.5">
-                    <Link href={`/cultures/${c.id}`} className="font-medium text-zinc-900 hover:text-indigo-600">{c.name}</Link>
+                    <SubLink href={`/cultures/${c.id}`} className="font-medium text-zinc-900 hover:text-indigo-600">{c.name}</SubLink>
                   </td>
-                  <td className="px-4 py-2.5 text-zinc-500 max-w-xs truncate">{c.description ?? '—'}</td>
-                </tr>
+                  <td className="px-4 py-2.5 text-zinc-500 max-w-xs truncate">
+                    {c.description ? stripMentions(c.description) : '—'}
+                  </td>
+                </ClickableRow>
               ))}
             </tbody>
           </table>

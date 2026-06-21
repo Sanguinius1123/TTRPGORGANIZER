@@ -1,5 +1,6 @@
 import { db } from '@/lib/db'
 import { FilterBar } from '@/components/FilterBar'
+import { ClickableRow, SubLink } from '@/components/TableRow'
 import Link from 'next/link'
 import { Suspense } from 'react'
 
@@ -7,8 +8,8 @@ interface EncounterRow {
   id: string
   title: string
   status: string
-  location: { name: string } | null
-  session: { session_number: number } | null
+  location: { id: string; name: string } | null
+  session: { id: string; session_number: number } | null
 }
 
 const statusColor: Record<string, string> = {
@@ -23,7 +24,7 @@ export default async function EncountersPage({ searchParams }: { searchParams: S
   const params = await searchParams
   const supabase = db()
 
-  let q = supabase.from('encounters').select('*, location:location_id(name), session:session_id(session_number)').order('created_at', { ascending: false })
+  let q = supabase.from('encounters').select('*, location:location_id(id, name), session:session_id(id, session_number)').order('created_at', { ascending: false })
   if (params.status) q = q.eq('status', params.status)
 
   const { data: raw } = await q
@@ -73,22 +74,28 @@ export default async function EncountersPage({ searchParams }: { searchParams: S
             </thead>
             <tbody>
               {encounters.map((e) => (
-                <tr key={e.id} className="border-b border-zinc-100 last:border-0 hover:bg-zinc-50">
+                <ClickableRow key={e.id} href={`/encounters/${e.id}`} className="border-b border-zinc-100 last:border-0 hover:bg-zinc-50">
                   <td className="px-4 py-3">
-                    <Link href={`/encounters/${e.id}`} className="font-medium text-zinc-900 hover:text-indigo-600">
+                    <SubLink href={`/encounters/${e.id}`} className="font-medium text-zinc-900 hover:text-indigo-600">
                       {e.title}
-                    </Link>
+                    </SubLink>
                   </td>
-                  <td className="px-4 py-3 text-zinc-500">{e.location?.name ?? '—'}</td>
-                  <td className="px-4 py-3 text-zinc-500">
-                    {e.session ? `#${e.session.session_number}` : '—'}
+                  <td className="px-4 py-3">
+                    {e.location
+                      ? <SubLink href={`/locations/${e.location.id}`} className="text-zinc-500 hover:text-indigo-600">{e.location.name}</SubLink>
+                      : <span className="text-zinc-400">—</span>}
+                  </td>
+                  <td className="px-4 py-3">
+                    {e.session
+                      ? <SubLink href={`/sessions/${e.session.id}`} className="text-zinc-500 hover:text-indigo-600">#{e.session.session_number}</SubLink>
+                      : <span className="text-zinc-400">—</span>}
                   </td>
                   <td className="px-4 py-3">
                     <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${statusColor[e.status] ?? 'bg-zinc-100 text-zinc-600'}`}>
                       {e.status}
                     </span>
                   </td>
-                </tr>
+                </ClickableRow>
               ))}
             </tbody>
           </table>

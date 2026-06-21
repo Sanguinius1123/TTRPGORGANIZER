@@ -256,6 +256,7 @@ export interface Database {
           id: string
           name: string
           description: string | null
+          origin_location_id: string | null
           created_at: string
         }
         Insert: Partial<Omit<Database['public']['Tables']['species']['Row'], 'id' | 'created_at'>>
@@ -271,6 +272,31 @@ export interface Database {
         }
         Insert: Partial<Omit<Database['public']['Tables']['cultures']['Row'], 'id' | 'created_at'>>
         Update: Partial<Database['public']['Tables']['cultures']['Insert']>
+        Relationships: []
+      }
+      culture_locations: {
+        Row: {
+          id: string
+          culture_id: string
+          location_id: string
+          notes: string | null
+          created_at: string
+        }
+        Insert: Partial<Omit<Database['public']['Tables']['culture_locations']['Row'], 'id' | 'created_at'>>
+        Update: Partial<Database['public']['Tables']['culture_locations']['Insert']>
+        Relationships: []
+      }
+      session_notes: {
+        Row: {
+          id: string
+          session_id: string
+          pc_id: string | null
+          author_name: string | null
+          notes_text: string | null
+          created_at: string
+        }
+        Insert: Partial<Omit<Database['public']['Tables']['session_notes']['Row'], 'id' | 'created_at'>>
+        Update: Partial<Database['public']['Tables']['session_notes']['Insert']>
         Relationships: []
       }
       faction_relationships: {
@@ -330,3 +356,5 @@ export type Species              = Tables<'species'>
 export type Culture              = Tables<'cultures'>
 export type FactionRelationship  = Tables<'faction_relationships'>
 export type FactionLocation      = Tables<'faction_locations'>
+export type CultureLocation      = Tables<'culture_locations'>
+export type SessionNote          = Tables<'session_notes'>

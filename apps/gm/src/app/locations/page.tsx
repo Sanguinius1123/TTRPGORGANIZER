@@ -1,6 +1,7 @@
 import { db } from '@/lib/db'
 import { toggleLocationVisibility } from '@/lib/actions/locations'
 import { FilterBar } from '@/components/FilterBar'
+import { ClickableRow, SubLink, StopPropCell } from '@/components/TableRow'
 import Link from 'next/link'
 import { Suspense } from 'react'
 
@@ -10,7 +11,7 @@ interface LocationRow {
   type: string | null
   status: string | null
   visible: boolean
-  parent: { name: string } | null
+  parent: { id: string; name: string } | null
 }
 
 type SearchParams = Promise<{ type?: string; status?: string; visible?: string }>
@@ -19,7 +20,7 @@ export default async function LocationsPage({ searchParams }: { searchParams: Se
   const params = await searchParams
   const supabase = db()
 
-  let q = supabase.from('locations').select('*, parent:parent_location_id(name)').order('name')
+  let q = supabase.from('locations').select('*, parent:parent_location_id(id, name)').order('name')
   if (params.type) q = q.ilike('type', `%${params.type}%`)
   if (params.status) q = q.ilike('status', `%${params.status}%`)
   if (params.visible === 'true') q = q.eq('visible', true)
@@ -71,16 +72,20 @@ export default async function LocationsPage({ searchParams }: { searchParams: Se
             </thead>
             <tbody>
               {locations.map((loc) => (
-                <tr key={loc.id} className="border-b border-zinc-100 last:border-0 hover:bg-zinc-50">
+                <ClickableRow key={loc.id} href={`/locations/${loc.id}`} className="border-b border-zinc-100 last:border-0 hover:bg-zinc-50">
                   <td className="px-4 py-3">
-                    <Link href={`/locations/${loc.id}`} className="font-medium text-zinc-900 hover:text-indigo-600">
+                    <SubLink href={`/locations/${loc.id}`} className="font-medium text-zinc-900 hover:text-indigo-600">
                       {loc.name}
-                    </Link>
+                    </SubLink>
                   </td>
                   <td className="px-4 py-3 text-zinc-500">{loc.type ?? '—'}</td>
-                  <td className="px-4 py-3 text-zinc-500">{loc.parent?.name ?? '—'}</td>
-                  <td className="px-4 py-3 text-zinc-500">{loc.status ?? '—'}</td>
                   <td className="px-4 py-3">
+                    {loc.parent
+                      ? <SubLink href={`/locations/${loc.parent.id}`} className="text-zinc-500 hover:text-indigo-600">{loc.parent.name}</SubLink>
+                      : <span className="text-zinc-400">—</span>}
+                  </td>
+                  <td className="px-4 py-3 text-zinc-500">{loc.status ?? '—'}</td>
+                  <StopPropCell className="px-4 py-3">
                     <form action={toggleLocationVisibility}>
                       <input type="hidden" name="id" value={loc.id} />
                       <input type="hidden" name="visible" value={String(loc.visible)} />
@@ -90,8 +95,8 @@ export default async function LocationsPage({ searchParams }: { searchParams: Se
                         {loc.visible ? 'Visible' : 'Hidden'}
                       </button>
                     </form>
-                  </td>
-                </tr>
+                  </StopPropCell>
+                </ClickableRow>
               ))}
             </tbody>
           </table>

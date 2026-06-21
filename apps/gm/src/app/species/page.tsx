@@ -1,6 +1,11 @@
 import { db } from '@/lib/db'
 import { Species } from '@ttrpg/db'
+import { ClickableRow, SubLink } from '@/components/TableRow'
 import Link from 'next/link'
+
+function stripMentions(text: string): string {
+  return text.replace(/\[\[[^\]]+\|([^\]]+)\]\]/g, '$1')
+}
 
 export default async function SpeciesPage() {
   const supabase = db()
@@ -29,12 +34,14 @@ export default async function SpeciesPage() {
             </thead>
             <tbody>
               {speciesList.map((s) => (
-                <tr key={s.id} className="border-b border-zinc-100 last:border-0 hover:bg-zinc-50">
+                <ClickableRow key={s.id} href={`/species/${s.id}`} className="border-b border-zinc-100 last:border-0 hover:bg-zinc-50">
                   <td className="px-4 py-2.5">
-                    <Link href={`/species/${s.id}`} className="font-medium text-zinc-900 hover:text-indigo-600">{s.name}</Link>
+                    <SubLink href={`/species/${s.id}`} className="font-medium text-zinc-900 hover:text-indigo-600">{s.name}</SubLink>
                   </td>
-                  <td className="px-4 py-2.5 text-zinc-500 max-w-xs truncate">{s.description ?? '—'}</td>
-                </tr>
+                  <td className="px-4 py-2.5 text-zinc-500 max-w-xs truncate">
+                    {s.description ? stripMentions(s.description) : '—'}
+                  </td>
+                </ClickableRow>
               ))}
             </tbody>
           </table>

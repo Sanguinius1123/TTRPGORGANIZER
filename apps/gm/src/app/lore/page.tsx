@@ -2,6 +2,7 @@ import { db } from '@/lib/db'
 import { LoreEntry } from '@ttrpg/db'
 import { toggleLoreVisibility } from '@/lib/actions/lore'
 import { FilterBar } from '@/components/FilterBar'
+import { ClickableRow, SubLink, StopPropCell } from '@/components/TableRow'
 import Link from 'next/link'
 import { Suspense } from 'react'
 
@@ -59,14 +60,14 @@ export default async function LorePage({ searchParams }: { searchParams: SearchP
             </thead>
             <tbody>
               {entries.map((entry) => (
-                <tr key={entry.id} className="border-b border-zinc-100 last:border-0 hover:bg-zinc-50">
+                <ClickableRow key={entry.id} href={`/lore/${entry.id}`} className="border-b border-zinc-100 last:border-0 hover:bg-zinc-50">
                   <td className="px-4 py-3">
-                    <Link href={`/lore/${entry.id}`} className="font-medium text-zinc-900 hover:text-indigo-600">
+                    <SubLink href={`/lore/${entry.id}`} className="font-medium text-zinc-900 hover:text-indigo-600">
                       {entry.title}
-                    </Link>
+                    </SubLink>
                   </td>
                   <td className="px-4 py-3 text-zinc-500">{entry.category ?? '—'}</td>
-                  <td className="px-4 py-3">
+                  <StopPropCell className="px-4 py-3">
                     <form action={toggleLoreVisibility}>
                       <input type="hidden" name="id" value={entry.id} />
                       <input type="hidden" name="visible" value={String(entry.visible)} />
@@ -76,8 +77,8 @@ export default async function LorePage({ searchParams }: { searchParams: SearchP
                         {entry.visible ? 'Visible' : 'Hidden'}
                       </button>
                     </form>
-                  </td>
-                </tr>
+                  </StopPropCell>
+                </ClickableRow>
               ))}
             </tbody>
           </table>

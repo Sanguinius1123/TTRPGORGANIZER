@@ -2,6 +2,7 @@ import { db } from '@/lib/db'
 import { PlayerCharacter } from '@ttrpg/db'
 import { togglePlayerCharacterVisibility } from '@/lib/actions/player-characters'
 import { FilterBar } from '@/components/FilterBar'
+import { ClickableRow, SubLink, StopPropCell } from '@/components/TableRow'
 import Link from 'next/link'
 import { Suspense } from 'react'
 
@@ -19,11 +20,14 @@ export default async function PlayerCharactersPage({ searchParams }: { searchPar
       else if (params.visible === 'false') q = q.eq('visible', false)
       return q
     })(),
-    supabase.from('species').select('name').order('name'),
+    supabase.from('species').select('id, name').order('name'),
   ])
 
   const pcs = (results[0].data ?? []) as PlayerCharacter[]
-  const speciesOptions = (results[1].data ?? []).map((s: any) => ({ value: s.name, label: s.name }))
+  const speciesList = (results[1].data ?? []) as Array<{ id: string; name: string }>
+
+  const speciesIdByName = Object.fromEntries(speciesList.map(s => [s.name, s.id]))
+  const speciesOptions = speciesList.map(s => ({ value: s.name, label: s.name }))
 
   const filters = [
     { type: 'select' as const, name: 'species', label: 'Species', options: speciesOptions },
@@ -66,15 +70,21 @@ export default async function PlayerCharactersPage({ searchParams }: { searchPar
             </thead>
             <tbody>
               {pcs.map((pc) => (
-                <tr key={pc.id} className="border-b border-zinc-100 last:border-0 hover:bg-zinc-50">
+                <ClickableRow key={pc.id} href={`/player-characters/${pc.id}`} className="border-b border-zinc-100 last:border-0 hover:bg-zinc-50">
                   <td className="px-4 py-3">
-                    <Link href={`/player-characters/${pc.id}`} className="font-medium text-zinc-900 hover:text-indigo-600">
+                    <SubLink href={`/player-characters/${pc.id}`} className="font-medium text-zinc-900 hover:text-indigo-600">
                       {pc.name}
-                    </Link>
+                    </SubLink>
                   </td>
                   <td className="px-4 py-3 text-zinc-500">{pc.player_name ?? '—'}</td>
-                  <td className="px-4 py-3 text-zinc-500">{pc.species ?? '—'}</td>
                   <td className="px-4 py-3">
+                    {pc.species
+                      ? speciesIdByName[pc.species]
+                        ? <SubLink href={`/species/${speciesIdByName[pc.species]}`} className="text-zinc-500 hover:text-indigo-600">{pc.species}</SubLink>
+                        : <span className="text-zinc-500">{pc.species}</span>
+                      : <span className="text-zinc-400">—</span>}
+                  </td>
+                  <StopPropCell className="px-4 py-3">
                     <form action={togglePlayerCharacterVisibility}>
                       <input type="hidden" name="id" value={pc.id} />
                       <input type="hidden" name="visible" value={String(pc.visible)} />
@@ -84,8 +94,8 @@ export default async function PlayerCharactersPage({ searchParams }: { searchPar
                         {pc.visible ? 'Visible' : 'Hidden'}
                       </button>
                     </form>
-                  </td>
-                </tr>
+                  </StopPropCell>
+                </ClickableRow>
               ))}
             </tbody>
           </table>

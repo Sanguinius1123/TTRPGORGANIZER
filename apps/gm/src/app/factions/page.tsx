@@ -1,6 +1,7 @@
 import { db } from '@/lib/db'
 import { toggleFactionVisibility } from '@/lib/actions/factions'
 import { FilterBar } from '@/components/FilterBar'
+import { ClickableRow, SubLink, StopPropCell } from '@/components/TableRow'
 import Link from 'next/link'
 import { Suspense } from 'react'
 
@@ -10,7 +11,7 @@ interface FactionRow {
   species: string | null
   culture: string | null
   visible: boolean
-  parent: { name: string } | null
+  parent: { id: string; name: string } | null
 }
 
 type SearchParams = Promise<{ species?: string; culture?: string; visible?: string }>
@@ -21,20 +22,26 @@ export default async function FactionsPage({ searchParams }: { searchParams: Sea
 
   const results = await Promise.all([
     (() => {
-      let q = supabase.from('factions').select('*, parent:parent_faction_id(name)').order('name')
+      let q = supabase.from('factions').select('*, parent:parent_faction_id(id, name)').order('name')
       if (params.species) q = q.eq('species', params.species)
       if (params.culture) q = q.eq('culture', params.culture)
       if (params.visible === 'true') q = q.eq('visible', true)
       else if (params.visible === 'false') q = q.eq('visible', false)
       return q
     })(),
-    supabase.from('species').select('name').order('name'),
-    supabase.from('cultures').select('name').order('name'),
+    supabase.from('species').select('id, name').order('name'),
+    supabase.from('cultures').select('id, name').order('name'),
   ])
 
   const factions = (results[0].data ?? []) as unknown as FactionRow[]
-  const speciesOptions = (results[1].data ?? []).map((s: any) => ({ value: s.name, label: s.name }))
-  const cultureOptions = (results[2].data ?? []).map((c: any) => ({ value: c.name, label: c.name }))
+  const speciesList = (results[1].data ?? []) as Array<{ id: string; name: string }>
+  const culturesList = (results[2].data ?? []) as Array<{ id: string; name: string }>
+
+  const speciesIdByName = Object.fromEntries(speciesList.map(s => [s.name, s.id]))
+  const cultureIdByName = Object.fromEntries(culturesList.map(c => [c.name, c.id]))
+
+  const speciesOptions = speciesList.map(s => ({ value: s.name, label: s.name }))
+  const cultureOptions = culturesList.map(c => ({ value: c.name, label: c.name }))
 
   const filters = [
     { type: 'select' as const, name: 'species', label: 'Species', options: speciesOptions },
@@ -79,16 +86,32 @@ export default async function FactionsPage({ searchParams }: { searchParams: Sea
             </thead>
             <tbody>
               {factions.map((f) => (
-                <tr key={f.id} className="border-b border-zinc-100 last:border-0 hover:bg-zinc-50">
+                <ClickableRow key={f.id} href={`/factions/${f.id}`} className="border-b border-zinc-100 last:border-0 hover:bg-zinc-50">
                   <td className="px-4 py-3">
-                    <Link href={`/factions/${f.id}`} className="font-medium text-zinc-900 hover:text-indigo-600">
+                    <SubLink href={`/factions/${f.id}`} className="font-medium text-zinc-900 hover:text-indigo-600">
                       {f.name}
-                    </Link>
+                    </SubLink>
                   </td>
-                  <td className="px-4 py-3 text-zinc-500">{f.parent?.name ?? '—'}</td>
-                  <td className="px-4 py-3 text-zinc-500">{f.species ?? '—'}</td>
-                  <td className="px-4 py-3 text-zinc-500">{f.culture ?? '—'}</td>
                   <td className="px-4 py-3">
+                    {f.parent
+                      ? <SubLink href={`/factions/${f.parent.id}`} className="text-zinc-500 hover:text-indigo-600">{f.parent.name}</SubLink>
+                      : <span className="text-zinc-400">—</span>}
+                  </td>
+                  <td className="px-4 py-3">
+                    {f.species
+                      ? speciesIdByName[f.species]
+                        ? <SubLink href={`/species/${speciesIdByName[f.species]}`} className="text-zinc-500 hover:text-indigo-600">{f.species}</SubLink>
+                        : <span className="text-zinc-500">{f.species}</span>
+                      : <span className="text-zinc-400">—</span>}
+                  </td>
+                  <td className="px-4 py-3">
+                    {f.culture
+                      ? cultureIdByName[f.culture]
+                        ? <SubLink href={`/cultures/${cultureIdByName[f.culture]}`} className="text-zinc-500 hover:text-indigo-600">{f.culture}</SubLink>
+                        : <span className="text-zinc-500">{f.culture}</span>
+                      : <span className="text-zinc-400">—</span>}
+                  </td>
+                  <StopPropCell className="px-4 py-3">
                     <form action={toggleFactionVisibility}>
                       <input type="hidden" name="id" value={f.id} />
                       <input type="hidden" name="visible" value={String(f.visible)} />
@@ -98,8 +121,8 @@ export default async function FactionsPage({ searchParams }: { searchParams: Sea
                         {f.visible ? 'Visible' : 'Hidden'}
                       </button>
                     </form>
-                  </td>
-                </tr>
+                  </StopPropCell>
+                </ClickableRow>
               ))}
             </tbody>
           </table>

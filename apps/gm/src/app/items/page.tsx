@@ -1,6 +1,7 @@
 import { db } from '@/lib/db'
 import { Item } from '@ttrpg/db'
 import { FilterBar } from '@/components/FilterBar'
+import { ClickableRow, SubLink } from '@/components/TableRow'
 import Link from 'next/link'
 import { Suspense } from 'react'
 
@@ -55,17 +56,17 @@ export default async function ItemsPage({ searchParams }: { searchParams: Search
             </thead>
             <tbody>
               {items.map((item) => (
-                <tr key={item.id} className="border-b border-zinc-100 last:border-0 hover:bg-zinc-50">
+                <ClickableRow key={item.id} href={`/items/${item.id}`} className="border-b border-zinc-100 last:border-0 hover:bg-zinc-50">
                   <td className="px-4 py-3">
-                    <Link href={`/items/${item.id}`} className="font-medium text-zinc-900 hover:text-indigo-600">
+                    <SubLink href={`/items/${item.id}`} className="font-medium text-zinc-900 hover:text-indigo-600">
                       {item.name}
-                    </Link>
+                    </SubLink>
                   </td>
                   <td className="px-4 py-3 text-zinc-500">{item.item_type ?? '—'}</td>
                   <td className="px-4 py-3 text-zinc-500">
                     {item.base_price != null ? item.base_price : '—'}
                   </td>
-                </tr>
+                </ClickableRow>
               ))}
             </tbody>
           </table>

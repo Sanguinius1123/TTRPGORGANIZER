@@ -1,6 +1,7 @@
 import { db } from '@/lib/db'
 import { togglePlotThreadVisibility } from '@/lib/actions/plot-threads'
 import { FilterBar } from '@/components/FilterBar'
+import { ClickableRow, SubLink, StopPropCell } from '@/components/TableRow'
 import Link from 'next/link'
 import { Suspense } from 'react'
 
@@ -10,7 +11,7 @@ interface ThreadRow {
   type: string
   status: string
   visible: boolean
-  parent: { title: string } | null
+  parent: { id: string; title: string } | null
 }
 
 const typeColor: Record<string, string> = {
@@ -31,7 +32,7 @@ export default async function PlotThreadsPage({ searchParams }: { searchParams: 
   const params = await searchParams
   const supabase = db()
 
-  let q = supabase.from('plot_threads').select('*, parent:parent_id(title)').order('status').order('type').order('title')
+  let q = supabase.from('plot_threads').select('*, parent:parent_id(id, title)').order('status').order('type').order('title')
   if (params.type) q = q.eq('type', params.type)
   if (params.status) q = q.eq('status', params.status)
   if (params.visible === 'true') q = q.eq('visible', true)
@@ -91,24 +92,28 @@ export default async function PlotThreadsPage({ searchParams }: { searchParams: 
             </thead>
             <tbody>
               {threads.map((t) => (
-                <tr key={t.id} className="border-b border-zinc-100 last:border-0 hover:bg-zinc-50">
+                <ClickableRow key={t.id} href={`/plot-threads/${t.id}`} className="border-b border-zinc-100 last:border-0 hover:bg-zinc-50">
                   <td className="px-4 py-3">
-                    <Link href={`/plot-threads/${t.id}`} className="font-medium text-zinc-900 hover:text-indigo-600">
+                    <SubLink href={`/plot-threads/${t.id}`} className="font-medium text-zinc-900 hover:text-indigo-600">
                       {t.title}
-                    </Link>
+                    </SubLink>
                   </td>
                   <td className="px-4 py-3">
                     <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${typeColor[t.type] ?? ''}`}>
                       {t.type}
                     </span>
                   </td>
-                  <td className="px-4 py-3 text-zinc-500">{t.parent?.title ?? '—'}</td>
+                  <td className="px-4 py-3">
+                    {t.parent
+                      ? <SubLink href={`/plot-threads/${t.parent.id}`} className="text-zinc-500 hover:text-indigo-600">{t.parent.title}</SubLink>
+                      : <span className="text-zinc-400">—</span>}
+                  </td>
                   <td className="px-4 py-3">
                     <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${statusColor[t.status] ?? ''}`}>
                       {t.status}
                     </span>
                   </td>
-                  <td className="px-4 py-3">
+                  <StopPropCell className="px-4 py-3">
                     <form action={togglePlotThreadVisibility}>
                       <input type="hidden" name="id" value={t.id} />
                       <input type="hidden" name="visible" value={String(t.visible)} />
@@ -118,8 +123,8 @@ export default async function PlotThreadsPage({ searchParams }: { searchParams: 
                         {t.visible ? 'Visible' : 'Hidden'}
                       </button>
                     </form>
-                  </td>
-                </tr>
+                  </StopPropCell>
+                </ClickableRow>
               ))}
             </tbody>
           </table>

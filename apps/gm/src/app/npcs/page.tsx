@@ -2,6 +2,7 @@ import { db } from '@/lib/db'
 import { NPC } from '@ttrpg/db'
 import { toggleNpcVisibility } from '@/lib/actions/npcs'
 import { FilterBar } from '@/components/FilterBar'
+import { ClickableRow, SubLink, StopPropCell } from '@/components/TableRow'
 import Link from 'next/link'
 import { Suspense } from 'react'
 
@@ -21,13 +22,19 @@ export default async function NpcsPage({ searchParams }: { searchParams: SearchP
       else if (params.visible === 'false') q = q.eq('visible', false)
       return q
     })(),
-    supabase.from('species').select('name').order('name'),
-    supabase.from('cultures').select('name').order('name'),
+    supabase.from('species').select('id, name').order('name'),
+    supabase.from('cultures').select('id, name').order('name'),
   ])
 
   const npcs = (results[0].data ?? []) as NPC[]
-  const speciesOptions = (results[1].data ?? []).map((s: any) => ({ value: s.name, label: s.name }))
-  const cultureOptions = (results[2].data ?? []).map((c: any) => ({ value: c.name, label: c.name }))
+  const speciesList = (results[1].data ?? []) as Array<{ id: string; name: string }>
+  const culturesList = (results[2].data ?? []) as Array<{ id: string; name: string }>
+
+  const speciesIdByName = Object.fromEntries(speciesList.map(s => [s.name, s.id]))
+  const cultureIdByName = Object.fromEntries(culturesList.map(c => [c.name, c.id]))
+
+  const speciesOptions = speciesList.map(s => ({ value: s.name, label: s.name }))
+  const cultureOptions = culturesList.map(c => ({ value: c.name, label: c.name }))
 
   const filters = [
     { type: 'select' as const, name: 'species', label: 'Species', options: speciesOptions },
@@ -73,16 +80,28 @@ export default async function NpcsPage({ searchParams }: { searchParams: SearchP
             </thead>
             <tbody>
               {npcs.map((npc) => (
-                <tr key={npc.id} className="border-b border-zinc-100 last:border-0 hover:bg-zinc-50">
+                <ClickableRow key={npc.id} href={`/npcs/${npc.id}`} className="border-b border-zinc-100 last:border-0 hover:bg-zinc-50">
                   <td className="px-4 py-3">
-                    <Link href={`/npcs/${npc.id}`} className="font-medium text-zinc-900 hover:text-indigo-600">
+                    <SubLink href={`/npcs/${npc.id}`} className="font-medium text-zinc-900 hover:text-indigo-600">
                       {npc.name}
-                    </Link>
+                    </SubLink>
                   </td>
-                  <td className="px-4 py-3 text-zinc-500">{npc.species ?? '—'}</td>
-                  <td className="px-4 py-3 text-zinc-500">{npc.profession ?? '—'}</td>
-                  <td className="px-4 py-3 text-zinc-500">{npc.culture ?? '—'}</td>
                   <td className="px-4 py-3">
+                    {npc.species
+                      ? speciesIdByName[npc.species]
+                        ? <SubLink href={`/species/${speciesIdByName[npc.species]}`} className="text-zinc-500 hover:text-indigo-600">{npc.species}</SubLink>
+                        : <span className="text-zinc-500">{npc.species}</span>
+                      : <span className="text-zinc-400">—</span>}
+                  </td>
+                  <td className="px-4 py-3 text-zinc-500">{npc.profession ?? '—'}</td>
+                  <td className="px-4 py-3">
+                    {npc.culture
+                      ? cultureIdByName[npc.culture]
+                        ? <SubLink href={`/cultures/${cultureIdByName[npc.culture]}`} className="text-zinc-500 hover:text-indigo-600">{npc.culture}</SubLink>
+                        : <span className="text-zinc-500">{npc.culture}</span>
+                      : <span className="text-zinc-400">—</span>}
+                  </td>
+                  <StopPropCell className="px-4 py-3">
                     <form action={toggleNpcVisibility}>
                       <input type="hidden" name="id" value={npc.id} />
                       <input type="hidden" name="visible" value={String(npc.visible)} />
@@ -92,8 +111,8 @@ export default async function NpcsPage({ searchParams }: { searchParams: SearchP
                         {npc.visible ? 'Visible' : 'Hidden'}
                       </button>
                     </form>
-                  </td>
-                </tr>
+                  </StopPropCell>
+                </ClickableRow>
               ))}
             </tbody>
           </table>

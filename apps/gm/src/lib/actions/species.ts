@@ -33,6 +33,18 @@ export async function updateSpecies(formData: FormData) {
   revalidatePath('/species')
 }
 
+export async function setSpeciesOriginLocation(formData: FormData) {
+  const supabase = db()
+  const id = formData.get('id') as string
+  const origin_location_id = (formData.get('origin_location_id') as string) || null
+  const { error } = await supabase
+    .from('species')
+    .update({ origin_location_id })
+    .eq('id', id)
+  if (error) throw new Error(error.message)
+  revalidatePath(`/species/${id}`)
+}
+
 export async function deleteSpecies(formData: FormData) {
   const supabase = db()
   const id = formData.get('id') as string
