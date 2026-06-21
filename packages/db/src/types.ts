@@ -287,6 +287,17 @@ export interface Database {
         Update: Partial<Database['public']['Tables']['culture_locations']['Insert']>
         Relationships: []
       }
+      session_plot_threads: {
+        Row: {
+          id: string
+          session_id: string
+          plot_thread_id: string
+          created_at: string
+        }
+        Insert: Partial<Omit<Database['public']['Tables']['session_plot_threads']['Row'], 'id' | 'created_at'>>
+        Update: Partial<Database['public']['Tables']['session_plot_threads']['Insert']>
+        Relationships: []
+      }
       session_notes: {
         Row: {
           id: string
@@ -359,3 +370,4 @@ export type FactionRelationship  = Tables<'faction_relationships'>
 export type FactionLocation      = Tables<'faction_locations'>
 export type CultureLocation      = Tables<'culture_locations'>
 export type SessionNote          = Tables<'session_notes'>
+export type SessionPlotThread    = Tables<'session_plot_threads'>

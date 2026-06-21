@@ -41,6 +41,26 @@ export async function updateSession(formData: FormData) {
   revalidatePath('/sessions')
 }
 
+export async function addSessionPlotThread(formData: FormData) {
+  const supabase = db()
+  const session_id     = formData.get('session_id') as string
+  const plot_thread_id = formData.get('plot_thread_id') as string
+  const { error } = await supabase
+    .from('session_plot_threads')
+    .upsert({ session_id, plot_thread_id }, { onConflict: 'session_id,plot_thread_id', ignoreDuplicates: true })
+  if (error) throw new Error(error.message)
+  revalidatePath(`/sessions/${session_id}`)
+}
+
+export async function removeSessionPlotThread(formData: FormData) {
+  const supabase = db()
+  const id         = formData.get('id') as string
+  const session_id = formData.get('session_id') as string
+  const { error } = await supabase.from('session_plot_threads').delete().eq('id', id)
+  if (error) throw new Error(error.message)
+  revalidatePath(`/sessions/${session_id}`)
+}
+
 export async function deleteSession(formData: FormData) {
   const supabase = db()
   const id = formData.get('id') as string
