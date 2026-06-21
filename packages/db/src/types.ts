@@ -13,6 +13,8 @@ export interface Database {
           description: string | null
           image_url: string | null
           visible: boolean
+          species: string | null
+          culture: string | null
           created_at: string
         }
         Insert: Partial<Omit<Database['public']['Tables']['factions']['Row'], 'id' | 'created_at'>>
@@ -57,10 +59,12 @@ export interface Database {
           name: string
           player_name: string | null
           species: string | null
+          culture: string | null
           background: string | null
           notes: string | null
           image_url: string | null
           visible: boolean
+          current_location_id: string | null
           created_at: string
         }
         Insert: Partial<Omit<Database['public']['Tables']['player_characters']['Row'], 'id' | 'created_at'>>
@@ -79,6 +83,7 @@ export interface Database {
           notes: string | null
           image_url: string | null
           visible: boolean
+          current_location_id: string | null
           created_at: string
         }
         Insert: Partial<Omit<Database['public']['Tables']['npcs']['Row'], 'id' | 'created_at'>>
@@ -246,6 +251,53 @@ export interface Database {
         Update: Partial<Database['public']['Tables']['plot_threads']['Insert']>
         Relationships: []
       }
+      species: {
+        Row: {
+          id: string
+          name: string
+          description: string | null
+          created_at: string
+        }
+        Insert: Partial<Omit<Database['public']['Tables']['species']['Row'], 'id' | 'created_at'>>
+        Update: Partial<Database['public']['Tables']['species']['Insert']>
+        Relationships: []
+      }
+      cultures: {
+        Row: {
+          id: string
+          name: string
+          description: string | null
+          created_at: string
+        }
+        Insert: Partial<Omit<Database['public']['Tables']['cultures']['Row'], 'id' | 'created_at'>>
+        Update: Partial<Database['public']['Tables']['cultures']['Insert']>
+        Relationships: []
+      }
+      faction_relationships: {
+        Row: {
+          id: string
+          from_faction_id: string
+          to_faction_id: string
+          relationship_type: string
+          notes: string | null
+          created_at: string
+        }
+        Insert: Partial<Omit<Database['public']['Tables']['faction_relationships']['Row'], 'id' | 'created_at'>>
+        Update: Partial<Database['public']['Tables']['faction_relationships']['Insert']>
+        Relationships: []
+      }
+      faction_locations: {
+        Row: {
+          id: string
+          faction_id: string
+          location_id: string
+          notes: string | null
+          created_at: string
+        }
+        Insert: Partial<Omit<Database['public']['Tables']['faction_locations']['Row'], 'id' | 'created_at'>>
+        Update: Partial<Database['public']['Tables']['faction_locations']['Insert']>
+        Relationships: []
+      }
     }
     Views: Record<string, never>
     Functions: Record<string, never>
@@ -274,3 +326,7 @@ export type Encounter          = Tables<'encounters'>
 export type EncounterParticipant = Tables<'encounter_participants'>
 export type LoreEntry          = Tables<'lore_entries'>
 export type PlotThread         = Tables<'plot_threads'>
+export type Species              = Tables<'species'>
+export type Culture              = Tables<'cultures'>
+export type FactionRelationship  = Tables<'faction_relationships'>
+export type FactionLocation      = Tables<'faction_locations'>

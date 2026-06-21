@@ -1,5 +1,8 @@
 import { db } from '@/lib/db'
+import { toggleLocationVisibility } from '@/lib/actions/locations'
+import { FilterBar } from '@/components/FilterBar'
 import Link from 'next/link'
+import { Suspense } from 'react'
 
 interface LocationRow {
   id: string
@@ -10,14 +13,26 @@ interface LocationRow {
   parent: { name: string } | null
 }
 
-export default async function LocationsPage() {
-  const supabase = db()
-  const { data: raw } = await supabase
-    .from('locations')
-    .select('*, parent:parent_location_id(name)')
-    .order('name')
+type SearchParams = Promise<{ type?: string; status?: string; visible?: string }>
 
+export default async function LocationsPage({ searchParams }: { searchParams: SearchParams }) {
+  const params = await searchParams
+  const supabase = db()
+
+  let q = supabase.from('locations').select('*, parent:parent_location_id(name)').order('name')
+  if (params.type) q = q.ilike('type', `%${params.type}%`)
+  if (params.status) q = q.ilike('status', `%${params.status}%`)
+  if (params.visible === 'true') q = q.eq('visible', true)
+  else if (params.visible === 'false') q = q.eq('visible', false)
+
+  const { data: raw } = await q
   const locations = (raw ?? []) as unknown as LocationRow[]
+
+  const filters = [
+    { type: 'text' as const, name: 'type', label: 'Type', placeholder: 'settlement, planet…' },
+    { type: 'text' as const, name: 'status', label: 'Status', placeholder: 'active, ruins…' },
+    { type: 'select' as const, name: 'visible', label: 'Visibility', options: [{ value: 'true', label: 'Visible' }, { value: 'false', label: 'Hidden' }] },
+  ]
 
   return (
     <div className="p-8">
@@ -31,9 +46,13 @@ export default async function LocationsPage() {
         </Link>
       </div>
 
+      <Suspense fallback={null}>
+        <FilterBar filters={filters} />
+      </Suspense>
+
       {!locations.length ? (
         <div className="rounded-lg border border-dashed border-zinc-300 p-12 text-center">
-          <p className="text-zinc-500 text-sm">No locations yet.</p>
+          <p className="text-zinc-500 text-sm">No locations match the current filters.</p>
           <Link href="/locations/new" className="mt-3 inline-block text-sm font-medium text-indigo-600 hover:text-indigo-700">
             Create the first one →
           </Link>
@@ -62,11 +81,15 @@ export default async function LocationsPage() {
                   <td className="px-4 py-3 text-zinc-500">{loc.parent?.name ?? '—'}</td>
                   <td className="px-4 py-3 text-zinc-500">{loc.status ?? '—'}</td>
                   <td className="px-4 py-3">
-                    <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${
-                      loc.visible ? 'bg-green-100 text-green-800' : 'bg-zinc-100 text-zinc-600'
-                    }`}>
-                      {loc.visible ? 'Visible' : 'Hidden'}
-                    </span>
+                    <form action={toggleLocationVisibility}>
+                      <input type="hidden" name="id" value={loc.id} />
+                      <input type="hidden" name="visible" value={String(loc.visible)} />
+                      <button type="submit" className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium cursor-pointer transition-colors ${
+                        loc.visible ? 'bg-green-100 text-green-800 hover:bg-green-200' : 'bg-zinc-100 text-zinc-600 hover:bg-zinc-200'
+                      }`}>
+                        {loc.visible ? 'Visible' : 'Hidden'}
+                      </button>
+                    </form>
                   </td>
                 </tr>
               ))}

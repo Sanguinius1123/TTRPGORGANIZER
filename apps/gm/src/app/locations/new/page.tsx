@@ -1,5 +1,6 @@
 import { db } from '@/lib/db'
 import { createLocation } from '@/lib/actions/locations'
+import MentionTextarea from '@/components/MentionTextarea'
 import Link from 'next/link'
 
 const input = 'block w-full rounded-md border border-zinc-300 px-3 py-2 text-sm text-zinc-900 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none'
@@ -49,7 +50,7 @@ export default async function NewLocationPage() {
         </div>
         <div>
           <label className={label}>Description</label>
-          <textarea name="description" rows={5} className={`${input} resize-none`} />
+          <MentionTextarea name="description" rows={5} className={`${input} resize-none`} />
         </div>
 
         <div className="flex gap-3 pt-2">

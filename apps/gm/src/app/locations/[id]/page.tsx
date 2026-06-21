@@ -1,6 +1,7 @@
 import { db } from '@/lib/db'
 import { updateLocation, deleteLocation, toggleLocationVisibility } from '@/lib/actions/locations'
 import { Location } from '@ttrpg/db'
+import MentionTextarea from '@/components/MentionTextarea'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 
@@ -84,14 +85,14 @@ export default async function LocationPage({ params }: { params: Promise<{ id: s
         </div>
         <div>
           <label className={label}>Parent Location</label>
-          <select name="parent_location_id" defaultValue={loc.parent_location_id ?? ''} className={input}>
+          <select key={loc.parent_location_id ?? ''} name="parent_location_id" defaultValue={loc.parent_location_id ?? ''} className={input}>
             <option value="">— None —</option>
             {allLocations.map((l) => <option key={l.id} value={l.id}>{l.name}</option>)}
           </select>
         </div>
         <div>
           <label className={label}>Description</label>
-          <textarea name="description" defaultValue={loc.description ?? ''} rows={5} className={`${input} resize-none`} />
+          <MentionTextarea name="description" defaultValue={loc.description ?? ''} rows={5} className={`${input} resize-none`} />
         </div>
         <div className="flex gap-3 pt-2">
           <button type="submit" className="rounded-md bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700">

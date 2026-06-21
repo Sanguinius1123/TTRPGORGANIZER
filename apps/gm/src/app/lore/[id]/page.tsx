@@ -1,6 +1,7 @@
 import { db } from '@/lib/db'
 import { updateLoreEntry, deleteLoreEntry, toggleLoreVisibility } from '@/lib/actions/lore'
 import { LoreEntry } from '@ttrpg/db'
+import MentionTextarea from '@/components/MentionTextarea'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 
@@ -47,7 +48,7 @@ export default async function LoreEntryPage({ params }: { params: Promise<{ id: 
         </div>
         <div>
           <label className={label}>Description</label>
-          <textarea name="description" defaultValue={entry.description ?? ''} rows={10} className={`${input} resize-none`} />
+          <MentionTextarea name="description" defaultValue={entry.description ?? ''} rows={10} className={`${input} resize-none`} />
         </div>
         <div className="flex gap-3 pt-2">
           <button type="submit" className="rounded-md bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700">

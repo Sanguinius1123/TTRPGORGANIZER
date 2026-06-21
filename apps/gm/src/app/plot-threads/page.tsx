@@ -1,11 +1,15 @@
 import { db } from '@/lib/db'
+import { togglePlotThreadVisibility } from '@/lib/actions/plot-threads'
+import { FilterBar } from '@/components/FilterBar'
 import Link from 'next/link'
+import { Suspense } from 'react'
 
 interface ThreadRow {
   id: string
   title: string
   type: string
   status: string
+  visible: boolean
   parent: { title: string } | null
 }
 
@@ -21,16 +25,34 @@ const statusColor: Record<string, string> = {
   abandoned: 'bg-red-100 text-red-700',
 }
 
-export default async function PlotThreadsPage() {
-  const supabase = db()
-  const { data: raw } = await supabase
-    .from('plot_threads')
-    .select('*, parent:parent_id(title)')
-    .order('status')
-    .order('type')
-    .order('title')
+type SearchParams = Promise<{ type?: string; status?: string; visible?: string }>
 
+export default async function PlotThreadsPage({ searchParams }: { searchParams: SearchParams }) {
+  const params = await searchParams
+  const supabase = db()
+
+  let q = supabase.from('plot_threads').select('*, parent:parent_id(title)').order('status').order('type').order('title')
+  if (params.type) q = q.eq('type', params.type)
+  if (params.status) q = q.eq('status', params.status)
+  if (params.visible === 'true') q = q.eq('visible', true)
+  else if (params.visible === 'false') q = q.eq('visible', false)
+
+  const { data: raw } = await q
   const threads = (raw ?? []) as unknown as ThreadRow[]
+
+  const filters = [
+    { type: 'select' as const, name: 'type', label: 'Type', options: [
+      { value: 'thread', label: 'Thread' },
+      { value: 'hook', label: 'Hook' },
+      { value: 'objective', label: 'Objective' },
+    ]},
+    { type: 'select' as const, name: 'status', label: 'Status', options: [
+      { value: 'active', label: 'Active' },
+      { value: 'completed', label: 'Completed' },
+      { value: 'abandoned', label: 'Abandoned' },
+    ]},
+    { type: 'select' as const, name: 'visible', label: 'Visibility', options: [{ value: 'true', label: 'Visible' }, { value: 'false', label: 'Hidden' }] },
+  ]
 
   return (
     <div className="p-8">
@@ -44,9 +66,13 @@ export default async function PlotThreadsPage() {
         </Link>
       </div>
 
+      <Suspense fallback={null}>
+        <FilterBar filters={filters} />
+      </Suspense>
+
       {!threads.length ? (
         <div className="rounded-lg border border-dashed border-zinc-300 p-12 text-center">
-          <p className="text-zinc-500 text-sm">No plot threads yet.</p>
+          <p className="text-zinc-500 text-sm">No plot threads match the current filters.</p>
           <Link href="/plot-threads/new" className="mt-3 inline-block text-sm font-medium text-indigo-600 hover:text-indigo-700">
             Create the first one →
           </Link>
@@ -60,6 +86,7 @@ export default async function PlotThreadsPage() {
                 <th className="text-left px-4 py-3 font-medium text-zinc-600">Type</th>
                 <th className="text-left px-4 py-3 font-medium text-zinc-600">Parent</th>
                 <th className="text-left px-4 py-3 font-medium text-zinc-600">Status</th>
+                <th className="text-left px-4 py-3 font-medium text-zinc-600">Visible</th>
               </tr>
             </thead>
             <tbody>
@@ -80,6 +107,17 @@ export default async function PlotThreadsPage() {
                     <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${statusColor[t.status] ?? ''}`}>
                       {t.status}
                     </span>
+                  </td>
+                  <td className="px-4 py-3">
+                    <form action={togglePlotThreadVisibility}>
+                      <input type="hidden" name="id" value={t.id} />
+                      <input type="hidden" name="visible" value={String(t.visible)} />
+                      <button type="submit" className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium cursor-pointer transition-colors ${
+                        t.visible ? 'bg-green-100 text-green-800 hover:bg-green-200' : 'bg-zinc-100 text-zinc-600 hover:bg-zinc-200'
+                      }`}>
+                        {t.visible ? 'Visible' : 'Hidden'}
+                      </button>
+                    </form>
                   </td>
                 </tr>
               ))}

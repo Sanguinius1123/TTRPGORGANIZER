@@ -1,5 +1,7 @@
 import { db } from '@/lib/db'
+import { FilterBar } from '@/components/FilterBar'
 import Link from 'next/link'
+import { Suspense } from 'react'
 
 interface EncounterRow {
   id: string
@@ -15,14 +17,25 @@ const statusColor: Record<string, string> = {
   archived: 'bg-zinc-100 text-zinc-600',
 }
 
-export default async function EncountersPage() {
-  const supabase = db()
-  const { data: raw } = await supabase
-    .from('encounters')
-    .select('*, location:location_id(name), session:session_id(session_number)')
-    .order('created_at', { ascending: false })
+type SearchParams = Promise<{ status?: string }>
 
+export default async function EncountersPage({ searchParams }: { searchParams: SearchParams }) {
+  const params = await searchParams
+  const supabase = db()
+
+  let q = supabase.from('encounters').select('*, location:location_id(name), session:session_id(session_number)').order('created_at', { ascending: false })
+  if (params.status) q = q.eq('status', params.status)
+
+  const { data: raw } = await q
   const encounters = (raw ?? []) as unknown as EncounterRow[]
+
+  const filters = [
+    { type: 'select' as const, name: 'status', label: 'Status', options: [
+      { value: 'prep', label: 'Prep' },
+      { value: 'active', label: 'Active' },
+      { value: 'archived', label: 'Archived' },
+    ]},
+  ]
 
   return (
     <div className="p-8">
@@ -36,9 +49,13 @@ export default async function EncountersPage() {
         </Link>
       </div>
 
+      <Suspense fallback={null}>
+        <FilterBar filters={filters} />
+      </Suspense>
+
       {!encounters.length ? (
         <div className="rounded-lg border border-dashed border-zinc-300 p-12 text-center">
-          <p className="text-zinc-500 text-sm">No encounters yet.</p>
+          <p className="text-zinc-500 text-sm">No encounters match the current filters.</p>
           <Link href="/encounters/new" className="mt-3 inline-block text-sm font-medium text-indigo-600 hover:text-indigo-700">
             Build the first one →
           </Link>

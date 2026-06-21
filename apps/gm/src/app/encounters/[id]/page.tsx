@@ -1,6 +1,7 @@
 import { db } from '@/lib/db'
 import { updateEncounter, deleteEncounter, addParticipant, deleteParticipant } from '@/lib/actions/encounters'
 import { Encounter } from '@ttrpg/db'
+import MentionTextarea from '@/components/MentionTextarea'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 
@@ -50,14 +51,14 @@ export default async function EncounterPage({ params }: { params: Promise<{ id: 
         <div className="grid grid-cols-2 gap-4">
           <div>
             <label className={label}>Location</label>
-            <select name="location_id" defaultValue={enc.location_id ?? ''} className={input}>
+            <select key={enc.location_id ?? ''} name="location_id" defaultValue={enc.location_id ?? ''} className={input}>
               <option value="">— None —</option>
               {locations.map((l) => <option key={l.id} value={l.id}>{l.name}</option>)}
             </select>
           </div>
           <div>
             <label className={label}>Session</label>
-            <select name="session_id" defaultValue={enc.session_id ?? ''} className={input}>
+            <select key={enc.session_id ?? ''} name="session_id" defaultValue={enc.session_id ?? ''} className={input}>
               <option value="">— None (prep) —</option>
               {sessions.map((s) => <option key={s.id} value={s.id}>#{s.session_number}{s.title ? ` — ${s.title}` : ''}</option>)}
             </select>
@@ -65,7 +66,7 @@ export default async function EncounterPage({ params }: { params: Promise<{ id: 
         </div>
         <div>
           <label className={label}>Status</label>
-          <select name="status" defaultValue={enc.status} className={input}>
+          <select key={enc.status} name="status" defaultValue={enc.status} className={input}>
             <option value="prep">Prep</option>
             <option value="active">Active</option>
             <option value="archived">Archived</option>
@@ -73,11 +74,11 @@ export default async function EncounterPage({ params }: { params: Promise<{ id: 
         </div>
         <div>
           <label className={label}>Notes</label>
-          <textarea name="notes" defaultValue={enc.notes ?? ''} rows={4} placeholder="Setup, tactics, terrain, objectives…" className={`${input} resize-none`} />
+          <MentionTextarea name="notes" defaultValue={enc.notes ?? ''} rows={4} placeholder="Setup, tactics, terrain, objectives…" className={`${input} resize-none`} />
         </div>
         <div>
           <label className={label}>Summary <span className="text-xs text-zinc-400">(fill in after the encounter)</span></label>
-          <textarea name="summary" defaultValue={enc.summary ?? ''} rows={3} className={`${input} resize-none`} />
+          <MentionTextarea name="summary" defaultValue={enc.summary ?? ''} rows={3} className={`${input} resize-none`} />
         </div>
         <div className="flex gap-3 pt-2">
           <button type="submit" className="rounded-md bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700">

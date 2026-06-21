@@ -1,11 +1,34 @@
 import { db } from '@/lib/db'
 import { PlayerCharacter } from '@ttrpg/db'
+import { togglePlayerCharacterVisibility } from '@/lib/actions/player-characters'
+import { FilterBar } from '@/components/FilterBar'
 import Link from 'next/link'
+import { Suspense } from 'react'
 
-export default async function PlayerCharactersPage() {
+type SearchParams = Promise<{ species?: string; visible?: string }>
+
+export default async function PlayerCharactersPage({ searchParams }: { searchParams: SearchParams }) {
+  const params = await searchParams
   const supabase = db()
-  const { data: rawPcs } = await supabase.from('player_characters').select('*').order('name')
-  const pcs = (rawPcs ?? []) as PlayerCharacter[]
+
+  const results = await Promise.all([
+    (() => {
+      let q = supabase.from('player_characters').select('*').order('name')
+      if (params.species) q = q.eq('species', params.species)
+      if (params.visible === 'true') q = q.eq('visible', true)
+      else if (params.visible === 'false') q = q.eq('visible', false)
+      return q
+    })(),
+    supabase.from('species').select('name').order('name'),
+  ])
+
+  const pcs = (results[0].data ?? []) as PlayerCharacter[]
+  const speciesOptions = (results[1].data ?? []).map((s: any) => ({ value: s.name, label: s.name }))
+
+  const filters = [
+    { type: 'select' as const, name: 'species', label: 'Species', options: speciesOptions },
+    { type: 'select' as const, name: 'visible', label: 'Visibility', options: [{ value: 'true', label: 'Visible' }, { value: 'false', label: 'Hidden' }] },
+  ]
 
   return (
     <div className="p-8">
@@ -18,6 +41,10 @@ export default async function PlayerCharactersPage() {
           New Character
         </Link>
       </div>
+
+      <Suspense fallback={null}>
+        <FilterBar filters={filters} />
+      </Suspense>
 
       {!pcs.length ? (
         <div className="rounded-lg border border-dashed border-zinc-300 p-12 text-center">
@@ -48,11 +75,15 @@ export default async function PlayerCharactersPage() {
                   <td className="px-4 py-3 text-zinc-500">{pc.player_name ?? '—'}</td>
                   <td className="px-4 py-3 text-zinc-500">{pc.species ?? '—'}</td>
                   <td className="px-4 py-3">
-                    <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${
-                      pc.visible ? 'bg-green-100 text-green-800' : 'bg-zinc-100 text-zinc-600'
-                    }`}>
-                      {pc.visible ? 'Visible' : 'Hidden'}
-                    </span>
+                    <form action={togglePlayerCharacterVisibility}>
+                      <input type="hidden" name="id" value={pc.id} />
+                      <input type="hidden" name="visible" value={String(pc.visible)} />
+                      <button type="submit" className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium cursor-pointer transition-colors ${
+                        pc.visible ? 'bg-green-100 text-green-800 hover:bg-green-200' : 'bg-zinc-100 text-zinc-600 hover:bg-zinc-200'
+                      }`}>
+                        {pc.visible ? 'Visible' : 'Hidden'}
+                      </button>
+                    </form>
                   </td>
                 </tr>
               ))}

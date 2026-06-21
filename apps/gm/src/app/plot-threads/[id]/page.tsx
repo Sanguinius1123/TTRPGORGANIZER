@@ -1,6 +1,7 @@
 import { db } from '@/lib/db'
 import { updatePlotThread, deletePlotThread, togglePlotThreadVisibility } from '@/lib/actions/plot-threads'
 import { PlotThread } from '@ttrpg/db'
+import MentionTextarea from '@/components/MentionTextarea'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 
@@ -67,7 +68,7 @@ export default async function PlotThreadPage({ params }: { params: Promise<{ id:
         <div className="grid grid-cols-2 gap-4">
           <div>
             <label className={label}>Type</label>
-            <select name="type" defaultValue={thread.type} className={input}>
+            <select key={thread.type} name="type" defaultValue={thread.type} className={input}>
               <option value="thread">Thread</option>
               <option value="hook">Hook</option>
               <option value="objective">Objective</option>
@@ -75,7 +76,7 @@ export default async function PlotThreadPage({ params }: { params: Promise<{ id:
           </div>
           <div>
             <label className={label}>Status</label>
-            <select name="status" defaultValue={thread.status} className={input}>
+            <select key={thread.status} name="status" defaultValue={thread.status} className={input}>
               <option value="active">Active</option>
               <option value="completed">Completed</option>
               <option value="abandoned">Abandoned</option>
@@ -84,18 +85,18 @@ export default async function PlotThreadPage({ params }: { params: Promise<{ id:
         </div>
         <div>
           <label className={label}>Parent Objective</label>
-          <select name="parent_id" defaultValue={thread.parent_id ?? ''} className={input}>
+          <select key={thread.parent_id ?? ''} name="parent_id" defaultValue={thread.parent_id ?? ''} className={input}>
             <option value="">— None —</option>
             {allObjectives.map((o) => <option key={o.id} value={o.id}>{o.title}</option>)}
           </select>
         </div>
         <div>
           <label className={label}>Description</label>
-          <textarea name="description" defaultValue={thread.description ?? ''} rows={4} className={`${input} resize-none`} />
+          <MentionTextarea name="description" defaultValue={thread.description ?? ''} rows={4} className={`${input} resize-none`} />
         </div>
         <div>
           <label className={label}>Notes <span className="text-xs text-zinc-400">(private)</span></label>
-          <textarea name="notes" defaultValue={thread.notes ?? ''} rows={3} className={`${input} resize-none`} />
+          <MentionTextarea name="notes" defaultValue={thread.notes ?? ''} rows={3} className={`${input} resize-none`} />
         </div>
         <div className="flex gap-3 pt-2">
           <button type="submit" className="rounded-md bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700">

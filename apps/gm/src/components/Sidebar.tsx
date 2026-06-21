@@ -21,6 +21,8 @@ const nav = [
       { label: 'NPCs', href: '/npcs' },
       { label: 'Player Characters', href: '/player-characters' },
       { label: 'Factions', href: '/factions' },
+      { label: 'Species / Ancestry', href: '/species' },
+      { label: 'Cultures', href: '/cultures' },
     ],
   },
   {

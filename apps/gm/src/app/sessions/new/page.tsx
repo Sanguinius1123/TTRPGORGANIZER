@@ -1,4 +1,5 @@
 import { createSession } from '@/lib/actions/sessions'
+import MentionTextarea from '@/components/MentionTextarea'
 import Link from 'next/link'
 
 const input = 'block w-full rounded-md border border-zinc-300 px-3 py-2 text-sm text-zinc-900 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none'
@@ -27,11 +28,11 @@ export default function NewSessionPage() {
         </div>
         <div>
           <label className={label}>Summary</label>
-          <textarea name="summary" rows={6} className={`${input} resize-none`} />
+          <MentionTextarea name="summary" rows={6} className={`${input} resize-none`} />
         </div>
         <div>
           <label className={label}>Loose Threads</label>
-          <textarea name="loose_threads" rows={4} placeholder="Unresolved questions, follow-ups, things players may pursue…" className={`${input} resize-none`} />
+          <MentionTextarea name="loose_threads" rows={4} placeholder="Unresolved questions, follow-ups, things players may pursue…" className={`${input} resize-none`} />
         </div>
 
         <div className="flex gap-3 pt-2">

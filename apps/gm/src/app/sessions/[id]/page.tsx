@@ -1,6 +1,7 @@
 import { db } from '@/lib/db'
 import { updateSession, deleteSession } from '@/lib/actions/sessions'
 import { Session } from '@ttrpg/db'
+import MentionTextarea from '@/components/MentionTextarea'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 
@@ -45,11 +46,11 @@ export default async function SessionPage({ params }: { params: Promise<{ id: st
         </div>
         <div>
           <label className={label}>Summary</label>
-          <textarea name="summary" defaultValue={session.summary ?? ''} rows={8} className={`${input} resize-none`} />
+          <MentionTextarea name="summary" defaultValue={session.summary ?? ''} rows={8} className={`${input} resize-none`} />
         </div>
         <div>
           <label className={label}>Loose Threads</label>
-          <textarea name="loose_threads" defaultValue={session.loose_threads ?? ''} rows={4} placeholder="Unresolved questions, follow-ups, things players may pursue…" className={`${input} resize-none`} />
+          <MentionTextarea name="loose_threads" defaultValue={session.loose_threads ?? ''} rows={4} placeholder="Unresolved questions, follow-ups, things players may pursue…" className={`${input} resize-none`} />
         </div>
         <div className="flex gap-3 pt-2">
           <button type="submit" className="rounded-md bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700">

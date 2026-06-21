@@ -1,10 +1,20 @@
+import { db } from '@/lib/db'
 import { createNpc } from '@/lib/actions/npcs'
+import MentionTextarea from '@/components/MentionTextarea'
 import Link from 'next/link'
 
 const input = 'block w-full rounded-md border border-zinc-300 px-3 py-2 text-sm text-zinc-900 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none'
 const label = 'block text-sm font-medium text-zinc-700 mb-1'
 
-export default function NewNpcPage() {
+export default async function NewNpcPage() {
+  const supabase = db()
+  const results = await Promise.all([
+    supabase.from('species').select('id, name').order('name'),
+    supabase.from('cultures').select('id, name').order('name'),
+  ])
+  const speciesList = (results[0].data ?? []) as Array<{ id: string; name: string }>
+  const culturesList = (results[1].data ?? []) as Array<{ id: string; name: string }>
+
   return (
     <div className="p-8 max-w-2xl">
       <div className="flex items-center gap-3 mb-6">
@@ -22,30 +32,30 @@ export default function NewNpcPage() {
         <div className="grid grid-cols-2 gap-4">
           <div>
             <label className={label}>Species / Ancestry</label>
-            <input name="species" className={input} />
+            <select name="species" className={input}>
+              <option value="">— None —</option>
+              {speciesList.map((s) => <option key={s.id} value={s.name}>{s.name}</option>)}
+            </select>
           </div>
           <div>
             <label className={label}>Profession</label>
             <input name="profession" className={input} />
           </div>
         </div>
-        <div className="grid grid-cols-2 gap-4">
-          <div>
-            <label className={label}>Culture</label>
-            <input name="culture" className={input} />
-          </div>
-          <div>
-            <label className={label}>Disposition</label>
-            <input name="disposition" placeholder="friendly, hostile, neutral…" className={input} />
-          </div>
+        <div>
+          <label className={label}>Culture</label>
+          <select name="culture" className={input}>
+            <option value="">— None —</option>
+            {culturesList.map((c) => <option key={c.id} value={c.name}>{c.name}</option>)}
+          </select>
         </div>
         <div>
           <label className={label}>Background</label>
-          <textarea name="background" rows={4} className={`${input} resize-none`} />
+          <MentionTextarea name="background" rows={4} className={`${input} resize-none`} />
         </div>
         <div>
           <label className={label}>GM Notes <span className="text-xs text-zinc-400">(private)</span></label>
-          <textarea name="notes" rows={3} className={`${input} resize-none`} />
+          <MentionTextarea name="notes" rows={3} className={`${input} resize-none`} />
         </div>
 
         <div className="flex gap-3 pt-2">

@@ -19,4 +19,8 @@ export type {
   EncounterParticipant,
   LoreEntry,
   PlotThread,
+  Species,
+  Culture,
+  FactionRelationship,
+  FactionLocation,
 } from './types'

@@ -1,11 +1,24 @@
 import { db } from '@/lib/db'
 import { Item } from '@ttrpg/db'
+import { FilterBar } from '@/components/FilterBar'
 import Link from 'next/link'
+import { Suspense } from 'react'
 
-export default async function ItemsPage() {
+type SearchParams = Promise<{ item_type?: string }>
+
+export default async function ItemsPage({ searchParams }: { searchParams: SearchParams }) {
+  const params = await searchParams
   const supabase = db()
-  const { data: rawItems } = await supabase.from('items').select('*').order('name')
+
+  let q = supabase.from('items').select('*').order('name')
+  if (params.item_type) q = q.ilike('item_type', `%${params.item_type}%`)
+
+  const { data: rawItems } = await q
   const items = (rawItems ?? []) as Item[]
+
+  const filters = [
+    { type: 'text' as const, name: 'item_type', label: 'Type', placeholder: 'weapon, armour…' },
+  ]
 
   return (
     <div className="p-8">
@@ -19,9 +32,13 @@ export default async function ItemsPage() {
         </Link>
       </div>
 
+      <Suspense fallback={null}>
+        <FilterBar filters={filters} />
+      </Suspense>
+
       {!items.length ? (
         <div className="rounded-lg border border-dashed border-zinc-300 p-12 text-center">
-          <p className="text-zinc-500 text-sm">No items yet.</p>
+          <p className="text-zinc-500 text-sm">No items match the current filters.</p>
           <Link href="/items/new" className="mt-3 inline-block text-sm font-medium text-indigo-600 hover:text-indigo-700">
             Create the first one →
           </Link>

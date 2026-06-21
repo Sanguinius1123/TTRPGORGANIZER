@@ -14,7 +14,6 @@ export async function createNpc(formData: FormData) {
       profession: (formData.get('profession') as string) || null,
       culture: (formData.get('culture') as string) || null,
       background: (formData.get('background') as string) || null,
-      disposition: (formData.get('disposition') as string) || null,
       notes: (formData.get('notes') as string) || null,
       visible: false,
     })
@@ -37,7 +36,6 @@ export async function updateNpc(formData: FormData) {
       profession: (formData.get('profession') as string) || null,
       culture: (formData.get('culture') as string) || null,
       background: (formData.get('background') as string) || null,
-      disposition: (formData.get('disposition') as string) || null,
       notes: (formData.get('notes') as string) || null,
     })
     .eq('id', id)
@@ -45,6 +43,15 @@ export async function updateNpc(formData: FormData) {
   if (error) throw new Error(error.message)
   revalidatePath(`/npcs/${id}`)
   revalidatePath('/npcs')
+}
+
+export async function setNpcLocation(formData: FormData) {
+  const supabase = db()
+  const id = formData.get('id') as string
+  const current_location_id = (formData.get('current_location_id') as string) || null
+  const { error } = await supabase.from('npcs').update({ current_location_id }).eq('id', id)
+  if (error) throw new Error(error.message)
+  revalidatePath(`/npcs/${id}`)
 }
 
 export async function deleteNpc(formData: FormData) {
@@ -92,6 +99,25 @@ export async function deleteNpcFact(formData: FormData) {
   const id = formData.get('id') as string
   const npc_id = formData.get('npc_id') as string
   const { error } = await supabase.from('npc_facts').delete().eq('id', id)
+  if (error) throw new Error(error.message)
+  revalidatePath(`/npcs/${npc_id}`)
+}
+
+export async function addNpcFaction(formData: FormData) {
+  const supabase = db()
+  const npc_id = formData.get('npc_id') as string
+  const faction_id = formData.get('faction_id') as string
+  const role = (formData.get('role') as string) || null
+  const { error } = await supabase.from('npc_factions').insert({ npc_id, faction_id, role })
+  if (error) throw new Error(error.message)
+  revalidatePath(`/npcs/${npc_id}`)
+}
+
+export async function removeNpcFaction(formData: FormData) {
+  const supabase = db()
+  const id = formData.get('id') as string
+  const npc_id = formData.get('npc_id') as string
+  const { error } = await supabase.from('npc_factions').delete().eq('id', id)
   if (error) throw new Error(error.message)
   revalidatePath(`/npcs/${npc_id}`)
 }

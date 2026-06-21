@@ -10,9 +10,10 @@ export async function createFaction(formData: FormData) {
     .from('factions')
     .insert({
       name: formData.get('name') as string,
-      disposition: (formData.get('disposition') as string) || null,
       goal: (formData.get('goal') as string) || null,
       description: (formData.get('description') as string) || null,
+      species: (formData.get('species') as string) || null,
+      culture: (formData.get('culture') as string) || null,
       parent_faction_id: (formData.get('parent_faction_id') as string) || null,
       visible: false,
     })
@@ -30,9 +31,10 @@ export async function updateFaction(formData: FormData) {
     .from('factions')
     .update({
       name: formData.get('name') as string,
-      disposition: (formData.get('disposition') as string) || null,
       goal: (formData.get('goal') as string) || null,
       description: (formData.get('description') as string) || null,
+      species: (formData.get('species') as string) || null,
+      culture: (formData.get('culture') as string) || null,
       parent_faction_id: (formData.get('parent_faction_id') as string) || null,
     })
     .eq('id', id)
@@ -58,4 +60,41 @@ export async function toggleFactionVisibility(formData: FormData) {
   if (error) throw new Error(error.message)
   revalidatePath(`/factions/${id}`)
   revalidatePath('/factions')
+}
+
+export async function addFactionRelationship(formData: FormData) {
+  const supabase = db()
+  const from_faction_id = formData.get('faction_id') as string
+  const to_faction_id   = formData.get('to_faction_id') as string
+  const relationship_type = (formData.get('relationship_type') as string) || 'neutral'
+  const { error } = await supabase.from('faction_relationships').insert({ from_faction_id, to_faction_id, relationship_type })
+  if (error) throw new Error(error.message)
+  revalidatePath(`/factions/${from_faction_id}`)
+}
+
+export async function removeFactionRelationship(formData: FormData) {
+  const supabase = db()
+  const id = formData.get('id') as string
+  const faction_id = formData.get('faction_id') as string
+  const { error } = await supabase.from('faction_relationships').delete().eq('id', id)
+  if (error) throw new Error(error.message)
+  revalidatePath(`/factions/${faction_id}`)
+}
+
+export async function addFactionLocation(formData: FormData) {
+  const supabase = db()
+  const faction_id  = formData.get('faction_id') as string
+  const location_id = formData.get('location_id') as string
+  const { error } = await supabase.from('faction_locations').insert({ faction_id, location_id })
+  if (error) throw new Error(error.message)
+  revalidatePath(`/factions/${faction_id}`)
+}
+
+export async function removeFactionLocation(formData: FormData) {
+  const supabase = db()
+  const id = formData.get('id') as string
+  const faction_id = formData.get('faction_id') as string
+  const { error } = await supabase.from('faction_locations').delete().eq('id', id)
+  if (error) throw new Error(error.message)
+  revalidatePath(`/factions/${faction_id}`)
 }

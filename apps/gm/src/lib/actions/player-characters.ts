@@ -12,6 +12,7 @@ export async function createPlayerCharacter(formData: FormData) {
       name: formData.get('name') as string,
       player_name: (formData.get('player_name') as string) || null,
       species: (formData.get('species') as string) || null,
+      culture: (formData.get('culture') as string) || null,
       background: (formData.get('background') as string) || null,
       notes: (formData.get('notes') as string) || null,
       visible: false,
@@ -32,6 +33,7 @@ export async function updatePlayerCharacter(formData: FormData) {
       name: formData.get('name') as string,
       player_name: (formData.get('player_name') as string) || null,
       species: (formData.get('species') as string) || null,
+      culture: (formData.get('culture') as string) || null,
       background: (formData.get('background') as string) || null,
       notes: (formData.get('notes') as string) || null,
     })
@@ -40,6 +42,15 @@ export async function updatePlayerCharacter(formData: FormData) {
   if (error) throw new Error(error.message)
   revalidatePath(`/player-characters/${id}`)
   revalidatePath('/player-characters')
+}
+
+export async function setPcLocation(formData: FormData) {
+  const supabase = db()
+  const id = formData.get('id') as string
+  const current_location_id = (formData.get('current_location_id') as string) || null
+  const { error } = await supabase.from('player_characters').update({ current_location_id }).eq('id', id)
+  if (error) throw new Error(error.message)
+  revalidatePath(`/player-characters/${id}`)
 }
 
 export async function deletePlayerCharacter(formData: FormData) {
