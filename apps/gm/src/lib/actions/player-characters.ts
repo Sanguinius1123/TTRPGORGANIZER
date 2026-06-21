@@ -70,3 +70,22 @@ export async function togglePlayerCharacterVisibility(formData: FormData) {
   revalidatePath(`/player-characters/${id}`)
   revalidatePath('/player-characters')
 }
+
+export async function addPcFaction(formData: FormData) {
+  const supabase = db()
+  const pc_id      = formData.get('pc_id') as string
+  const faction_id = formData.get('faction_id') as string
+  const role       = (formData.get('role') as string) || null
+  const { error } = await supabase.from('pc_factions').insert({ pc_id, faction_id, role })
+  if (error) throw new Error(error.message)
+  revalidatePath(`/player-characters/${pc_id}`)
+}
+
+export async function removePcFaction(formData: FormData) {
+  const supabase = db()
+  const id    = formData.get('id') as string
+  const pc_id = formData.get('pc_id') as string
+  const { error } = await supabase.from('pc_factions').delete().eq('id', id)
+  if (error) throw new Error(error.message)
+  revalidatePath(`/player-characters/${pc_id}`)
+}

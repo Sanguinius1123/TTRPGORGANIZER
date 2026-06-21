@@ -1,5 +1,8 @@
 import { db } from '@/lib/db'
-import { updatePlayerCharacter, deletePlayerCharacter, togglePlayerCharacterVisibility, setPcLocation } from '@/lib/actions/player-characters'
+import {
+  updatePlayerCharacter, deletePlayerCharacter, togglePlayerCharacterVisibility,
+  setPcLocation, addPcFaction, removePcFaction,
+} from '@/lib/actions/player-characters'
 import { PlayerCharacter } from '@ttrpg/db'
 import MentionTextarea from '@/components/MentionTextarea'
 import Link from 'next/link'
@@ -9,6 +12,9 @@ const input = 'block w-full rounded-md border border-zinc-300 px-3 py-2 text-sm 
 const label = 'block text-sm font-medium text-zinc-700 mb-1'
 const smallInput = 'block w-full rounded border border-zinc-300 px-2 py-1.5 text-xs text-zinc-900 focus:border-indigo-500 outline-none'
 
+interface FactionLink { id: string; role: string | null; faction_id: string }
+interface SimpleFaction { id: string; name: string }
+
 export default async function PlayerCharacterPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
   const supabase = db()
@@ -17,14 +23,19 @@ export default async function PlayerCharacterPage({ params }: { params: Promise<
   if (!raw) notFound()
   const pc = raw as PlayerCharacter
 
-  const [r1, r2, r3] = await Promise.all([
+  const [r1, r2, r3, r4, r5] = await Promise.all([
     supabase.from('species').select('id, name').order('name'),
     supabase.from('cultures').select('id, name').order('name'),
     supabase.from('locations').select('id, name').order('name'),
+    supabase.from('factions').select('id, name').order('name'),
+    supabase.from('pc_factions').select('id, role, faction_id').eq('pc_id', id),
   ])
   const speciesList  = (r1.data ?? []) as Array<{ id: string; name: string }>
   const culturesList = (r2.data ?? []) as Array<{ id: string; name: string }>
   const allLocations = (r3.data ?? []) as Array<{ id: string; name: string }>
+  const allFactions  = (r4.data ?? []) as SimpleFaction[]
+  const factionLinks = (r5.data ?? []) as FactionLink[]
+  const factionById  = Object.fromEntries(allFactions.map((f) => [f.id, f]))
 
   return (
     <div className="p-8 max-w-5xl">
@@ -108,7 +119,53 @@ export default async function PlayerCharacterPage({ params }: { params: Promise<
         </div>
 
         {/* ── Right: sidebar ── */}
-        <div className="w-64 shrink-0">
+        <div className="w-64 shrink-0 space-y-4">
+
+          {/* Factions panel */}
+          <div className="bg-white rounded-lg border border-zinc-200 overflow-hidden">
+            <div className="px-4 py-2.5 border-b border-zinc-100 bg-zinc-50">
+              <h3 className="text-xs font-semibold text-zinc-600 uppercase tracking-wide">Factions</h3>
+            </div>
+            <div className="p-3 space-y-1">
+              {factionLinks.length === 0 && (
+                <p className="text-xs text-zinc-400 px-1 py-1">No faction memberships.</p>
+              )}
+              {factionLinks.map((link) => {
+                const faction = factionById[link.faction_id]
+                if (!faction) return null
+                return (
+                  <div key={link.id} className="flex items-start gap-2 group rounded px-1 py-1.5 hover:bg-zinc-50">
+                    <div className="flex-1 min-w-0">
+                      <Link href={`/factions/${faction.id}`} className="text-sm font-medium text-zinc-900 hover:text-indigo-600 block truncate">
+                        {faction.name}
+                      </Link>
+                      {link.role && <p className="text-xs text-zinc-400 truncate">{link.role}</p>}
+                    </div>
+                    <form action={removePcFaction}>
+                      <input type="hidden" name="id" value={link.id} />
+                      <input type="hidden" name="pc_id" value={id} />
+                      <button type="submit" className="opacity-0 group-hover:opacity-100 text-zinc-300 hover:text-red-500 text-xs pt-0.5">✕</button>
+                    </form>
+                  </div>
+                )
+              })}
+            </div>
+            <form action={addPcFaction} className="px-3 pb-3 pt-2 border-t border-zinc-100 space-y-1.5">
+              <input type="hidden" name="pc_id" value={id} />
+              <select name="faction_id" required className={smallInput}>
+                <option value="">Select faction…</option>
+                {allFactions.map((f) => <option key={f.id} value={f.id}>{f.name}</option>)}
+              </select>
+              <div className="flex gap-1.5">
+                <input name="role" placeholder="Role (optional)" className={`${smallInput} flex-1`} />
+                <button type="submit" className="rounded bg-indigo-600 px-2.5 py-1.5 text-xs font-medium text-white hover:bg-indigo-700 whitespace-nowrap">
+                  Add
+                </button>
+              </div>
+            </form>
+          </div>
+
+          {/* Known Location panel */}
           <div className="bg-white rounded-lg border border-zinc-200 overflow-hidden">
             <div className="px-4 py-2.5 border-b border-zinc-100 bg-zinc-50">
               <h3 className="text-xs font-semibold text-zinc-600 uppercase tracking-wide">Known Location</h3>
@@ -126,8 +183,8 @@ export default async function PlayerCharacterPage({ params }: { params: Promise<
               </form>
             </div>
           </div>
-        </div>
 
+        </div>
       </div>
     </div>
   )

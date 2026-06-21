@@ -114,6 +114,18 @@ export interface Database {
         Update: Partial<Database['public']['Tables']['npc_factions']['Insert']>
         Relationships: []
       }
+      pc_factions: {
+        Row: {
+          id: string
+          pc_id: string
+          faction_id: string
+          role: string | null
+          created_at: string
+        }
+        Insert: Partial<Omit<Database['public']['Tables']['pc_factions']['Row'], 'id' | 'created_at'>>
+        Update: Partial<Database['public']['Tables']['pc_factions']['Insert']>
+        Relationships: []
+      }
       npc_locations: {
         Row: {
           id: string
@@ -354,6 +366,7 @@ export type PlayerCharacter    = Tables<'player_characters'>
 export type NPC                = Tables<'npcs'>
 export type NPCFact            = Tables<'npc_facts'>
 export type NPCFaction         = Tables<'npc_factions'>
+export type PCFaction          = Tables<'pc_factions'>
 export type NPCLocation        = Tables<'npc_locations'>
 export type CharacterRelationship = Tables<'character_relationships'>
 export type Item               = Tables<'items'>
