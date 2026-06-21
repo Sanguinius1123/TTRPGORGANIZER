@@ -2,10 +2,21 @@ import { db } from '@/lib/db'
 import { Session } from '@ttrpg/db'
 import Link from 'next/link'
 
+function stripMentions(text: string): string {
+  return text.replace(/\[\[[^\]]+\|([^\]]+)\]\]/g, '$1')
+}
+
 export default async function SessionsPage() {
   const supabase = db()
-  const { data: rawSessions } = await supabase.from('sessions').select('*').order('session_number', { ascending: false })
-  const sessions = (rawSessions ?? []) as Session[]
+
+  const results = await Promise.all([
+    supabase.from('sessions').select('*').order('session_number', { ascending: false }),
+    supabase.from('factions').select('id, name').order('name'),
+  ])
+
+  const sessions = (results[0].data ?? []) as Session[]
+  const factions = (results[1].data ?? []) as Array<{ id: string; name: string }>
+  const factionById = Object.fromEntries(factions.map(f => [f.id, f]))
 
   return (
     <div className="p-8">
@@ -28,23 +39,33 @@ export default async function SessionsPage() {
         </div>
       ) : (
         <div className="space-y-3">
-          {sessions.map((s) => (
-            <Link
-              key={s.id}
-              href={`/sessions/${s.id}`}
-              className="flex items-start gap-4 bg-white rounded-lg border border-zinc-200 p-4 hover:border-indigo-300 hover:shadow-sm transition-all"
-            >
-              <span className="shrink-0 flex items-center justify-center w-10 h-10 rounded-full bg-indigo-50 text-indigo-700 font-bold text-sm">
-                {s.session_number}
-              </span>
-              <div className="min-w-0">
-                <p className="font-medium text-zinc-900">{s.title ?? `Session ${s.session_number}`}</p>
-                {s.summary && (
-                  <p className="text-sm text-zinc-500 mt-0.5 line-clamp-2">{s.summary}</p>
-                )}
-              </div>
-            </Link>
-          ))}
+          {sessions.map((s) => {
+            const faction = s.faction_id ? factionById[s.faction_id] : null
+            return (
+              <Link
+                key={s.id}
+                href={`/sessions/${s.id}`}
+                className="flex items-start gap-4 bg-white rounded-lg border border-zinc-200 p-4 hover:border-indigo-300 hover:shadow-sm transition-all"
+              >
+                <span className="shrink-0 flex items-center justify-center w-10 h-10 rounded-full bg-indigo-50 text-indigo-700 font-bold text-sm">
+                  {s.session_number}
+                </span>
+                <div className="min-w-0 flex-1">
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <p className="font-medium text-zinc-900">{s.title ?? `Session ${s.session_number}`}</p>
+                    {faction && (
+                      <span className="inline-flex items-center rounded-full bg-indigo-50 px-2 py-0.5 text-xs font-medium text-indigo-700">
+                        {faction.name}
+                      </span>
+                    )}
+                  </div>
+                  {s.summary && (
+                    <p className="text-sm text-zinc-500 mt-0.5 line-clamp-2">{stripMentions(s.summary)}</p>
+                  )}
+                </div>
+              </Link>
+            )
+          })}
         </div>
       )}
     </div>

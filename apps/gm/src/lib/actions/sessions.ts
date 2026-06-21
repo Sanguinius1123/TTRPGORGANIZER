@@ -13,6 +13,7 @@ export async function createSession(formData: FormData) {
       title: (formData.get('title') as string) || null,
       summary: (formData.get('summary') as string) || null,
       loose_threads: (formData.get('loose_threads') as string) || null,
+      faction_id: (formData.get('faction_id') as string) || null,
     })
     .select()
     .single()
@@ -31,6 +32,7 @@ export async function updateSession(formData: FormData) {
       title: (formData.get('title') as string) || null,
       summary: (formData.get('summary') as string) || null,
       loose_threads: (formData.get('loose_threads') as string) || null,
+      faction_id: (formData.get('faction_id') as string) || null,
     })
     .eq('id', id)
 

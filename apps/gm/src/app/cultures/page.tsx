@@ -13,7 +13,7 @@ export default async function CulturesPage() {
   const cultures = (raw ?? []) as Culture[]
 
   return (
-    <div className="p-8 max-w-3xl">
+    <div className="p-8">
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-2xl font-bold text-zinc-900">Cultures</h1>
         <Link href="/cultures/new" className="rounded-md bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700">

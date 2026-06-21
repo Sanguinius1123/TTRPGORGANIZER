@@ -13,7 +13,7 @@ export default async function SpeciesPage() {
   const speciesList = (raw ?? []) as Species[]
 
   return (
-    <div className="p-8 max-w-3xl">
+    <div className="p-8">
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-2xl font-bold text-zinc-900">Species / Ancestry</h1>
         <Link href="/species/new" className="rounded-md bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700">

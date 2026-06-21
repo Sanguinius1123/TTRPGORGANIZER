@@ -1,0 +1,2 @@
+ALTER TABLE sessions
+  ADD COLUMN faction_id UUID REFERENCES factions(id) ON DELETE SET NULL;

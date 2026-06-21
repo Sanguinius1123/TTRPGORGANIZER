@@ -19,16 +19,18 @@ export default async function SessionPage({ params }: { params: Promise<{ id: st
   const { id } = await params
   const supabase = db()
 
-  const [r0, r1, r2] = await Promise.all([
+  const [r0, r1, r2, r3] = await Promise.all([
     supabase.from('sessions').select('*').eq('id', id).single(),
     supabase.from('encounters').select('id, title, status').eq('session_id', id).order('created_at'),
     supabase.from('session_notes').select('*, pc:pc_id(name)').eq('session_id', id).order('created_at'),
+    supabase.from('factions').select('id, name').order('name'),
   ])
 
   if (!r0.data) notFound()
   const session = r0.data as Session
   const encounters = (r1.data ?? []) as EncounterRow[]
   const playerNotes = (r2.data ?? []) as unknown as SessionNoteRow[]
+  const factions = (r3.data ?? []) as Array<{ id: string; name: string }>
 
   return (
     <div className="p-8 max-w-3xl">
@@ -52,6 +54,18 @@ export default async function SessionPage({ params }: { params: Promise<{ id: st
             <label className={label}>Title</label>
             <input name="title" defaultValue={session.title ?? ''} className={input} />
           </div>
+        </div>
+        <div>
+          <label className={label}>Party / Faction</label>
+          <select
+            key={session.faction_id ?? ''}
+            name="faction_id"
+            defaultValue={session.faction_id ?? ''}
+            className={input}
+          >
+            <option value="">— None —</option>
+            {factions.map(f => <option key={f.id} value={f.id}>{f.name}</option>)}
+          </select>
         </div>
         <div>
           <label className={label}>Summary</label>

@@ -186,6 +186,7 @@ export interface Database {
           title: string | null
           summary: string | null
           loose_threads: string | null
+          faction_id: string | null
           created_at: string
         }
         Insert: Partial<Omit<Database['public']['Tables']['sessions']['Row'], 'id' | 'created_at'>>

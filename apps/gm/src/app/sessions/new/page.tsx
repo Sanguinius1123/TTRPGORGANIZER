@@ -1,3 +1,4 @@
+import { db } from '@/lib/db'
 import { createSession } from '@/lib/actions/sessions'
 import MentionTextarea from '@/components/MentionTextarea'
 import Link from 'next/link'
@@ -5,7 +6,11 @@ import Link from 'next/link'
 const input = 'block w-full rounded-md border border-zinc-300 px-3 py-2 text-sm text-zinc-900 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none'
 const label = 'block text-sm font-medium text-zinc-700 mb-1'
 
-export default function NewSessionPage() {
+export default async function NewSessionPage() {
+  const supabase = db()
+  const { data: raw } = await supabase.from('factions').select('id, name').order('name')
+  const factions = (raw ?? []) as Array<{ id: string; name: string }>
+
   return (
     <div className="p-8 max-w-2xl">
       <div className="flex items-center gap-3 mb-6">
@@ -25,6 +30,13 @@ export default function NewSessionPage() {
             <label className={label}>Title</label>
             <input name="title" className={input} />
           </div>
+        </div>
+        <div>
+          <label className={label}>Party / Faction</label>
+          <select name="faction_id" className={input}>
+            <option value="">— None —</option>
+            {factions.map(f => <option key={f.id} value={f.id}>{f.name}</option>)}
+          </select>
         </div>
         <div>
           <label className={label}>Summary</label>
