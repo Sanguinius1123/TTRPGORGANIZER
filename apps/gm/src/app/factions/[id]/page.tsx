@@ -25,6 +25,7 @@ const REL_STYLE: Record<string, string> = {
   neutral:     'bg-zinc-100 text-zinc-600',
   unfriendly:  'bg-amber-100 text-amber-700',
   hostile:     'bg-red-100 text-red-700',
+  war:         'bg-red-200 text-red-900',
 }
 
 export default async function FactionPage({ params }: { params: Promise<{ id: string }> }) {
@@ -199,7 +200,7 @@ export default async function FactionPage({ params }: { params: Promise<{ id: st
           {/* Related Factions panel */}
           <div className="bg-white rounded-lg border border-zinc-200 overflow-hidden">
             <div className="px-4 py-2.5 border-b border-zinc-100 bg-zinc-50">
-              <h3 className="text-xs font-semibold text-zinc-600 uppercase tracking-wide">Related Factions</h3>
+              <h3 className="text-xs font-semibold text-zinc-600 uppercase tracking-wide">Stance</h3>
             </div>
             <div className="p-3 space-y-1">
               {factionRels.length === 0 && (
@@ -235,11 +236,12 @@ export default async function FactionPage({ params }: { params: Promise<{ id: st
               </select>
               <div className="flex gap-1.5">
                 <select name="relationship_type" className={`${smallInput} flex-1`}>
-                  <option value="neutral">Neutral</option>
                   <option value="allied">Allied</option>
                   <option value="friendly">Friendly</option>
+                  <option value="neutral">Neutral</option>
                   <option value="unfriendly">Unfriendly</option>
                   <option value="hostile">Hostile</option>
+                  <option value="war">War</option>
                 </select>
                 <button type="submit" className="rounded bg-indigo-600 px-2.5 py-1.5 text-xs font-medium text-white hover:bg-indigo-700 whitespace-nowrap">
                   Add

@@ -67,7 +67,10 @@ export async function addFactionRelationship(formData: FormData) {
   const from_faction_id = formData.get('faction_id') as string
   const to_faction_id   = formData.get('to_faction_id') as string
   const relationship_type = (formData.get('relationship_type') as string) || 'neutral'
-  const { error } = await supabase.from('faction_relationships').insert({ from_faction_id, to_faction_id, relationship_type })
+  // ignoreDuplicates: silently skip if this direction already exists
+  const { error } = await supabase.from('faction_relationships')
+    .upsert({ from_faction_id, to_faction_id, relationship_type },
+             { onConflict: 'from_faction_id,to_faction_id', ignoreDuplicates: true })
   if (error) throw new Error(error.message)
   revalidatePath(`/factions/${from_faction_id}`)
 }
