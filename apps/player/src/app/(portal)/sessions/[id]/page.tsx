@@ -12,21 +12,26 @@ export default async function SessionDetailPage({ params }: { params: Promise<{ 
   const results = await Promise.all([
     supabase.from('sessions').select('*').eq('id', id).single(),
     supabase.from('session_notes').select('*').eq('session_id', id).order('created_at'),
-    supabase.from('player_characters').select('id, name').eq('profile_id', user!.id).maybeSingle(),
+    supabase.from('player_characters').select('id, name, player_name').eq('profile_id', user!.id).maybeSingle(),
     supabase.from('profiles').select('id, display_name'),
-    supabase.from('player_characters').select('id, name, profile_id'),
+    supabase.from('player_characters').select('id, name, player_name, profile_id'),
   ])
 
   const raw = results[0].data
   if (!raw) notFound()
   const session = raw as Session
   const notes = (results[1].data ?? []) as SessionNote[]
-  const myPC = results[2].data as Pick<PlayerCharacter, 'id' | 'name'> | null
+  const myPC = results[2].data as Pick<PlayerCharacter, 'id' | 'name' | 'player_name'> | null
   const profiles = (results[3].data ?? []) as Pick<Profile, 'id' | 'display_name'>[]
-  const allPCs = (results[4].data ?? []) as Pick<PlayerCharacter, 'id' | 'name' | 'profile_id'>[]
+  const allPCs = (results[4].data ?? []) as Pick<PlayerCharacter, 'id' | 'name' | 'player_name' | 'profile_id'>[]
 
   const profileById = Object.fromEntries(profiles.map(p => [p.id, p]))
   const pcById = Object.fromEntries(allPCs.map(p => [p.id, p]))
+
+  // Find my existing note for this session (one per PC per session)
+  const myNote = myPC
+    ? (notes.find(n => n.pc_id === myPC.id) ?? null)
+    : null
 
   return (
     <div className="p-8 max-w-4xl">
@@ -62,23 +67,41 @@ export default async function SessionDetailPage({ params }: { params: Promise<{ 
             <span className="text-xs text-zinc-400">{notes.length} {notes.length === 1 ? 'note' : 'notes'}</span>
           </div>
           <div className="divide-y divide-zinc-100">
-            {notes.length === 0 && (
+            {notes.length === 0 && !myPC && (
               <p className="px-6 py-4 text-sm text-zinc-400">No player notes yet.</p>
             )}
             {notes.map(note => {
               const pc = note.pc_id ? pcById[note.pc_id] : null
               const profile = note.profile_id ? profileById[note.profile_id] : null
-              const author = pc ? pc.name : note.author_name ?? profile?.display_name ?? 'Unknown'
+              const isMyNote = myPC && note.pc_id === myPC.id
+
+              // "Character Name — Player Name" format
+              const pcLabel = pc
+                ? [pc.name, pc.player_name].filter(Boolean).join(' — ')
+                : (note.author_name ?? profile?.display_name ?? 'Unknown')
+
+              // Skip my own note — it's shown in the edit form below
+              if (isMyNote) return null
+
               return (
                 <div key={note.id} className="px-6 py-4">
-                  <p className="text-xs font-semibold text-indigo-600 mb-1.5">{author}</p>
+                  <p className="text-xs font-semibold text-indigo-600 mb-1.5">{pcLabel}</p>
                   <p className="text-sm text-zinc-700 whitespace-pre-wrap leading-relaxed">{note.notes_text}</p>
                 </div>
               )
             })}
+
             {myPC && (
               <div className="px-6 py-4 bg-zinc-50">
-                <NoteForm sessionId={id} pcId={myPC.id} profileId={user!.id} />
+                <p className="text-xs font-semibold text-indigo-600 mb-3">
+                  {[myPC.name, myPC.player_name].filter(Boolean).join(' — ')} (you)
+                </p>
+                <NoteForm
+                  sessionId={id}
+                  pcId={myPC.id}
+                  profileId={user!.id}
+                  existingNote={myNote ? { id: myNote.id, notes_text: myNote.notes_text ?? '' } : null}
+                />
               </div>
             )}
           </div>

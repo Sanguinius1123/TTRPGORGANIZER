@@ -1,5 +1,5 @@
 import { db } from '@/lib/db'
-import { updateSession, deleteSession, addSessionPlotThread, removeSessionPlotThread } from '@/lib/actions/sessions'
+import { updateSession, deleteSession, addSessionPlotThread, removeSessionPlotThread, updateSessionNote, deleteSessionNote } from '@/lib/actions/sessions'
 import { addEncounterToSession, removeEncounterFromSession } from '@/lib/actions/encounters'
 import { Session } from '@ttrpg/db'
 import MentionTextarea from '@/components/MentionTextarea'
@@ -12,7 +12,7 @@ const smallInput = 'block w-full rounded border border-zinc-300 px-2 py-1.5 text
 
 interface EncounterRow { id: string; title: string; status: string }
 interface ParticipantDrRow { encounter_id: string; role: string | null; dr: number | null; count: number }
-interface SessionNoteRow { id: string; author_name: string | null; notes_text: string | null; pc: { name: string } | null }
+interface SessionNoteRow { id: string; author_name: string | null; notes_text: string | null; pc: { name: string; player_name: string | null } | null }
 interface SessionPlotThreadRow { id: string; plot_thread_id: string }
 interface PlotThreadRow { id: string; title: string; status: string }
 
@@ -43,7 +43,7 @@ export default async function SessionPage({ params }: { params: Promise<{ id: st
   const [r0, r1, r2, r3, r4, r5, r6] = await Promise.all([
     supabase.from('sessions').select('*').eq('id', id).single(),
     supabase.from('encounters').select('id, title, status').eq('session_id', id).order('created_at'),
-    supabase.from('session_notes').select('*, pc:pc_id(name)').eq('session_id', id).order('created_at'),
+    supabase.from('session_notes').select('*, pc:pc_id(name, player_name)').eq('session_id', id).order('created_at'),
     supabase.from('factions').select('id, name').order('name'),
     supabase.from('session_plot_threads').select('id, plot_thread_id').eq('session_id', id).order('created_at'),
     supabase.from('encounters').select('id, title, status').neq('session_id', id).order('title'),
@@ -141,16 +141,36 @@ export default async function SessionPage({ params }: { params: Promise<{ id: st
             <section className="mb-8">
               <h2 className="text-sm font-semibold text-zinc-700 uppercase tracking-wide mb-3">Player Notes</h2>
               <div className="space-y-3">
-                {playerNotes.map((note) => (
-                  <div key={note.id} className="bg-white rounded-lg border border-zinc-200 p-4">
-                    <p className="text-xs font-semibold text-zinc-500 mb-1">
-                      {note.pc?.name ?? note.author_name ?? 'Unknown player'}
-                    </p>
-                    <p className="text-sm text-zinc-800 whitespace-pre-wrap">
-                      {note.notes_text ? stripMentions(note.notes_text) : '—'}
-                    </p>
-                  </div>
-                ))}
+                {playerNotes.map((note) => {
+                  const pcLabel = note.pc
+                    ? [note.pc.name, note.pc.player_name].filter(Boolean).join(' — ')
+                    : (note.author_name ?? 'Unknown player')
+                  return (
+                    <div key={note.id} className="bg-white rounded-lg border border-zinc-200 overflow-hidden">
+                      <div className="flex items-center justify-between px-4 py-2.5 border-b border-zinc-100 bg-zinc-50">
+                        <p className="text-xs font-semibold text-zinc-600">{pcLabel}</p>
+                        <form action={deleteSessionNote}>
+                          <input type="hidden" name="id" value={note.id} />
+                          <input type="hidden" name="session_id" value={id} />
+                          <button type="submit" className="text-zinc-300 hover:text-red-500 text-xs transition-colors">Delete</button>
+                        </form>
+                      </div>
+                      <form action={updateSessionNote} className="p-4 space-y-2">
+                        <input type="hidden" name="id" value={note.id} />
+                        <input type="hidden" name="session_id" value={id} />
+                        <textarea
+                          name="notes_text"
+                          defaultValue={note.notes_text ? stripMentions(note.notes_text) : ''}
+                          rows={3}
+                          className="block w-full rounded border border-zinc-200 px-3 py-2 text-sm text-zinc-800 focus:border-indigo-400 focus:outline-none resize-none"
+                        />
+                        <button type="submit" className="rounded bg-zinc-700 px-3 py-1.5 text-xs font-medium text-white hover:bg-zinc-600">
+                          Save
+                        </button>
+                      </form>
+                    </div>
+                  )
+                })}
               </div>
             </section>
           )}

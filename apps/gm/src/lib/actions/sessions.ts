@@ -63,6 +63,23 @@ export async function removeSessionPlotThread(formData: FormData) {
   revalidatePath(`/sessions/${session_id}`)
 }
 
+export async function updateSessionNote(formData: FormData) {
+  const supabase = db()
+  const id         = formData.get('id') as string
+  const session_id = formData.get('session_id') as string
+  const notes_text = (formData.get('notes_text') as string) || null
+  await supabase.from('session_notes').update({ notes_text }).eq('id', id)
+  revalidatePath(`/sessions/${session_id}`)
+}
+
+export async function deleteSessionNote(formData: FormData) {
+  const supabase = db()
+  const id         = formData.get('id') as string
+  const session_id = formData.get('session_id') as string
+  await supabase.from('session_notes').delete().eq('id', id)
+  revalidatePath(`/sessions/${session_id}`)
+}
+
 export async function deleteSession(formData: FormData) {
   const supabase = db()
   const id = formData.get('id') as string
