@@ -12,10 +12,16 @@ export default async function LocationsPage() {
   const locations = (raw ?? []) as Location[]
 
   return (
-    <div className="p-8 max-w-3xl">
-      <h1 className="text-2xl font-bold text-zinc-900 mb-6">Locations</h1>
+    <div className="p-8 max-w-5xl">
+      <div className="mb-6">
+        <h1 className="text-2xl font-bold text-zinc-900">Locations</h1>
+        <p className="text-sm text-zinc-500 mt-1">{locations.length} {locations.length === 1 ? 'entry' : 'entries'}</p>
+      </div>
+
       {locations.length === 0 ? (
-        <p className="text-zinc-500 text-sm">No locations have been revealed yet.</p>
+        <div className="rounded-lg border border-dashed border-zinc-300 p-12 text-center">
+          <p className="text-zinc-500 text-sm">No locations have been revealed yet.</p>
+        </div>
       ) : (
         <div className="bg-white rounded-lg border border-zinc-200 overflow-hidden">
           <table className="w-full text-sm">
@@ -23,6 +29,7 @@ export default async function LocationsPage() {
               <tr className="border-b border-zinc-200 bg-zinc-50">
                 <th className="text-left px-4 py-3 font-medium text-zinc-600">Name</th>
                 <th className="text-left px-4 py-3 font-medium text-zinc-600">Type</th>
+                <th className="text-left px-4 py-3 font-medium text-zinc-600">Area</th>
                 <th className="text-left px-4 py-3 font-medium text-zinc-600">Status</th>
               </tr>
             </thead>
@@ -38,6 +45,7 @@ export default async function LocationsPage() {
                     {loc.type ?? '—'}
                     {loc.descriptor && <span className="text-zinc-400 ml-1">· {loc.descriptor}</span>}
                   </td>
+                  <td className="px-4 py-3 text-zinc-500">{loc.area ?? '—'}</td>
                   <td className="px-4 py-3 text-zinc-500">{loc.status ?? '—'}</td>
                 </tr>
               ))}

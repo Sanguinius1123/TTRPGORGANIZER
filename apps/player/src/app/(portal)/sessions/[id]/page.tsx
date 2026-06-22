@@ -1,5 +1,6 @@
 import { createClient } from '@/lib/supabase/server'
 import { Session, SessionNote, PlayerCharacter, Profile } from '@ttrpg/db'
+import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { NoteForm } from './NoteForm'
 
@@ -28,46 +29,61 @@ export default async function SessionDetailPage({ params }: { params: Promise<{ 
   const pcById = Object.fromEntries(allPCs.map(p => [p.id, p]))
 
   return (
-    <div className="p-8 max-w-3xl space-y-8">
-      <div>
+    <div className="p-8 max-w-4xl">
+      <div className="flex items-center gap-2 mb-6 text-sm">
+        <Link href="/sessions" className="text-zinc-500 hover:text-zinc-700">Sessions</Link>
+        <span className="text-zinc-300">/</span>
+        <span className="text-zinc-900 font-medium">Session {session.session_number}</span>
+      </div>
+
+      <div className="mb-6">
         <p className="text-xs font-semibold text-zinc-400 uppercase tracking-wide mb-1">Session {session.session_number}</p>
         <h1 className="text-2xl font-bold text-zinc-900">{session.title ?? 'Untitled'}</h1>
       </div>
 
-      {session.summary && (
-        <section>
-          <h2 className="text-sm font-semibold text-zinc-500 uppercase tracking-wide mb-2">Summary</h2>
-          <p className="text-zinc-700 whitespace-pre-wrap">{session.summary}</p>
-        </section>
-      )}
-
-      {session.loose_threads && (
-        <section>
-          <h2 className="text-sm font-semibold text-zinc-500 uppercase tracking-wide mb-2">Loose Threads</h2>
-          <p className="text-zinc-700 whitespace-pre-wrap">{session.loose_threads}</p>
-        </section>
-      )}
-
-      {/* Player notes */}
-      <section className="space-y-4">
-        <h2 className="text-sm font-semibold text-zinc-500 uppercase tracking-wide">Player Notes</h2>
-        {notes.length === 0 && <p className="text-sm text-zinc-400">No player notes yet.</p>}
-        {notes.map(note => {
-          const pc = note.pc_id ? pcById[note.pc_id] : null
-          const profile = note.profile_id ? profileById[note.profile_id] : null
-          const author = pc ? `${pc.name}` : note.author_name ?? profile?.display_name ?? 'Unknown'
-          return (
-            <div key={note.id} className="rounded-lg bg-white border border-zinc-200 p-4">
-              <p className="text-xs font-semibold text-indigo-600 mb-1">{author}</p>
-              <p className="text-sm text-zinc-700 whitespace-pre-wrap">{note.notes_text}</p>
-            </div>
-          )
-        })}
-
-        {myPC && (
-          <NoteForm sessionId={id} pcId={myPC.id} profileId={user!.id} />
+      <div className="space-y-6">
+        {session.summary && (
+          <div className="bg-white rounded-lg border border-zinc-200 p-6">
+            <h2 className="text-xs font-semibold text-zinc-500 uppercase tracking-wide mb-3">Summary</h2>
+            <p className="text-zinc-700 whitespace-pre-wrap text-sm leading-relaxed">{session.summary}</p>
+          </div>
         )}
-      </section>
+
+        {session.loose_threads && (
+          <div className="bg-white rounded-lg border border-zinc-200 p-6">
+            <h2 className="text-xs font-semibold text-zinc-500 uppercase tracking-wide mb-3">Loose Threads</h2>
+            <p className="text-zinc-700 whitespace-pre-wrap text-sm leading-relaxed">{session.loose_threads}</p>
+          </div>
+        )}
+
+        <div className="bg-white rounded-lg border border-zinc-200 overflow-hidden">
+          <div className="px-6 py-4 border-b border-zinc-100 bg-zinc-50 flex items-center justify-between">
+            <h2 className="text-xs font-semibold text-zinc-600 uppercase tracking-wide">Player Notes</h2>
+            <span className="text-xs text-zinc-400">{notes.length} {notes.length === 1 ? 'note' : 'notes'}</span>
+          </div>
+          <div className="divide-y divide-zinc-100">
+            {notes.length === 0 && (
+              <p className="px-6 py-4 text-sm text-zinc-400">No player notes yet.</p>
+            )}
+            {notes.map(note => {
+              const pc = note.pc_id ? pcById[note.pc_id] : null
+              const profile = note.profile_id ? profileById[note.profile_id] : null
+              const author = pc ? pc.name : note.author_name ?? profile?.display_name ?? 'Unknown'
+              return (
+                <div key={note.id} className="px-6 py-4">
+                  <p className="text-xs font-semibold text-indigo-600 mb-1.5">{author}</p>
+                  <p className="text-sm text-zinc-700 whitespace-pre-wrap leading-relaxed">{note.notes_text}</p>
+                </div>
+              )
+            })}
+            {myPC && (
+              <div className="px-6 py-4 bg-zinc-50">
+                <NoteForm sessionId={id} pcId={myPC.id} profileId={user!.id} />
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
     </div>
   )
 }

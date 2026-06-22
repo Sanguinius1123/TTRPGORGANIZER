@@ -13,35 +13,49 @@ export default async function DashboardPage() {
     supabase.from('player_characters').select('id, name').eq('profile_id', user!.id).maybeSingle(),
   ])
 
-  const [locations, npcs, factions, lore, sessions, myPC] = results
+  const myPC = results[5].data as { id: string; name: string } | null
 
   const stats = [
-    { label: 'Locations',    count: locations.count ?? 0, href: '/locations' },
-    { label: 'NPCs',         count: npcs.count ?? 0,      href: '/npcs' },
-    { label: 'Factions',     count: factions.count ?? 0,  href: '/factions' },
-    { label: 'Lore Entries', count: lore.count ?? 0,      href: '/lore' },
-    { label: 'Sessions',     count: sessions.count ?? 0,  href: '/sessions' },
+    { label: 'Locations',    count: results[0].count ?? 0, href: '/locations' },
+    { label: 'NPCs',         count: results[1].count ?? 0, href: '/npcs' },
+    { label: 'Factions',     count: results[2].count ?? 0, href: '/factions' },
+    { label: 'Lore Entries', count: results[3].count ?? 0, href: '/lore' },
+    { label: 'Sessions',     count: results[4].count ?? 0, href: '/sessions' },
   ]
 
   return (
-    <div className="p-8 max-w-3xl space-y-8">
-      <div>
+    <div className="p-8 max-w-4xl">
+      <div className="mb-8">
         <h1 className="text-2xl font-bold text-zinc-900">Welcome back</h1>
-        {myPC.data && (
+        {myPC && (
           <p className="mt-1 text-sm text-zinc-500">
-            Playing as <a href="/character" className="text-indigo-600 hover:underline font-medium">{myPC.data.name}</a>
+            Playing as{' '}
+            <a href="/character" className="text-indigo-600 hover:underline font-medium">{myPC.name}</a>
           </p>
         )}
       </div>
 
-      <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+      <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 mb-8">
         {stats.map(({ label, count, href }) => (
-          <a key={label} href={href} className="rounded-lg bg-white border border-zinc-200 p-4 hover:border-indigo-300 transition-colors">
-            <p className="text-2xl font-bold text-zinc-900">{count}</p>
-            <p className="text-sm text-zinc-500 mt-0.5">{label}</p>
+          <a
+            key={label}
+            href={href}
+            className="bg-white rounded-lg border border-zinc-200 p-5 hover:border-indigo-300 hover:shadow-sm transition-all"
+          >
+            <p className="text-3xl font-bold text-zinc-900">{count}</p>
+            <p className="text-sm text-zinc-500 mt-1">{label}</p>
           </a>
         ))}
       </div>
+
+      {!myPC && (
+        <div className="bg-amber-50 border border-amber-200 rounded-lg p-5">
+          <p className="text-sm font-medium text-amber-800">No character assigned</p>
+          <p className="text-sm text-amber-700 mt-1">
+            Ask your GM to assign you a player character to unlock the character sheet and session notes.
+          </p>
+        </div>
+      )}
     </div>
   )
 }
