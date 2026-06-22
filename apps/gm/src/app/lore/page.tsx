@@ -1,10 +1,8 @@
 import { db } from '@/lib/db'
-import { LoreEntry } from '@ttrpg/db'
+import { LoreEntry, Species, Culture } from '@ttrpg/db'
 import { toggleLoreVisibility } from '@/lib/actions/lore'
-import { FilterBar } from '@/components/FilterBar'
 import { ClickableRow, SubLink, StopPropCell } from '@/components/TableRow'
 import Link from 'next/link'
-import { Suspense } from 'react'
 
 const LORE_CATEGORIES = [
   'History', 'Myth & Legend', 'Religion & Faith', 'Magic / Technology',
@@ -12,87 +10,202 @@ const LORE_CATEGORIES = [
   'Languages & Scripts', 'Artifacts & Relics', 'Geography & Astronomy', 'Economy & Trade',
 ]
 
-type SearchParams = Promise<{ category?: string; visible?: string }>
+type SearchParams = Promise<{ tab?: string; category?: string }>
 
 export default async function LorePage({ searchParams }: { searchParams: SearchParams }) {
   const params = await searchParams
+  const tab = params.tab ?? 'lore'
   const supabase = db()
 
-  let q = supabase.from('lore_entries').select('*').order('category').order('title')
-  if (params.category) q = q.ilike('category', `%${params.category}%`)
-  if (params.visible === 'true') q = q.eq('visible', true)
-  else if (params.visible === 'false') q = q.eq('visible', false)
+  const results = await Promise.all([
+    supabase.from('lore_entries').select('*').order('category').order('title'),
+    supabase.from('species').select('*').order('name'),
+    supabase.from('cultures').select('*').order('name'),
+  ])
 
-  const { data: rawEntries } = await q
-  const entries = (rawEntries ?? []) as LoreEntry[]
+  const allEntries = (results[0].data ?? []) as LoreEntry[]
+  const allSpecies = (results[1].data ?? []) as Species[]
+  const allCultures = (results[2].data ?? []) as Culture[]
 
-  const filters = [
-    { type: 'select' as const, name: 'category', label: 'Category', options: LORE_CATEGORIES.map(c => ({ value: c, label: c })) },
-    { type: 'select' as const, name: 'visible', label: 'Visibility', options: [{ value: 'true', label: 'Visible' }, { value: 'false', label: 'Hidden' }] },
+  const entries = params.category
+    ? allEntries.filter(e => e.category === params.category)
+    : allEntries
+
+  const tabs = [
+    { key: 'lore',     label: 'Lore & Knowledge', count: allEntries.length },
+    { key: 'species',  label: 'Species / Ancestry', count: allSpecies.length },
+    { key: 'cultures', label: 'Cultures',           count: allCultures.length },
   ]
+
+  const newHref = tab === 'species' ? '/species/new' : tab === 'cultures' ? '/cultures/new' : '/lore/new'
+  const newLabel = tab === 'species' ? 'New Species' : tab === 'cultures' ? 'New Culture' : 'New Entry'
 
   return (
     <div className="p-8">
       <div className="flex items-center justify-between mb-6">
-        <div>
-          <h1 className="text-2xl font-bold text-zinc-900">Lore & Knowledge</h1>
-          <p className="text-sm text-zinc-500 mt-1">{entries.length} entries</p>
-        </div>
-        <Link href="/lore/new" className="rounded-md bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700">
-          New Entry
+        <h1 className="text-2xl font-bold text-zinc-900">Lore & Knowledge</h1>
+        <Link href={newHref} className="rounded-md bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700">
+          {newLabel}
         </Link>
       </div>
 
-      <Suspense fallback={null}>
-        <FilterBar filters={filters} />
-      </Suspense>
-
-      {!entries.length ? (
-        <div className="rounded-lg border border-dashed border-zinc-300 p-12 text-center">
-          <p className="text-zinc-500 text-sm">No lore entries match the current filters.</p>
-          <Link href="/lore/new" className="mt-3 inline-block text-sm font-medium text-indigo-600 hover:text-indigo-700">
-            Create the first one →
+      {/* Tabs */}
+      <div className="flex gap-1 mb-6 border-b border-zinc-200">
+        {tabs.map(t => (
+          <Link
+            key={t.key}
+            href={`/lore?tab=${t.key}`}
+            className={`px-4 py-2 text-sm font-medium border-b-2 -mb-px transition-colors ${
+              tab === t.key
+                ? 'border-indigo-600 text-indigo-600'
+                : 'border-transparent text-zinc-500 hover:text-zinc-800'
+            }`}
+          >
+            {t.label}
+            <span className="ml-1.5 text-xs text-zinc-400">({t.count})</span>
           </Link>
-        </div>
-      ) : (
-        <div className="bg-white rounded-lg border border-zinc-200 overflow-hidden">
-          <table className="w-full text-sm">
-            <thead>
-              <tr className="border-b border-zinc-200 bg-zinc-50">
-                <th className="text-left px-4 py-3 font-medium text-zinc-600">Title</th>
-                <th className="text-left px-4 py-3 font-medium text-zinc-600">Category</th>
-                <th className="text-left px-4 py-3 font-medium text-zinc-600">Visible</th>
-              </tr>
-            </thead>
-            <tbody>
-              {entries.map((entry) => (
-                <ClickableRow key={entry.id} href={`/lore/${entry.id}`} className="border-b border-zinc-100 last:border-0 hover:bg-zinc-50">
-                  <td className="px-4 py-3">
-                    <SubLink href={`/lore/${entry.id}`} className="font-medium text-zinc-900 hover:text-indigo-600">
-                      {entry.title}
-                    </SubLink>
-                  </td>
-                  <td className="px-4 py-3 text-zinc-500">
-                    {entry.category ?? '—'}
-                    {entry.descriptor && <span className="text-zinc-400 ml-1">· {entry.descriptor}</span>}
-                  </td>
-                  <StopPropCell className="px-4 py-3">
-                    <form action={toggleLoreVisibility}>
-                      <input type="hidden" name="id" value={entry.id} />
-                      <input type="hidden" name="visible" value={String(entry.visible)} />
-                      <button type="submit" className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium cursor-pointer transition-colors ${
-                        entry.visible ? 'bg-green-100 text-green-800 hover:bg-green-200' : 'bg-zinc-100 text-zinc-600 hover:bg-zinc-200'
-                      }`}>
-                        {entry.visible ? 'Visible' : 'Hidden'}
-                      </button>
-                    </form>
-                  </StopPropCell>
-                </ClickableRow>
-              ))}
-            </tbody>
-          </table>
-        </div>
+        ))}
+      </div>
+
+      {/* Lore tab */}
+      {tab === 'lore' && (
+        <>
+          {/* Category filter chips */}
+          <div className="flex flex-wrap gap-2 mb-4">
+            <Link
+              href="/lore?tab=lore"
+              className={`px-3 py-1 rounded-full text-xs font-medium border transition-colors ${
+                !params.category ? 'bg-zinc-800 text-white border-zinc-800' : 'border-zinc-300 text-zinc-600 hover:bg-zinc-50'
+              }`}
+            >
+              All
+            </Link>
+            {LORE_CATEGORIES.map(cat => (
+              <Link
+                key={cat}
+                href={`/lore?tab=lore&category=${encodeURIComponent(cat)}`}
+                className={`px-3 py-1 rounded-full text-xs font-medium border transition-colors ${
+                  params.category === cat ? 'bg-zinc-800 text-white border-zinc-800' : 'border-zinc-300 text-zinc-600 hover:bg-zinc-50'
+                }`}
+              >
+                {cat}
+              </Link>
+            ))}
+          </div>
+          {entries.length === 0 ? (
+            <EmptyState href="/lore/new" label="lore entry" />
+          ) : (
+            <div className="bg-white rounded-lg border border-zinc-200 overflow-hidden">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="border-b border-zinc-200 bg-zinc-50">
+                    <th className="text-left px-4 py-3 font-medium text-zinc-600">Title</th>
+                    <th className="text-left px-4 py-3 font-medium text-zinc-600">Category</th>
+                    <th className="text-left px-4 py-3 font-medium text-zinc-600">Visible</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {entries.map((entry) => (
+                    <ClickableRow key={entry.id} href={`/lore/${entry.id}`} className="border-b border-zinc-100 last:border-0 hover:bg-zinc-50">
+                      <td className="px-4 py-3">
+                        <SubLink href={`/lore/${entry.id}`} className="font-medium text-zinc-900 hover:text-indigo-600">
+                          {entry.title}
+                        </SubLink>
+                      </td>
+                      <td className="px-4 py-3 text-zinc-500">
+                        {entry.category ?? '—'}
+                        {entry.descriptor && <span className="text-zinc-400 ml-1">· {entry.descriptor}</span>}
+                      </td>
+                      <StopPropCell className="px-4 py-3">
+                        <form action={toggleLoreVisibility}>
+                          <input type="hidden" name="id" value={entry.id} />
+                          <input type="hidden" name="visible" value={String(entry.visible)} />
+                          <button type="submit" className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium cursor-pointer transition-colors ${
+                            entry.visible ? 'bg-green-100 text-green-800 hover:bg-green-200' : 'bg-zinc-100 text-zinc-600 hover:bg-zinc-200'
+                          }`}>
+                            {entry.visible ? 'Visible' : 'Hidden'}
+                          </button>
+                        </form>
+                      </StopPropCell>
+                    </ClickableRow>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </>
       )}
+
+      {/* Species tab */}
+      {tab === 'species' && (
+        allSpecies.length === 0 ? (
+          <EmptyState href="/species/new" label="species" />
+        ) : (
+          <div className="bg-white rounded-lg border border-zinc-200 overflow-hidden">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="border-b border-zinc-200 bg-zinc-50">
+                  <th className="text-left px-4 py-3 font-medium text-zinc-600">Name</th>
+                  <th className="text-left px-4 py-3 font-medium text-zinc-600">Description</th>
+                </tr>
+              </thead>
+              <tbody>
+                {allSpecies.map((s) => (
+                  <ClickableRow key={s.id} href={`/species/${s.id}`} className="border-b border-zinc-100 last:border-0 hover:bg-zinc-50">
+                    <td className="px-4 py-3">
+                      <SubLink href={`/species/${s.id}`} className="font-medium text-zinc-900 hover:text-indigo-600">
+                        {s.name}
+                      </SubLink>
+                    </td>
+                    <td className="px-4 py-3 text-zinc-500 truncate max-w-xs">{s.description ?? '—'}</td>
+                  </ClickableRow>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )
+      )}
+
+      {/* Cultures tab */}
+      {tab === 'cultures' && (
+        allCultures.length === 0 ? (
+          <EmptyState href="/cultures/new" label="culture" />
+        ) : (
+          <div className="bg-white rounded-lg border border-zinc-200 overflow-hidden">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="border-b border-zinc-200 bg-zinc-50">
+                  <th className="text-left px-4 py-3 font-medium text-zinc-600">Name</th>
+                  <th className="text-left px-4 py-3 font-medium text-zinc-600">Description</th>
+                </tr>
+              </thead>
+              <tbody>
+                {allCultures.map((c) => (
+                  <ClickableRow key={c.id} href={`/cultures/${c.id}`} className="border-b border-zinc-100 last:border-0 hover:bg-zinc-50">
+                    <td className="px-4 py-3">
+                      <SubLink href={`/cultures/${c.id}`} className="font-medium text-zinc-900 hover:text-indigo-600">
+                        {c.name}
+                      </SubLink>
+                    </td>
+                    <td className="px-4 py-3 text-zinc-500 truncate max-w-xs">{c.description ?? '—'}</td>
+                  </ClickableRow>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )
+      )}
+    </div>
+  )
+}
+
+function EmptyState({ href, label }: { href: string; label: string }) {
+  return (
+    <div className="rounded-lg border border-dashed border-zinc-300 p-12 text-center">
+      <p className="text-zinc-500 text-sm">Nothing here yet.</p>
+      <Link href={href} className="mt-3 inline-block text-sm font-medium text-indigo-600 hover:text-indigo-700">
+        Create the first {label} →
+      </Link>
     </div>
   )
 }

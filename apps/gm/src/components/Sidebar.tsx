@@ -6,7 +6,10 @@ import { usePathname } from 'next/navigation'
 const nav = [
   {
     group: 'Campaign',
-    items: [{ label: 'Dashboard', href: '/' }],
+    items: [
+      { label: 'Dashboard', href: '/' },
+      { label: 'Settings', href: '/settings' },
+    ],
   },
   {
     group: 'Setting',
@@ -21,8 +24,6 @@ const nav = [
       { label: 'NPCs', href: '/npcs' },
       { label: 'Player Characters', href: '/player-characters' },
       { label: 'Factions', href: '/factions' },
-      { label: 'Species / Ancestry', href: '/species' },
-      { label: 'Cultures', href: '/cultures' },
     ],
   },
   {

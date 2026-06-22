@@ -63,9 +63,11 @@ export interface Database {
           culture: string | null
           background: string | null
           notes: string | null
+          private_notes: string | null
           image_url: string | null
           visible: boolean
           current_location_id: string | null
+          profile_id: string | null
           created_at: string
         }
         Insert: Partial<Omit<Database['public']['Tables']['player_characters']['Row'], 'id' | 'created_at'>>
@@ -318,6 +320,7 @@ export interface Database {
           id: string
           session_id: string
           pc_id: string | null
+          profile_id: string | null
           author_name: string | null
           notes_text: string | null
           created_at: string
@@ -349,6 +352,25 @@ export interface Database {
         }
         Insert: Partial<Omit<Database['public']['Tables']['faction_locations']['Row'], 'id' | 'created_at'>>
         Update: Partial<Database['public']['Tables']['faction_locations']['Insert']>
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          id: string
+          display_name: string | null
+          created_at: string
+        }
+        Insert: Partial<Omit<Database['public']['Tables']['profiles']['Row'], 'created_at'>>
+        Update: Partial<Database['public']['Tables']['profiles']['Insert']>
+        Relationships: []
+      }
+      settings: {
+        Row: {
+          key: string
+          value: string | null
+        }
+        Insert: { key: string; value?: string | null }
+        Update: { key?: string; value?: string | null }
         Relationships: []
       }
     }
@@ -387,3 +409,5 @@ export type FactionLocation      = Tables<'faction_locations'>
 export type CultureLocation      = Tables<'culture_locations'>
 export type SessionNote          = Tables<'session_notes'>
 export type SessionPlotThread    = Tables<'session_plot_threads'>
+export type Profile              = Tables<'profiles'>
+export type Setting              = Tables<'settings'>

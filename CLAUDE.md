@@ -12,7 +12,7 @@ A **setting-agnostic** TTRPG campaign management tool. The GM needs structured, 
 TTRPGorganizer/
   apps/
     gm/          # Next.js — private GM app, full read/write (BUILT)
-    player/      # Next.js — public player portal, read-only (NOT YET CREATED)
+    player/      # Next.js — player portal, runs on port 3001 (BUILT)
   packages/
     db/          # Supabase client + TypeScript types
       src/
@@ -48,6 +48,21 @@ Do not ask the user to run migrations manually — run them directly.
 | Auth | Supabase Auth | Single GM account — login page at `/login` |
 | Deployment | Vercel | Player portal; GM app runs locally |
 | Package manager | pnpm | Workspaces |
+
+## Player portal (@supabase/ssr type gotcha)
+
+`apps/player` uses `@supabase/ssr` for cookie-based session management. The `createServerClient` and `createBrowserClient` functions from `@supabase/ssr` have a third `Schema` generic that doesn't satisfy `GenericSchema` with hand-written Database types, causing all query `.data` to resolve as `never`.
+
+**Fix:** Do NOT pass `<Database>` generic to `@supabase/ssr` functions in the player portal. All clients are created without the generic (defaults to `any`). Cast all query results explicitly — the same pattern as the GM app.
+
+```typescript
+// apps/player/src/lib/supabase/server.ts and client.ts
+// ✓ correct — no generic
+return createServerClient(url, key, { cookies: ... })
+
+// ✗ wrong — causes never on all query results
+return createServerClient<Database>(url, key, { cookies: ... })
+```
 
 ## Database schema (live in Supabase)
 
@@ -216,6 +231,38 @@ const sessions  = (results[1].data ?? []) as Array<{ id: string; session_number:
 
 ### "Unknown" convention
 `NULL` means unknown/nowhere for all location FKs. Never create a fake "Unknown" location row. UI displays `NULL` as "Unknown" or "Nomadic" depending on context.
+
+## Player portal — what's built
+
+`apps/player` is a full Next.js 16 app running on port 3001.
+
+### Auth flow
+- Players self-register at `/register` with email + password + **access code** (validated against `settings.registration_code`)
+- On registration, a `profiles` row is created linking `auth.users.id` → `profiles.id`
+- GM assigns a `player_characters` row to a player by setting `player_characters.profile_id` from the GM Settings page
+- Session managed via `@supabase/ssr` cookies; middleware at `src/middleware.ts` enforces auth on all routes except `/login` and `/register`
+
+### Pages
+| Page | Route | Notes |
+|------|-------|-------|
+| Dashboard | `/` | Summary counts with links |
+| Sessions list | `/sessions` | |
+| Session detail | `/sessions/[id]` | GM summary + player note boxes; players post notes via `NoteForm` |
+| Locations list | `/locations` | visible only |
+| Location detail | `/locations/[id]` | sub-locations + shop inventory |
+| NPCs list | `/npcs` | visible only |
+| NPC detail | `/npcs/[id]` | revealed facts only |
+| Factions list | `/factions` | visible only |
+| Faction detail | `/factions/[id]` | visible NPC members |
+| Lore | `/lore` | tabbed: Lore / Species / Cultures |
+| Lore detail | `/lore/[id]`, `/species/[id]`, `/cultures/[id]` | |
+| My Character | `/character` | player-editable; private notes visible only to that player |
+
+### Key design decisions
+- Players can see all visible player characters (not just their own) but can only edit their own
+- `private_notes` on `player_characters` is only rendered on `/character` (your own sheet) — not shown on other players' views
+- Session notes are tagged with both `profile_id` and `pc_id` so multi-character players stay distinct
+- RLS enforces all visibility and write permissions at the database level
 
 ### @mention / rich text (large feature, do separately)
 - Replace textarea fields with Tiptap rich-text editor

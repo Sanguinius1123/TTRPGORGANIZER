@@ -23,4 +23,10 @@ export type {
   Culture,
   FactionRelationship,
   FactionLocation,
+  PCFaction,
+  CultureLocation,
+  SessionNote,
+  SessionPlotThread,
+  Profile,
+  Setting,
 } from './types'
