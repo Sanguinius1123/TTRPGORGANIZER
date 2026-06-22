@@ -41,6 +41,8 @@ export default async function NpcPage({ params }: { params: Promise<{ id: string
   const culturesList = (r5.data ?? []) as Array<{ id: string; name: string }>
   const allLocations = (r6.data ?? []) as SimpleLocation[]
   const factionById  = Object.fromEntries(allFactions.map((f) => [f.id, f]))
+  const speciesIdByName = Object.fromEntries(speciesList.map(s => [s.name, s.id]))
+  const cultureIdByName = Object.fromEntries(culturesList.map(c => [c.name, c.id]))
 
   return (
     <div className="p-8 max-w-5xl">
@@ -77,7 +79,12 @@ export default async function NpcPage({ params }: { params: Promise<{ id: string
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className={label}>Species / Ancestry</label>
+                <div className="flex items-center justify-between mb-1">
+                  <label className="text-sm font-medium text-zinc-700">Species / Ancestry</label>
+                  {npc.species && speciesIdByName[npc.species] && (
+                    <Link href={`/species/${speciesIdByName[npc.species]}`} className="text-xs text-indigo-500 hover:text-indigo-700">View →</Link>
+                  )}
+                </div>
                 <select key={npc.species ?? ''} name="species" defaultValue={npc.species ?? ''} className={input}>
                   <option value="">— None —</option>
                   {speciesList.map((s) => <option key={s.id} value={s.name}>{s.name}</option>)}
@@ -89,7 +96,12 @@ export default async function NpcPage({ params }: { params: Promise<{ id: string
               </div>
             </div>
             <div>
-              <label className={label}>Culture</label>
+              <div className="flex items-center justify-between mb-1">
+                <label className="text-sm font-medium text-zinc-700">Culture</label>
+                {npc.culture && cultureIdByName[npc.culture] && (
+                  <Link href={`/cultures/${cultureIdByName[npc.culture]}`} className="text-xs text-indigo-500 hover:text-indigo-700">View →</Link>
+                )}
+              </div>
               <select key={npc.culture ?? ''} name="culture" defaultValue={npc.culture ?? ''} className={input}>
                 <option value="">— None —</option>
                 {culturesList.map((c) => <option key={c.id} value={c.name}>{c.name}</option>)}

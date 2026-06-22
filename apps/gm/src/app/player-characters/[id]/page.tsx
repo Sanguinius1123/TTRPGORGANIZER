@@ -36,6 +36,8 @@ export default async function PlayerCharacterPage({ params }: { params: Promise<
   const allFactions  = (r4.data ?? []) as SimpleFaction[]
   const factionLinks = (r5.data ?? []) as FactionLink[]
   const factionById  = Object.fromEntries(allFactions.map((f) => [f.id, f]))
+  const speciesIdByName = Object.fromEntries(speciesList.map(s => [s.name, s.id]))
+  const cultureIdByName = Object.fromEntries(culturesList.map(c => [c.name, c.id]))
 
   return (
     <div className="p-8 max-w-5xl">
@@ -79,14 +81,24 @@ export default async function PlayerCharacterPage({ params }: { params: Promise<
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className={label}>Species / Ancestry</label>
+                <div className="flex items-center justify-between mb-1">
+                  <label className="text-sm font-medium text-zinc-700">Species / Ancestry</label>
+                  {pc.species && speciesIdByName[pc.species] && (
+                    <Link href={`/species/${speciesIdByName[pc.species]}`} className="text-xs text-indigo-500 hover:text-indigo-700">View →</Link>
+                  )}
+                </div>
                 <select key={pc.species ?? ''} name="species" defaultValue={pc.species ?? ''} className={input}>
                   <option value="">— None —</option>
                   {speciesList.map((s) => <option key={s.id} value={s.name}>{s.name}</option>)}
                 </select>
               </div>
               <div>
-                <label className={label}>Culture</label>
+                <div className="flex items-center justify-between mb-1">
+                  <label className="text-sm font-medium text-zinc-700">Culture</label>
+                  {pc.culture && cultureIdByName[pc.culture] && (
+                    <Link href={`/cultures/${cultureIdByName[pc.culture]}`} className="text-xs text-indigo-500 hover:text-indigo-700">View →</Link>
+                  )}
+                </div>
                 <select key={pc.culture ?? ''} name="culture" defaultValue={pc.culture ?? ''} className={input}>
                   <option value="">— None —</option>
                   {culturesList.map((c) => <option key={c.id} value={c.name}>{c.name}</option>)}

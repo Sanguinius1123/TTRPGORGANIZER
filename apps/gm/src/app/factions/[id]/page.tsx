@@ -74,6 +74,8 @@ export default async function FactionPage({ params }: { params: Promise<{ id: st
   const npcById      = Object.fromEntries(allNpcs.map((n) => [n.id, n]))
   const factionById  = Object.fromEntries(allFactions.map((f) => [f.id, f]))
   const locationById = Object.fromEntries(allLocations.map((l) => [l.id, l]))
+  const speciesIdByName = Object.fromEntries(speciesList.map(s => [s.name, s.id]))
+  const cultureIdByName = Object.fromEntries(culturesList.map(c => [c.name, c.id]))
 
   let parent: { id: string; name: string } | null = null
   if (faction.parent_faction_id) {
@@ -120,14 +122,24 @@ export default async function FactionPage({ params }: { params: Promise<{ id: st
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className={label}>Species / Ancestry</label>
+                <div className="flex items-center justify-between mb-1">
+                  <label className="text-sm font-medium text-zinc-700">Species / Ancestry</label>
+                  {faction.species && speciesIdByName[faction.species] && (
+                    <Link href={`/species/${speciesIdByName[faction.species]}`} className="text-xs text-indigo-500 hover:text-indigo-700">View →</Link>
+                  )}
+                </div>
                 <select key={faction.species ?? ''} name="species" defaultValue={faction.species ?? ''} className={input}>
                   <option value="">— None —</option>
                   {speciesList.map((s) => <option key={s.id} value={s.name}>{s.name}</option>)}
                 </select>
               </div>
               <div>
-                <label className={label}>Culture</label>
+                <div className="flex items-center justify-between mb-1">
+                  <label className="text-sm font-medium text-zinc-700">Culture</label>
+                  {faction.culture && cultureIdByName[faction.culture] && (
+                    <Link href={`/cultures/${cultureIdByName[faction.culture]}`} className="text-xs text-indigo-500 hover:text-indigo-700">View →</Link>
+                  )}
+                </div>
                 <select key={faction.culture ?? ''} name="culture" defaultValue={faction.culture ?? ''} className={input}>
                   <option value="">— None —</option>
                   {culturesList.map((c) => <option key={c.id} value={c.name}>{c.name}</option>)}
