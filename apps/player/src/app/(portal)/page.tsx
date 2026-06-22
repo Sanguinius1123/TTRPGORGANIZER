@@ -134,14 +134,18 @@ export default async function HomePage({ searchParams }: { searchParams: SearchP
                 <p className="text-xs text-zinc-400 px-1 py-1">No other visible party members.</p>
               ) : (
                 partyMembers.map(member => (
-                  <div key={member.id} className="flex flex-col rounded px-1 py-2">
-                    <span className="text-sm font-medium text-zinc-900">{member.name}</span>
+                  <Link
+                    key={member.id}
+                    href={`/player-characters/${member.id}`}
+                    className="flex flex-col rounded px-1 py-2 hover:bg-zinc-50 transition-colors"
+                  >
+                    <span className="text-sm font-medium text-zinc-900 hover:text-indigo-600">{member.name}</span>
                     {(member.player_name || member.species) && (
                       <span className="text-xs text-zinc-400">
                         {[member.player_name, member.species].filter(Boolean).join(' · ')}
                       </span>
                     )}
-                  </div>
+                  </Link>
                 ))
               )}
             </div>

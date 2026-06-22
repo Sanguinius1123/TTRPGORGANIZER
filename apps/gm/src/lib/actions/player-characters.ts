@@ -15,7 +15,7 @@ export async function createPlayerCharacter(formData: FormData) {
       culture: (formData.get('culture') as string) || null,
       background: (formData.get('background') as string) || null,
       notes: (formData.get('notes') as string) || null,
-      visible: false,
+      visible: true,
     })
     .select()
     .single()
