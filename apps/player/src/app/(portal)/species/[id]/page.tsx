@@ -2,6 +2,8 @@ import { createClient } from '@/lib/supabase/server'
 import { Species } from '@ttrpg/db'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
+import { renderMentions } from '@/lib/mentions'
+import { buildVisibleMentionSet } from '@/lib/mentionVisibility'
 
 export default async function SpeciesDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
@@ -9,6 +11,8 @@ export default async function SpeciesDetailPage({ params }: { params: Promise<{ 
   const { data: raw } = await supabase.from('species').select('*').eq('id', id).single()
   if (!raw) notFound()
   const species = raw as Species
+
+  const visibleIds = await buildVisibleMentionSet(supabase, [species.description])
 
   return (
     <div className="p-8 max-w-4xl">
@@ -25,7 +29,7 @@ export default async function SpeciesDetailPage({ params }: { params: Promise<{ 
 
       {species.description && (
         <div className="bg-slate-800 rounded-lg border border-slate-700 p-6">
-          <p className="text-sm text-slate-300 whitespace-pre-wrap leading-relaxed">{species.description}</p>
+          <p className="text-sm text-slate-300 whitespace-pre-wrap leading-relaxed">{renderMentions(species.description, visibleIds)}</p>
         </div>
       )}
     </div>

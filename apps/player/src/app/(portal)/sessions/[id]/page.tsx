@@ -3,6 +3,8 @@ import { Session, SessionNote, PlayerCharacter, Profile } from '@ttrpg/db'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { NoteForm } from './NoteForm'
+import { renderMentions } from '@/lib/mentions'
+import { buildVisibleMentionSet } from '@/lib/mentionVisibility'
 
 export default async function SessionDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
@@ -28,6 +30,8 @@ export default async function SessionDetailPage({ params }: { params: Promise<{ 
   const profileById = Object.fromEntries(profiles.map(p => [p.id, p]))
   const pcById = Object.fromEntries(allPCs.map(p => [p.id, p]))
 
+  const visibleIds = await buildVisibleMentionSet(supabase, [session.summary, session.loose_threads])
+
   // Find my existing note for this session (one per PC per session)
   const myNote = myPC
     ? (notes.find(n => n.pc_id === myPC.id) ?? null)
@@ -50,14 +54,14 @@ export default async function SessionDetailPage({ params }: { params: Promise<{ 
         {session.summary && (
           <div className="bg-slate-800 rounded-lg border border-slate-700 p-6">
             <h2 className="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-3">Summary</h2>
-            <p className="text-slate-300 whitespace-pre-wrap text-sm leading-relaxed">{session.summary}</p>
+            <p className="text-slate-300 whitespace-pre-wrap text-sm leading-relaxed">{renderMentions(session.summary, visibleIds)}</p>
           </div>
         )}
 
         {session.loose_threads && (
           <div className="bg-slate-800 rounded-lg border border-slate-700 p-6">
             <h2 className="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-3">Loose Threads</h2>
-            <p className="text-slate-300 whitespace-pre-wrap text-sm leading-relaxed">{session.loose_threads}</p>
+            <p className="text-slate-300 whitespace-pre-wrap text-sm leading-relaxed">{renderMentions(session.loose_threads, visibleIds)}</p>
           </div>
         )}
 

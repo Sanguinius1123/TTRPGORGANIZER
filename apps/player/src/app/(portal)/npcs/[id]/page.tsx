@@ -2,6 +2,8 @@ import { createClient } from '@/lib/supabase/server'
 import { NPC, NPCFact } from '@ttrpg/db'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
+import { renderMentions } from '@/lib/mentions'
+import { buildVisibleMentionSet } from '@/lib/mentionVisibility'
 
 export default async function NPCDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
@@ -34,6 +36,11 @@ export default async function NPCDetailPage({ params }: { params: Promise<{ id: 
     factionRows.push(...((data ?? []) as typeof factionRows))
   }
   const factionById = Object.fromEntries(factionRows.map(f => [f.id, f]))
+
+  // Build visibility set for mentions in this NPC's text fields
+  const visibleIds = await buildVisibleMentionSet(supabase, [
+    npc.background, npc.notes, ...facts.map(f => f.fact_text),
+  ])
 
   const hasProperties = npc.species || npc.profession || npc.culture || npc.disposition
 
@@ -90,7 +97,7 @@ export default async function NPCDetailPage({ params }: { params: Promise<{ id: 
         {npc.background && (
           <div className="bg-slate-800 rounded-lg border border-slate-700 p-6">
             <h2 className="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-3">Background</h2>
-            <p className="text-sm text-slate-300 whitespace-pre-wrap leading-relaxed">{npc.background}</p>
+            <p className="text-sm text-slate-300 whitespace-pre-wrap leading-relaxed">{renderMentions(npc.background, visibleIds)}</p>
           </div>
         )}
 
@@ -102,7 +109,7 @@ export default async function NPCDetailPage({ params }: { params: Promise<{ id: 
             <ul className="divide-y divide-slate-700/50">
               {facts.map(fact => (
                 <li key={fact.id} className="px-6 py-3 text-sm text-slate-300 pl-9 relative before:absolute before:left-6 before:top-3.5 before:w-1.5 before:h-1.5 before:rounded-full before:bg-slate-600">
-                  {fact.fact_text}
+                  {renderMentions(fact.fact_text, visibleIds)}
                 </li>
               ))}
             </ul>

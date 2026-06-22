@@ -1,5 +1,11 @@
 # TTRPG Organizer — Claude context
 
+## Working style with Claude
+
+**Use agents for self-contained tasks.** When a task is well-defined, doesn't need back-and-forth feedback, and spans many files (e.g. a full styling pass, a systematic search-and-replace, a broad refactor), delegate it to a sub-agent via the Agent tool with `isolation: "worktree"`. This keeps the main conversation free for things that need active decisions and adjustments. Good candidates: full dark-mode passes, linting sweeps, adding a consistent pattern across many pages, build verification loops.
+
+**Keep the main conversation for interactive work**: new features with unclear scope, UX decisions, anything where the user needs to review options before proceeding, debugging sessions.
+
 ## What this project is
 
 A **setting-agnostic** TTRPG campaign management tool. The GM needs structured, queryable data (not prose files) to manage NPCs, locations, factions, items, shops, encounters, sessions, lore, and plot threads. A separate read-only player portal shows only what the GM has explicitly revealed.
@@ -245,30 +251,43 @@ const sessions  = (results[1].data ?? []) as Array<{ id: string; session_number:
 ### Pages
 | Page | Route | Notes |
 |------|-------|-------|
-| Dashboard | `/` | Summary counts with links |
-| Sessions list | `/sessions` | |
-| Session detail | `/sessions/[id]` | GM summary + player note boxes; players post notes via `NoteForm` |
-| Locations list | `/locations` | visible only |
+| My Character | `/` | Character sheet + editable fields + party sidebar; multi-PC switcher via `?pc=` param |
+| PC detail (other) | `/player-characters/[id]` | Read-only sheet for another player's PC; redirects to `/` if it's your own |
+| Sessions list | `/sessions` | Summary preview strips mention tokens |
+| Session detail | `/sessions/[id]` | GM summary + loose threads + player notes; one note per PC per session (upsert) |
+| Locations list | `/locations` | visible only, filter bar |
 | Location detail | `/locations/[id]` | sub-locations + shop inventory |
-| NPCs list | `/npcs` | visible only |
-| NPC detail | `/npcs/[id]` | revealed facts only |
-| Factions list | `/factions` | visible only |
-| Faction detail | `/factions/[id]` | visible NPC members |
-| Lore | `/lore` | tabbed: Lore / Species / Cultures |
-| Lore detail | `/lore/[id]`, `/species/[id]`, `/cultures/[id]` | |
-| My Character | `/character` | player-editable; private notes visible only to that player |
+| NPCs list | `/npcs` | visible only, filter bar |
+| NPC detail | `/npcs/[id]` | revealed facts only; mentions rendered |
+| Factions list | `/factions` | visible only, filter bar |
+| Faction detail | `/factions/[id]` | visible NPC members; mentions rendered |
+| Lore | `/lore` | tabbed: Lore / Species / Cultures, category chip filters |
+| Lore detail | `/lore/[id]`, `/species/[id]`, `/cultures/[id]` | mentions rendered |
+| (redirect) | `/character` | → `/` |
 
 ### Key design decisions
-- Players can see all visible player characters (not just their own) but can only edit their own
-- `private_notes` on `player_characters` is only rendered on `/character` (your own sheet) — not shown on other players' views
-- Session notes are tagged with both `profile_id` and `pc_id` so multi-character players stay distinct
+- Home page (`/`) is the character sheet, not a dashboard
+- Multi-PC support: one profile can be assigned to multiple `player_characters`; `?pc=<id>` param switches between them
+- `party_faction_id` FK on `player_characters` → `factions(id)` — GM sets per PC on the PC detail page; player portal uses it to populate the party sidebar
+- Session notes: one note per PC per session (upsert); GM can edit/delete any note for moderation; players can edit their own
+- Note display: "PC Name — Player Name" format
+- Players can see all visible PCs but can only edit their own; `/player-characters/[id]` is read-only for others
+- `private_notes` on `player_characters` is only rendered on `/` (your own sheet) — not shown on other players' views
 - RLS enforces all visibility and write permissions at the database level
 
-### @mention / rich text (large feature, do separately)
-- Replace textarea fields with Tiptap rich-text editor
+### @mention rendering (player portal)
+Mentions in the format `[[type:id|name]]` are rendered in all detail pages using:
+- `apps/player/src/lib/mentions.tsx` — `renderMentions(text, visibleIds)`, `stripMentions(text)`, `extractMentions(texts)`
+- `apps/player/src/lib/mentionVisibility.ts` — `buildVisibleMentionSet(supabase, texts)` — batch-queries visibility via RLS and returns a `Set<string>` of visible IDs
+
+**Visible mentions** render as colored clickable links (color varies by entity type). **Hidden mentions** (entity not visible to players) render as a randomly chosen glitch effect (block chars, alphanumeric noise, `REDACTED` badge, or symbol noise), with 3 surrounding non-space characters also scrambled to simulate "corruption bleed". The glitch style is picked server-side on each page load.
+
+List-page summaries (e.g. sessions list) use `stripMentions` — no visibility queries needed for a preview.
+
+### @mention / rich text — Tiptap upgrade (future)
+- Replace MentionTextarea with Tiptap rich-text editor
 - `@` triggers autocomplete searching across all entity types by name
 - Mentions stored by entity ID internally so renames don't break links
-- Rendered as clickable links navigating to the entity's detail page
 
 ### Player portal distance calculator (after portal is built)
 - When party's current location is known, show travel distance/cost to other visible locations
@@ -286,19 +305,14 @@ These entity types now have a fixed dropdown for their primary category field, p
 
 ## Next steps
 
-1. **Build the player portal** (`apps/player`) — this is the next major feature. Details:
-   - New Next.js app using `createBrowserClient()` from `packages/db`
-   - Reads only `visible = true` rows (locations, NPCs, factions, lore, plot threads) and only `revealed = true` npc_facts
-   - **Login / user accounts**: Players need their own accounts to log in to the web portal. Use Supabase Auth. Each player account is linked to a `player_characters` row so the app knows who they are. Design needed: a `profiles` table or a `auth_user_id` column on `player_characters`.
-   - **Player-editable fields**: Some things players should be able to edit themselves (e.g. session notes, their own PC's notes/background). Most content is GM-only. Define the boundary carefully before building.
-   - Pages needed: locations list, location detail (shops/inventory), NPC list (visible NPCs + revealed facts only), lore list, their own PC sheet
-   - Deploy to Vercel — set env vars (`NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`)
-2. **Apply remaining planned schema additions** — see "Planned schema additions" section below.
-3. **Future features**:
-   - **Item category list** — add dropdown + descriptor to Items (see note above)
-   - **Live spellcheck** — investigate browser-native `spellCheck` attribute on textarea/input elements (free, no library needed). If richer highlighting is needed, consider a lightweight library. Add to all MentionTextarea and text input fields.
-   - **History timeline page** — scrollable timeline UI for `lore_entries` where `category = 'History'`. Requires schema additions: `ALTER TABLE lore_entries ADD COLUMN major_event BOOLEAN DEFAULT FALSE; ALTER TABLE lore_entries ADD COLUMN event_timestamp TEXT;`. When `major_event = true` and `event_timestamp` is set, entry appears on the timeline. UI: page anchored at "current time", scroll up = past, scroll down = future.
-   - Map image overlay with pin positions (`x, y` on `locations`)
-   - NPC portrait / image upload
-   - Shop inventory management UI (schema exists, no UI yet for `shop_inventory`)
-   - @mention / rich text editor (Tiptap)
+1. **Apply remaining planned schema additions**
+   - `items.location_id FK locations(id)` — nullable, where the item currently is
+   - `lore_locations (id, lore_id FK, location_id FK, notes, created_at)` — lore entries tied to locations
+2. **Item category + descriptor** — add category dropdown and Descriptor field to Items. Suggested types: weapon, armour, consumable, tool, currency, relic, document, vehicle, misc. Confirm list with user before implementing.
+3. **Future features** (roughly in priority order):
+   - **Live spellcheck** — add `spellCheck` attribute to all `textarea`/`input` fields (browser-native, free). Add to MentionTextarea and all edit forms in both apps.
+   - **Shop inventory management UI** — schema exists (`shop_inventory`), no GM UI yet for adding/editing items in a shop
+   - **History timeline page** — scrollable timeline for `lore_entries` where `category = 'History'`. Needs schema: `ALTER TABLE lore_entries ADD COLUMN major_event BOOLEAN DEFAULT FALSE; ALTER TABLE lore_entries ADD COLUMN event_timestamp TEXT;`. UI: anchored at "current time", scroll up = past, scroll down = future.
+   - **Map image overlay** — pin positions (`x, y` on `locations`); don't add columns until building this
+   - **NPC portrait / image upload** — needs Supabase Storage setup
+   - **@mention Tiptap upgrade** — replace MentionTextarea with Tiptap rich-text editor

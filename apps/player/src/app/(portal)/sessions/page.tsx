@@ -1,6 +1,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { Session } from '@ttrpg/db'
 import Link from 'next/link'
+import { stripMentions } from '@/lib/mentions'
 
 export default async function SessionsPage() {
   const supabase = await createClient()
@@ -33,7 +34,7 @@ export default async function SessionsPage() {
                 <div className="flex-1 min-w-0">
                   <p className="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-0.5">Session {s.session_number}</p>
                   <p className="font-semibold text-slate-100">{s.title ?? 'Untitled'}</p>
-                  {s.summary && <p className="mt-1 text-sm text-slate-400 line-clamp-2">{s.summary}</p>}
+                  {s.summary && <p className="mt-1 text-sm text-slate-400 line-clamp-2">{stripMentions(s.summary)}</p>}
                 </div>
                 <span className="text-slate-600 text-sm shrink-0">→</span>
               </div>

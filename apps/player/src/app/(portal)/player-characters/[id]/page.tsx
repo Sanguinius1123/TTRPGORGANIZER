@@ -2,6 +2,8 @@ import { createClient } from '@/lib/supabase/server'
 import { PlayerCharacter, SessionNote } from '@ttrpg/db'
 import Link from 'next/link'
 import { notFound, redirect } from 'next/navigation'
+import { renderMentions } from '@/lib/mentions'
+import { buildVisibleMentionSet } from '@/lib/mentionVisibility'
 
 export default async function PCDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
@@ -30,6 +32,8 @@ export default async function PCDetailPage({ params }: { params: Promise<{ id: s
 
   const speciesIdByName  = Object.fromEntries(speciesList.map(s => [s.name, s.id]))
   const cultureIdByName  = Object.fromEntries(culturesList.map(c => [c.name, c.id]))
+
+  const visibleIds = await buildVisibleMentionSet(supabase, [pc.background, pc.notes])
 
   const field = 'text-sm text-slate-100'
   const label = 'text-xs font-medium text-slate-500 mb-0.5'
@@ -70,13 +74,13 @@ export default async function PCDetailPage({ params }: { params: Promise<{ id: s
           {pc.background && (
             <div>
               <p className={label}>Background</p>
-              <p className={`${field} whitespace-pre-wrap leading-relaxed`}>{pc.background}</p>
+              <p className={`${field} whitespace-pre-wrap leading-relaxed`}>{renderMentions(pc.background, visibleIds)}</p>
             </div>
           )}
           {pc.notes && (
             <div>
               <p className={label}>Notes</p>
-              <p className={`${field} whitespace-pre-wrap leading-relaxed`}>{pc.notes}</p>
+              <p className={`${field} whitespace-pre-wrap leading-relaxed`}>{renderMentions(pc.notes, visibleIds)}</p>
             </div>
           )}
         </div>

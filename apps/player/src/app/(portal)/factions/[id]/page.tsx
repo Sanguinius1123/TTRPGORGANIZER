@@ -2,6 +2,8 @@ import { createClient } from '@/lib/supabase/server'
 import { Faction, NPC } from '@ttrpg/db'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
+import { renderMentions } from '@/lib/mentions'
+import { buildVisibleMentionSet } from '@/lib/mentionVisibility'
 
 export default async function FactionDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
@@ -35,6 +37,8 @@ export default async function FactionDetailPage({ params }: { params: Promise<{ 
   }
 
   const hasProperties = faction.disposition || faction.species || faction.culture
+
+  const visibleIds = await buildVisibleMentionSet(supabase, [faction.goal, faction.description])
 
   return (
     <div className="p-8 max-w-4xl">
@@ -75,14 +79,14 @@ export default async function FactionDetailPage({ params }: { params: Promise<{ 
         {faction.goal && (
           <div className="bg-slate-800 rounded-lg border border-slate-700 p-6">
             <h2 className="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-3">Goal</h2>
-            <p className="text-sm text-slate-300 leading-relaxed">{faction.goal}</p>
+            <p className="text-sm text-slate-300 leading-relaxed">{renderMentions(faction.goal, visibleIds)}</p>
           </div>
         )}
 
         {faction.description && (
           <div className="bg-slate-800 rounded-lg border border-slate-700 p-6">
             <h2 className="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-3">Description</h2>
-            <p className="text-sm text-slate-300 whitespace-pre-wrap leading-relaxed">{faction.description}</p>
+            <p className="text-sm text-slate-300 whitespace-pre-wrap leading-relaxed">{renderMentions(faction.description, visibleIds)}</p>
           </div>
         )}
 

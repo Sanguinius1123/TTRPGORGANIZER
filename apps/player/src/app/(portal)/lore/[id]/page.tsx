@@ -2,6 +2,8 @@ import { createClient } from '@/lib/supabase/server'
 import { LoreEntry } from '@ttrpg/db'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
+import { renderMentions } from '@/lib/mentions'
+import { buildVisibleMentionSet } from '@/lib/mentionVisibility'
 
 export default async function LoreDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
@@ -14,6 +16,8 @@ export default async function LoreDetailPage({ params }: { params: Promise<{ id:
     .single()
   if (!raw) notFound()
   const entry = raw as LoreEntry
+
+  const visibleIds = await buildVisibleMentionSet(supabase, [entry.description])
 
   return (
     <div className="p-8 max-w-4xl">
@@ -32,7 +36,7 @@ export default async function LoreDetailPage({ params }: { params: Promise<{ id:
 
       {entry.description && (
         <div className="bg-slate-800 rounded-lg border border-slate-700 p-6">
-          <p className="text-sm text-slate-300 whitespace-pre-wrap leading-relaxed">{entry.description}</p>
+          <p className="text-sm text-slate-300 whitespace-pre-wrap leading-relaxed">{renderMentions(entry.description, visibleIds)}</p>
         </div>
       )}
     </div>

@@ -2,6 +2,8 @@ import { createClient } from '@/lib/supabase/server'
 import { Location, Shop, Item } from '@ttrpg/db'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
+import { renderMentions } from '@/lib/mentions'
+import { buildVisibleMentionSet } from '@/lib/mentionVisibility'
 
 export default async function LocationDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
@@ -25,6 +27,8 @@ export default async function LocationDetailPage({ params }: { params: Promise<{
     const { data: p } = await supabase.from('locations').select('id, name').eq('id', location.parent_location_id).single()
     parent = p as { id: string; name: string } | null
   }
+
+  const visibleIds = await buildVisibleMentionSet(supabase, [location.description])
 
   // Load inventory for each shop
   const inventories = shops.length > 0
@@ -83,7 +87,7 @@ export default async function LocationDetailPage({ params }: { params: Promise<{
         {location.description && (
           <div className="bg-slate-800 rounded-lg border border-slate-700 p-6">
             <h2 className="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-3">Description</h2>
-            <p className="text-sm text-slate-300 whitespace-pre-wrap leading-relaxed">{location.description}</p>
+            <p className="text-sm text-slate-300 whitespace-pre-wrap leading-relaxed">{renderMentions(location.description, visibleIds)}</p>
           </div>
         )}
 
