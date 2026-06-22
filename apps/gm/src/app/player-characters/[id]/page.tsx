@@ -3,6 +3,7 @@ import {
   updatePlayerCharacter, deletePlayerCharacter, togglePlayerCharacterVisibility,
   setPcLocation, addPcFaction, removePcFaction,
 } from '@/lib/actions/player-characters'
+import { assignProfileToPC } from '@/lib/actions/settings'
 import { PlayerCharacter } from '@ttrpg/db'
 import MentionTextarea from '@/components/MentionTextarea'
 import Link from 'next/link'
@@ -23,18 +24,20 @@ export default async function PlayerCharacterPage({ params }: { params: Promise<
   if (!raw) notFound()
   const pc = raw as PlayerCharacter
 
-  const [r1, r2, r3, r4, r5] = await Promise.all([
+  const [r1, r2, r3, r4, r5, r6] = await Promise.all([
     supabase.from('species').select('id, name').order('name'),
     supabase.from('cultures').select('id, name').order('name'),
     supabase.from('locations').select('id, name').order('name'),
     supabase.from('factions').select('id, name').order('name'),
     supabase.from('pc_factions').select('id, role, faction_id').eq('pc_id', id),
+    supabase.from('profiles').select('id, display_name').order('display_name'),
   ])
   const speciesList  = (r1.data ?? []) as Array<{ id: string; name: string }>
   const culturesList = (r2.data ?? []) as Array<{ id: string; name: string }>
   const allLocations = (r3.data ?? []) as Array<{ id: string; name: string }>
   const allFactions  = (r4.data ?? []) as SimpleFaction[]
   const factionLinks = (r5.data ?? []) as FactionLink[]
+  const profiles     = (r6.data ?? []) as Array<{ id: string; display_name: string | null }>
   const factionById  = Object.fromEntries(allFactions.map((f) => [f.id, f]))
   const speciesIdByName = Object.fromEntries(speciesList.map(s => [s.name, s.id]))
   const cultureIdByName = Object.fromEntries(culturesList.map(c => [c.name, c.id]))
@@ -47,11 +50,32 @@ export default async function PlayerCharacterPage({ params }: { params: Promise<
         <span className="text-sm text-zinc-900 font-medium">{pc.name}</span>
       </div>
 
-      <div className="flex items-start justify-between mb-6">
+      <div className="flex items-start justify-between gap-4 mb-6">
         <div>
           <h1 className="text-2xl font-bold text-zinc-900">{pc.name}</h1>
           {pc.player_name && <p className="text-sm text-zinc-500 mt-0.5">Played by {pc.player_name}</p>}
         </div>
+
+        {/* ── Player account assignment ── */}
+        <form action={assignProfileToPC} className="flex items-center gap-2 shrink-0">
+          <input type="hidden" name="pc_id" value={pc.id} />
+          <label className="text-xs font-medium text-zinc-500 whitespace-nowrap">Player account</label>
+          <select
+            key={pc.profile_id ?? ''}
+            name="profile_id"
+            defaultValue={pc.profile_id ?? ''}
+            className={smallInput + ' w-44'}
+          >
+            <option value="">— Unassigned —</option>
+            {profiles.map(p => (
+              <option key={p.id} value={p.id}>{p.display_name ?? p.id}</option>
+            ))}
+          </select>
+          <button type="submit" className="rounded bg-indigo-600 px-2.5 py-1.5 text-xs font-medium text-white hover:bg-indigo-700 whitespace-nowrap">
+            Assign
+          </button>
+        </form>
+
         <form action={togglePlayerCharacterVisibility}>
           <input type="hidden" name="id" value={pc.id} />
           <input type="hidden" name="visible" value={String(pc.visible)} />
