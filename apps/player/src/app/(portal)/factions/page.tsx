@@ -1,26 +1,60 @@
 import { createClient } from '@/lib/supabase/server'
-import { Faction } from '@ttrpg/db'
-import Link from 'next/link'
+import { FilterBar } from '@/components/FilterBar'
+import { ClickableRow, SubLink } from '@/components/TableRow'
+import { Suspense } from 'react'
 
-export default async function FactionsPage() {
+interface FactionRow {
+  id: string
+  name: string
+  species: string | null
+  culture: string | null
+  disposition: string | null
+  goal: string | null
+  parent: { id: string; name: string } | null
+}
+
+type SearchParams = Promise<{ species?: string; culture?: string }>
+
+export default async function FactionsPage({ searchParams }: { searchParams: SearchParams }) {
+  const params = await searchParams
   const supabase = await createClient()
-  const { data: raw } = await supabase
-    .from('factions')
-    .select('*')
-    .eq('visible', true)
-    .order('name')
-  const factions = (raw ?? []) as Faction[]
+
+  const results = await Promise.all([
+    (() => {
+      let q = supabase.from('factions').select('*, parent:parent_faction_id(id, name)').eq('visible', true).order('name')
+      if (params.species) q = q.eq('species', params.species)
+      if (params.culture) q = q.eq('culture', params.culture)
+      return q
+    })(),
+    supabase.from('species').select('id, name').order('name'),
+    supabase.from('cultures').select('id, name').order('name'),
+  ])
+
+  const factions = (results[0].data ?? []) as unknown as FactionRow[]
+  const speciesList = (results[1].data ?? []) as Array<{ id: string; name: string }>
+  const culturesList = (results[2].data ?? []) as Array<{ id: string; name: string }>
+  const speciesIdByName = Object.fromEntries(speciesList.map(s => [s.name, s.id]))
+  const cultureIdByName = Object.fromEntries(culturesList.map(c => [c.name, c.id]))
+
+  const filters = [
+    { type: 'select' as const, name: 'species', label: 'Species', options: speciesList.map(s => ({ value: s.name, label: s.name })) },
+    { type: 'select' as const, name: 'culture', label: 'Culture', options: culturesList.map(c => ({ value: c.name, label: c.name })) },
+  ]
 
   return (
-    <div className="p-8 max-w-5xl">
+    <div className="p-8">
       <div className="mb-6">
         <h1 className="text-2xl font-bold text-zinc-900">Factions</h1>
         <p className="text-sm text-zinc-500 mt-1">{factions.length} {factions.length === 1 ? 'entry' : 'entries'}</p>
       </div>
 
+      <Suspense fallback={null}>
+        <FilterBar filters={filters} />
+      </Suspense>
+
       {factions.length === 0 ? (
         <div className="rounded-lg border border-dashed border-zinc-300 p-12 text-center">
-          <p className="text-zinc-500 text-sm">No factions have been revealed yet.</p>
+          <p className="text-zinc-500 text-sm">No factions match the current filters.</p>
         </div>
       ) : (
         <div className="bg-white rounded-lg border border-zinc-200 overflow-hidden">
@@ -28,23 +62,41 @@ export default async function FactionsPage() {
             <thead>
               <tr className="border-b border-zinc-200 bg-zinc-50">
                 <th className="text-left px-4 py-3 font-medium text-zinc-600">Name</th>
+                <th className="text-left px-4 py-3 font-medium text-zinc-600">Parent Faction</th>
+                <th className="text-left px-4 py-3 font-medium text-zinc-600">Species</th>
+                <th className="text-left px-4 py-3 font-medium text-zinc-600">Culture</th>
                 <th className="text-left px-4 py-3 font-medium text-zinc-600">Disposition</th>
-                <th className="text-left px-4 py-3 font-medium text-zinc-600">Goal</th>
               </tr>
             </thead>
             <tbody>
               {factions.map(f => (
-                <tr key={f.id} className="border-b border-zinc-100 last:border-0 hover:bg-zinc-50">
+                <ClickableRow key={f.id} href={`/factions/${f.id}`} className="border-b border-zinc-100 last:border-0 hover:bg-zinc-50">
                   <td className="px-4 py-3">
-                    <Link href={`/factions/${f.id}`} className="font-medium text-zinc-900 hover:text-indigo-600">
+                    <SubLink href={`/factions/${f.id}`} className="font-medium text-zinc-900 hover:text-indigo-600">
                       {f.name}
-                    </Link>
+                    </SubLink>
+                  </td>
+                  <td className="px-4 py-3">
+                    {f.parent
+                      ? <SubLink href={`/factions/${f.parent.id}`} className="text-zinc-500 hover:text-indigo-600">{f.parent.name}</SubLink>
+                      : <span className="text-zinc-400">—</span>}
+                  </td>
+                  <td className="px-4 py-3">
+                    {f.species
+                      ? speciesIdByName[f.species]
+                        ? <SubLink href={`/species/${speciesIdByName[f.species]}`} className="text-zinc-500 hover:text-indigo-600">{f.species}</SubLink>
+                        : <span className="text-zinc-500">{f.species}</span>
+                      : <span className="text-zinc-400">—</span>}
+                  </td>
+                  <td className="px-4 py-3">
+                    {f.culture
+                      ? cultureIdByName[f.culture]
+                        ? <SubLink href={`/cultures/${cultureIdByName[f.culture]}`} className="text-zinc-500 hover:text-indigo-600">{f.culture}</SubLink>
+                        : <span className="text-zinc-500">{f.culture}</span>
+                      : <span className="text-zinc-400">—</span>}
                   </td>
                   <td className="px-4 py-3 text-zinc-500">{f.disposition ?? '—'}</td>
-                  <td className="px-4 py-3 text-zinc-500 max-w-xs">
-                    {f.goal ? <span className="line-clamp-1">{f.goal}</span> : '—'}
-                  </td>
-                </tr>
+                </ClickableRow>
               ))}
             </tbody>
           </table>
