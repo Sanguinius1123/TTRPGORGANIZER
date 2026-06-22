@@ -51,27 +51,39 @@ Do not ask the user to run migrations manually — run them directly.
 
 ## Database schema (live in Supabase)
 
-Migration has been applied. All tables exist.
+All migrations applied. All tables exist.
 
 ```
-factions            (id, name, parent_faction_id FK self, disposition, goal, description, image_url, visible, created_at)
+-- Core entities
+factions            (id, name, parent_faction_id FK self, disposition, goal, description, image_url, visible, species text, culture text, created_at)
 locations           (id, name, type, descriptor, status, area, description, parent_location_id FK self, image_url, visible, created_at)
 location_connections(id, from_location_id FK, to_location_id FK, travel_time, travel_cost, bidirectional, notes, created_at)
-player_characters   (id, name, player_name, species, background, notes, image_url, visible, created_at)
-npcs                (id, name, species, profession, culture, background, disposition, notes, image_url, visible, created_at)
-npc_facts           (id, npc_id FK, fact_text, revealed, created_at)
-npc_factions        (id, npc_id FK, faction_id FK, role, created_at)
-npc_locations       (id, npc_id FK, location_id FK, relationship_type, notes, created_at)
-character_relationships(id, from_npc_id FK, from_pc_id FK, to_npc_id FK, to_pc_id FK, relationship_type, notes, created_at)
-  -- directional: A→B ≠ B→A (one NPC may not know the other exists)
+species             (id, name, description, origin_location_id FK nullable, created_at)
+cultures            (id, name, description, created_at)
+player_characters   (id, name, player_name, species text, culture text, background, notes, image_url, visible, current_location_id FK nullable, created_at)
+npcs                (id, name, species text, profession, culture text, background, disposition, notes, image_url, visible, current_location_id FK nullable, created_at)
 items               (id, name, description, base_price, item_type, created_at)
 shops               (id, name, location_id FK, created_at)
 shop_inventory      (id, shop_id FK, item_id FK, price_override, available, created_at)
-sessions            (id, session_number, title, summary, loose_threads, created_at)
+sessions            (id, session_number, title, summary, loose_threads, faction_id FK nullable, created_at)
 encounters          (id, title, location_id FK, session_id FK, status, summary, notes, created_at)
-encounter_participants(id, encounter_id FK, npc_id FK nullable, label, count, role, notes, created_at)
+encounter_participants(id, encounter_id FK, npc_id FK nullable, label, count, role, notes, dr, created_at)
 lore_entries        (id, title, category, descriptor, description, visible, created_at)
 plot_threads        (id, title, type, description, status, notes, parent_id FK self, visible, created_at)
+
+-- Junction / relationship tables
+npc_facts           (id, npc_id FK, fact_text, revealed, created_at)
+npc_factions        (id, npc_id FK, faction_id FK, role, created_at)
+npc_locations       (id, npc_id FK, location_id FK, relationship_type, notes, created_at)
+pc_factions         (id, pc_id FK, faction_id FK, role, created_at)
+faction_relationships(id, from_faction_id FK, to_faction_id FK, relationship_type, notes, created_at)
+  -- directional: A→B ≠ B→A; unique per direction
+faction_locations   (id, faction_id FK, location_id FK, notes, created_at)
+culture_locations   (id, culture_id FK, location_id FK, notes, created_at)
+character_relationships(id, from_npc_id FK, from_pc_id FK, to_npc_id FK, to_pc_id FK, relationship_type, notes, created_at)
+  -- directional: A→B ≠ B→A (one NPC may not know the other exists)
+session_plot_threads(id, session_id FK, plot_thread_id FK, created_at)
+session_notes       (id, session_id FK, pc_id FK nullable, author_name, notes_text, created_at)
 ```
 
 **Visibility model:** `visible` boolean on most tables (GM toggles to expose to players). `revealed` boolean on `npc_facts` (per-fact granularity — some facts about an NPC are public, others secret). No session-number-based reveal tracking.
@@ -81,7 +93,7 @@ plot_threads        (id, title, type, description, status, notes, parent_id FK s
 The GM app (`apps/gm`) is fully built and the TypeScript build passes clean.
 
 ### Pages
-All 9 entity types have three pages each:
+All 11 entity types have three pages each:
 
 | Entity | List | Detail/Edit | New |
 |--------|------|-------------|-----|
@@ -89,6 +101,8 @@ All 9 entity types have three pages each:
 | NPCs | `/npcs` | `/npcs/[id]` | `/npcs/new` |
 | Player Characters | `/player-characters` | `/player-characters/[id]` | `/player-characters/new` |
 | Factions | `/factions` | `/factions/[id]` | `/factions/new` |
+| Species | `/species` | `/species/[id]` | `/species/new` |
+| Cultures | `/cultures` | `/cultures/[id]` | `/cultures/new` |
 | Items | `/items` | `/items/[id]` | `/items/new` |
 | Sessions | `/sessions` | `/sessions/[id]` | `/sessions/new` |
 | Encounters | `/encounters` | `/encounters/[id]` | `/encounters/new` |
@@ -194,17 +208,11 @@ const sessions  = (results[1].data ?? []) as Array<{ id: string; session_number:
 
 ## Planned schema additions (not yet migrated)
 
-These changes are designed but not yet applied to the database or wired into the UI:
-
 ### New columns
 - `items.location_id FK locations(id)` — where the item currently is (nullable)
-- `npcs.current_location_id FK locations(id)` — where the NPC is expected to be found (nullable)
-- `npcs.origin_location_id FK locations(id)` — where the NPC came from (nullable)
-- `player_characters.origin_location_id FK locations(id)` — where the PC came from (nullable)
 
 ### New tables
-- `pc_factions (id, pc_id FK, faction_id FK, role, created_at)` — PCs can belong to multiple factions (mirrors `npc_factions`)
-- `lore_locations (id, lore_id FK, location_id FK, notes, created_at)` — lore entries can be tied to one or more locations
+- `lore_locations (id, lore_id FK, location_id FK, notes, created_at)` — lore entries tied to one or more locations
 
 ### "Unknown" convention
 `NULL` means unknown/nowhere for all location FKs. Never create a fake "Unknown" location row. UI displays `NULL` as "Unknown" or "Nomadic" depending on context.

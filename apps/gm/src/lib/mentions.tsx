@@ -10,6 +10,8 @@ const ROUTE: Record<string, string> = {
   lore:         'lore',
   'plot-thread':'plot-threads',
   pc:           'player-characters',
+  species:      'species',
+  culture:      'cultures',
 }
 
 const COLOR: Record<string, string> = {
@@ -21,6 +23,8 @@ const COLOR: Record<string, string> = {
   lore:         'text-amber-600',
   'plot-thread':'text-red-600',
   pc:           'text-indigo-600',
+  species:      'text-teal-600',
+  culture:      'text-cyan-600',
 }
 
 const PATTERN = /\[\[([\w-]+):([a-f0-9-]+)\|([^\]]+)\]\]/g
