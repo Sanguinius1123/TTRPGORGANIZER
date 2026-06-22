@@ -144,3 +144,6 @@ vite.config.ts.timestamp-*
 
 # Turborepo
 .turbo/
+
+# Claude Code internal worktree scratch space
+.claude/
