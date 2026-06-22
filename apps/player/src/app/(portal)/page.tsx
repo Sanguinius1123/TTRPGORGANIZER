@@ -4,22 +4,25 @@ import { redirect } from 'next/navigation'
 import { CharacterForm } from './character/CharacterForm'
 import Link from 'next/link'
 
-export default async function HomePage() {
+type SearchParams = Promise<{ pc?: string }>
+
+export default async function HomePage({ searchParams }: { searchParams: SearchParams }) {
+  const params = await searchParams
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect('/login')
 
   const results = await Promise.all([
-    supabase.from('player_characters').select('*').eq('profile_id', user.id).maybeSingle(),
+    supabase.from('player_characters').select('*').eq('profile_id', user.id).order('name'),
     supabase.from('species').select('id, name').order('name'),
     supabase.from('cultures').select('id, name').order('name'),
   ])
 
-  const raw = results[0].data
-  const speciesList   = (results[1].data ?? []) as Array<{ id: string; name: string }>
-  const culturesList  = (results[2].data ?? []) as Array<{ id: string; name: string }>
+  const allMyPCs  = (results[0].data ?? []) as PlayerCharacter[]
+  const speciesList  = (results[1].data ?? []) as Array<{ id: string; name: string }>
+  const culturesList = (results[2].data ?? []) as Array<{ id: string; name: string }>
 
-  if (!raw) {
+  if (allMyPCs.length === 0) {
     return (
       <div className="p-8 max-w-2xl">
         <h1 className="text-2xl font-bold text-zinc-900 mb-6">My Character</h1>
@@ -33,7 +36,8 @@ export default async function HomePage() {
     )
   }
 
-  const pc = raw as PlayerCharacter
+  // If multiple PCs, let the player pick with ?pc=<id>; default to first
+  const pc = (params.pc ? allMyPCs.find(c => c.id === params.pc) : null) ?? allMyPCs[0]
 
   // Load faction memberships
   const { data: rawPCFactions } = await supabase
@@ -41,7 +45,6 @@ export default async function HomePage() {
   const pcFactionRows = (rawPCFactions ?? []) as Array<{ faction_id: string; role: string | null }>
   const factionIds = pcFactionRows.map(r => r.faction_id)
 
-  // Load party members (other visible PCs sharing the same party_faction_id)
   const results2 = await Promise.all([
     factionIds.length > 0
       ? supabase.from('factions').select('id, name').in('id', factionIds)
@@ -59,7 +62,7 @@ export default async function HomePage() {
       : Promise.resolve({ data: null }),
   ])
 
-  const factions = (results2[0].data ?? []) as Pick<Faction, 'id' | 'name'>[]
+  const factions     = (results2[0].data ?? []) as Pick<Faction, 'id' | 'name'>[]
   const partyMembers = (results2[1].data ?? []) as Array<{ id: string; name: string; player_name: string | null; species: string | null }>
   const partyFaction = results2[2].data as { id: string; name: string } | null
 
@@ -69,7 +72,29 @@ export default async function HomePage() {
 
   return (
     <div className="p-8 max-w-5xl">
-      <h1 className="text-2xl font-bold text-zinc-900 mb-6">{pc.name}</h1>
+      <div className="flex items-center gap-4 mb-6">
+        <h1 className="text-2xl font-bold text-zinc-900">{pc.name}</h1>
+        {allMyPCs.length > 1 && (
+          <div className="flex items-center gap-2">
+            <span className="text-xs text-zinc-400">Character:</span>
+            <div className="flex gap-1">
+              {allMyPCs.map(c => (
+                <Link
+                  key={c.id}
+                  href={c.id === pc.id ? '/' : `/?pc=${c.id}`}
+                  className={`px-3 py-1 rounded-full text-xs font-medium border transition-colors ${
+                    c.id === pc.id
+                      ? 'bg-indigo-600 text-white border-indigo-600'
+                      : 'border-zinc-300 text-zinc-600 hover:bg-zinc-50'
+                  }`}
+                >
+                  {c.name}
+                </Link>
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
 
       <div className="flex gap-6 items-start">
 
@@ -109,18 +134,14 @@ export default async function HomePage() {
                 <p className="text-xs text-zinc-400 px-1 py-1">No other visible party members.</p>
               ) : (
                 partyMembers.map(member => (
-                  <Link
-                    key={member.id}
-                    href={`/npcs`}
-                    className="flex flex-col rounded px-1 py-2 hover:bg-zinc-50 transition-colors"
-                  >
+                  <div key={member.id} className="flex flex-col rounded px-1 py-2">
                     <span className="text-sm font-medium text-zinc-900">{member.name}</span>
                     {(member.player_name || member.species) && (
                       <span className="text-xs text-zinc-400">
                         {[member.player_name, member.species].filter(Boolean).join(' · ')}
                       </span>
                     )}
-                  </Link>
+                  </div>
                 ))
               )}
             </div>
