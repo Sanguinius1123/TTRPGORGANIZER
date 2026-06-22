@@ -158,7 +158,7 @@ Login page at `/login` with Supabase email/password. Middleware at `src/middlewa
 
 **`encounter_participants` has a `label` field, not FK-only:** Most encounter participants are not worth tracking as full NPCs. `label` is a free-text description; `npc_id` is an optional FK for linking named NPCs.
 
-**Map as node graph first, image map later:** Locations are a list/hierarchy now. Schema leaves room for optional `x, y` columns later for map pin positions — don't add until building that feature.
+**Map as node graph first, image map later:** Locations are nodes; `location_connections` is the edge list. Schema needs nullable `x float` and `y float` on `locations` for canvas positions — add these when building the map. A background image is optional and purely cosmetic; the node graph is immediately useful without one.
 
 ## Critical TypeScript gotchas — hand-written Database types
 
@@ -305,14 +305,84 @@ These entity types now have a fixed dropdown for their primary category field, p
 
 ## Next steps
 
-1. **Apply remaining planned schema additions**
+1. **Node map** — see detailed plan below. This is the top priority.
+2. **Apply remaining planned schema additions**
    - `items.location_id FK locations(id)` — nullable, where the item currently is
    - `lore_locations (id, lore_id FK, location_id FK, notes, created_at)` — lore entries tied to locations
-2. **Item category + descriptor** — add category dropdown and Descriptor field to Items. Suggested types: weapon, armour, consumable, tool, currency, relic, document, vehicle, misc. Confirm list with user before implementing.
-3. **Future features** (roughly in priority order):
+3. **Item category + descriptor** — add category dropdown and Descriptor field to Items. Suggested types: weapon, armour, consumable, tool, currency, relic, document, vehicle, misc. Confirm list with user before implementing.
+4. **Future features** (roughly in priority order):
    - **Live spellcheck** — add `spellCheck` attribute to all `textarea`/`input` fields (browser-native, free). Add to MentionTextarea and all edit forms in both apps.
    - **Shop inventory management UI** — schema exists (`shop_inventory`), no GM UI yet for adding/editing items in a shop
    - **History timeline page** — scrollable timeline for `lore_entries` where `category = 'History'`. Needs schema: `ALTER TABLE lore_entries ADD COLUMN major_event BOOLEAN DEFAULT FALSE; ALTER TABLE lore_entries ADD COLUMN event_timestamp TEXT;`. UI: anchored at "current time", scroll up = past, scroll down = future.
-   - **Map image overlay** — pin positions (`x, y` on `locations`); don't add columns until building this
    - **NPC portrait / image upload** — needs Supabase Storage setup
    - **@mention Tiptap upgrade** — replace MentionTextarea with Tiptap rich-text editor
+
+## Node map — design and implementation plan
+
+### Concept
+A strict node-based map. Players move along edges only — no freeform movement. This works for fantasy (settlement-to-settlement, POIs like caves and keeps) and sci-fi (star system-to-star system; a system is like a settlement). Sub-locations inside a settlement (shops, districts) do NOT appear on the map — they belong on the location detail page, not the map canvas.
+
+The **edge IS the zone.** Encounter flavor (terrain, hazards, random table hints) lives in `location_connections.notes`, not in separate zone polygons. E.g. "Road through the Darkwood — bandit territory" or "Jump lane to Kepler — contested space, pirate interdiction."
+
+### Schema changes needed
+```sql
+ALTER TABLE locations ADD COLUMN map_x float;
+ALTER TABLE locations ADD COLUMN map_y float;
+```
+Both nullable. NULL means the location has no position set yet and won't appear on the canvas. Run via `npx supabase db push` after creating the migration file.
+
+Also add `locations.map_x` and `locations.map_y` to `packages/db/src/types.ts` `Location` Row type.
+
+### Library
+**React Flow** (`@xyflow/react`) — install in `apps/gm` and `apps/player`. Purpose-built for node/edge graphs: drag-to-reposition nodes, renders edges with labels, zoom/pan, supports background images. MIT license.
+
+```
+pnpm --filter gm add @xyflow/react
+pnpm --filter player add @xyflow/react
+```
+
+### GM map page (`apps/gm/src/app/(dashboard)/map/page.tsx`)
+- Fetch all locations where `map_x IS NOT NULL AND map_y IS NOT NULL` → render as React Flow nodes
+- Fetch all `location_connections` → render as React Flow edges; label with `travel_time` if set
+- Unpositioned locations shown in a sidebar panel so the GM can drag them onto the canvas to place them
+- On node drag-end: server action `updateLocationPosition(id, x, y)` saves new coordinates
+- Clicking a node navigates to `/locations/[id]`
+- Node style: name label, location `type` shown as a small badge, dim if `visible = false`
+- Add a nav link "Map" to the GM sidebar
+
+### Player portal map page (`apps/player/src/app/(portal)/map/page.tsx`)
+- Same layout but read-only (no dragging, no position saving)
+- Only fetch locations where `visible = true AND map_x IS NOT NULL AND map_y IS NOT NULL`
+- Only show `location_connections` where both endpoints are visible
+- Clicking a node navigates to `/locations/[id]`
+- Add "Map" nav link to player portal sidebar
+
+### PNG export (GM map only)
+Install `html-to-image` in the GM app:
+```
+pnpm --filter gm add html-to-image
+```
+Add an "Export PNG" button on the GM map page. On click:
+```typescript
+import { toPng } from 'html-to-image'
+const dataUrl = await toPng(document.querySelector('.react-flow') as HTMLElement)
+const a = document.createElement('a'); a.href = dataUrl; a.download = 'map.png'; a.click()
+```
+This exports a labeled snapshot of the current canvas view. **Use case:** import into Wonderdraft as a reference/tracing layer, draw geography around the node positions, export the finished Wonderdraft map, then use it as the background image URL.
+
+### Background image (defer — not needed to start)
+The node graph is immediately useful without a background image. When the user is ready:
+- Add a `map_background_url text` column to the `settings` table (or a new `map_settings` table)
+- React Flow supports `<Background>` component or a CSS background-image on the `.react-flow__renderer` wrapper
+- The x,y coordinates set during the abstract phase become accurate pin positions once the Wonderdraft export is dropped behind them
+
+**Workflow:** Place nodes in app → Export PNG → Import PNG as reference layer in Wonderdraft → Draw geography → Export Wonderdraft PNG → Upload URL to app settings → nodes now sit on top of real map art.
+
+### What to build first
+1. Migration: add `map_x`, `map_y` to `locations`
+2. Update `packages/db/src/types.ts`
+3. Install React Flow in both apps
+4. GM map page (draggable, saves positions, sidebar for unplaced locations)
+5. Player portal map page (read-only, visible-only)
+6. PNG export button on GM map
+7. Background image URL field (defer)
