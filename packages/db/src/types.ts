@@ -26,6 +26,7 @@ export interface Database {
           id: string
           name: string
           type: string | null
+          descriptor: string | null
           status: string | null
           area: string | null
           description: string | null
@@ -241,6 +242,7 @@ export interface Database {
           id: string
           title: string
           category: string | null
+          descriptor: string | null
           description: string | null
           visible: boolean
           created_at: string

@@ -5,10 +5,19 @@ import { ClickableRow, SubLink, StopPropCell } from '@/components/TableRow'
 import Link from 'next/link'
 import { Suspense } from 'react'
 
+const LOCATION_TYPES = [
+  'Sector', 'Star System', 'Star / Singularity', 'World', 'Space Station',
+  'Wilderness', 'Ruin', 'Settlement', 'District',
+  'Fortification', 'Residence', 'Commerce', 'Tavern / Inn', 'Place of Worship',
+  'Government', 'Prison', 'Guild / Organization', 'Workshop',
+  'Research / Laboratory', 'Medical / Healthcare', 'Entertainment', 'Transport Hub',
+]
+
 interface LocationRow {
   id: string
   name: string
   type: string | null
+  descriptor: string | null
   status: string | null
   visible: boolean
   parent: { id: string; name: string } | null
@@ -30,7 +39,7 @@ export default async function LocationsPage({ searchParams }: { searchParams: Se
   const locations = (raw ?? []) as unknown as LocationRow[]
 
   const filters = [
-    { type: 'text' as const, name: 'type', label: 'Type', placeholder: 'settlement, planet…' },
+    { type: 'select' as const, name: 'type', label: 'Type', options: LOCATION_TYPES.map(t => ({ value: t, label: t })) },
     { type: 'text' as const, name: 'status', label: 'Status', placeholder: 'active, ruins…' },
     { type: 'select' as const, name: 'visible', label: 'Visibility', options: [{ value: 'true', label: 'Visible' }, { value: 'false', label: 'Hidden' }] },
   ]
@@ -78,7 +87,10 @@ export default async function LocationsPage({ searchParams }: { searchParams: Se
                       {loc.name}
                     </SubLink>
                   </td>
-                  <td className="px-4 py-3 text-zinc-500">{loc.type ?? '—'}</td>
+                  <td className="px-4 py-3 text-zinc-500">
+                    {loc.type ?? '—'}
+                    {loc.descriptor && <span className="text-zinc-400 ml-1">· {loc.descriptor}</span>}
+                  </td>
                   <td className="px-4 py-3">
                     {loc.parent
                       ? <SubLink href={`/locations/${loc.parent.id}`} className="text-zinc-500 hover:text-indigo-600">{loc.parent.name}</SubLink>

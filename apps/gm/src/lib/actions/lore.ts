@@ -11,6 +11,7 @@ export async function createLoreEntry(formData: FormData) {
     .insert({
       title: formData.get('title') as string,
       category: (formData.get('category') as string) || null,
+      descriptor: (formData.get('descriptor') as string) || null,
       description: (formData.get('description') as string) || null,
       visible: false,
     })
@@ -29,6 +30,7 @@ export async function updateLoreEntry(formData: FormData) {
     .update({
       title: formData.get('title') as string,
       category: (formData.get('category') as string) || null,
+      descriptor: (formData.get('descriptor') as string) || null,
       description: (formData.get('description') as string) || null,
     })
     .eq('id', id)

@@ -11,6 +11,7 @@ export async function createLocation(formData: FormData) {
     .insert({
       name: formData.get('name') as string,
       type: (formData.get('type') as string) || null,
+      descriptor: (formData.get('descriptor') as string) || null,
       status: (formData.get('status') as string) || null,
       area: (formData.get('area') as string) || null,
       description: (formData.get('description') as string) || null,
@@ -33,6 +34,7 @@ export async function updateLocation(formData: FormData) {
     .update({
       name: formData.get('name') as string,
       type: (formData.get('type') as string) || null,
+      descriptor: (formData.get('descriptor') as string) || null,
       status: (formData.get('status') as string) || null,
       area: (formData.get('area') as string) || null,
       description: (formData.get('description') as string) || null,

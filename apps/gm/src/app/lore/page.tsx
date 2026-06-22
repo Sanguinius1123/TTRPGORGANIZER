@@ -6,6 +6,12 @@ import { ClickableRow, SubLink, StopPropCell } from '@/components/TableRow'
 import Link from 'next/link'
 import { Suspense } from 'react'
 
+const LORE_CATEGORIES = [
+  'History', 'Myth & Legend', 'Religion & Faith', 'Magic / Technology',
+  'Culture & Society', 'Politics & Law', 'Cosmology', 'Bestiary',
+  'Languages & Scripts', 'Artifacts & Relics', 'Geography & Astronomy', 'Economy & Trade',
+]
+
 type SearchParams = Promise<{ category?: string; visible?: string }>
 
 export default async function LorePage({ searchParams }: { searchParams: SearchParams }) {
@@ -21,7 +27,7 @@ export default async function LorePage({ searchParams }: { searchParams: SearchP
   const entries = (rawEntries ?? []) as LoreEntry[]
 
   const filters = [
-    { type: 'text' as const, name: 'category', label: 'Category', placeholder: 'history, lore…' },
+    { type: 'select' as const, name: 'category', label: 'Category', options: LORE_CATEGORIES.map(c => ({ value: c, label: c })) },
     { type: 'select' as const, name: 'visible', label: 'Visibility', options: [{ value: 'true', label: 'Visible' }, { value: 'false', label: 'Hidden' }] },
   ]
 
@@ -29,7 +35,7 @@ export default async function LorePage({ searchParams }: { searchParams: SearchP
     <div className="p-8">
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-2xl font-bold text-zinc-900">Lore Entries</h1>
+          <h1 className="text-2xl font-bold text-zinc-900">Lore & Knowledge</h1>
           <p className="text-sm text-zinc-500 mt-1">{entries.length} entries</p>
         </div>
         <Link href="/lore/new" className="rounded-md bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700">
@@ -66,7 +72,10 @@ export default async function LorePage({ searchParams }: { searchParams: SearchP
                       {entry.title}
                     </SubLink>
                   </td>
-                  <td className="px-4 py-3 text-zinc-500">{entry.category ?? '—'}</td>
+                  <td className="px-4 py-3 text-zinc-500">
+                    {entry.category ?? '—'}
+                    {entry.descriptor && <span className="text-zinc-400 ml-1">· {entry.descriptor}</span>}
+                  </td>
                   <StopPropCell className="px-4 py-3">
                     <form action={toggleLoreVisibility}>
                       <input type="hidden" name="id" value={entry.id} />

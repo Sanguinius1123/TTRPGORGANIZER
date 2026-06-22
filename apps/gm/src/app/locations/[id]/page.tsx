@@ -8,6 +8,14 @@ import { notFound } from 'next/navigation'
 const input = 'block w-full rounded-md border border-zinc-300 px-3 py-2 text-sm text-zinc-900 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none'
 const label = 'block text-sm font-medium text-zinc-700 mb-1'
 
+const LOCATION_TYPES = [
+  'Sector', 'Star System', 'Star / Singularity', 'World', 'Space Station',
+  'Wilderness', 'Ruin', 'Settlement', 'District',
+  'Fortification', 'Residence', 'Commerce', 'Tavern / Inn', 'Place of Worship',
+  'Government', 'Prison', 'Guild / Organization', 'Workshop',
+  'Research / Laboratory', 'Medical / Healthcare', 'Entertainment', 'Transport Hub',
+]
+
 interface SubLocation { id: string; name: string; type: string | null; visible: boolean }
 
 export default async function LocationPage({ params }: { params: Promise<{ id: string }> }) {
@@ -72,12 +80,19 @@ export default async function LocationPage({ params }: { params: Promise<{ id: s
         <div className="grid grid-cols-2 gap-4">
           <div>
             <label className={label}>Type</label>
-            <input name="type" defaultValue={loc.type ?? ''} placeholder="settlement, ruin, landmark…" className={input} />
+            <select key={loc.type ?? ''} name="type" defaultValue={loc.type ?? ''} className={input}>
+              <option value="">— None —</option>
+              {LOCATION_TYPES.map(t => <option key={t} value={t}>{t}</option>)}
+            </select>
           </div>
           <div>
-            <label className={label}>Status</label>
-            <input name="status" defaultValue={loc.status ?? ''} placeholder="active, abandoned…" className={input} />
+            <label className={label}>Descriptor</label>
+            <input name="descriptor" defaultValue={loc.descriptor ?? ''} placeholder="Ocean World, Frontier Colony…" className={input} />
           </div>
+        </div>
+        <div>
+          <label className={label}>Status</label>
+          <input name="status" defaultValue={loc.status ?? ''} placeholder="active, abandoned…" className={input} />
         </div>
         <div>
           <label className={label}>Area</label>

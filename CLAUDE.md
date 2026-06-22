@@ -27,6 +27,16 @@ TTRPGorganizer/
 
 Package manager: **pnpm** with workspaces. Run `pnpm --filter gm dev` to start the GM app.
 
+## Supabase CLI access
+
+The Supabase CLI is available and connected to the live project. Always apply migrations by running:
+
+```
+npx supabase db push
+```
+
+Do not ask the user to run migrations manually — run them directly.
+
 ## Tech stack
 
 | Layer | Choice | Notes |
@@ -45,7 +55,7 @@ Migration has been applied. All tables exist.
 
 ```
 factions            (id, name, parent_faction_id FK self, disposition, goal, description, image_url, visible, created_at)
-locations           (id, name, type, status, area, description, parent_location_id FK self, image_url, visible, created_at)
+locations           (id, name, type, descriptor, status, area, description, parent_location_id FK self, image_url, visible, created_at)
 location_connections(id, from_location_id FK, to_location_id FK, travel_time, travel_cost, bidirectional, notes, created_at)
 player_characters   (id, name, player_name, species, background, notes, image_url, visible, created_at)
 npcs                (id, name, species, profession, culture, background, disposition, notes, image_url, visible, created_at)
@@ -60,7 +70,7 @@ shop_inventory      (id, shop_id FK, item_id FK, price_override, available, crea
 sessions            (id, session_number, title, summary, loose_threads, created_at)
 encounters          (id, title, location_id FK, session_id FK, status, summary, notes, created_at)
 encounter_participants(id, encounter_id FK, npc_id FK nullable, label, count, role, notes, created_at)
-lore_entries        (id, title, category, description, visible, created_at)
+lore_entries        (id, title, category, descriptor, description, visible, created_at)
 plot_threads        (id, title, type, description, status, notes, parent_id FK self, visible, created_at)
 ```
 
@@ -210,14 +220,30 @@ These changes are designed but not yet applied to the database or wired into the
 - Uses `location_connections` graph with Dijkstra shortest-path traversal
 - Requires a way to track party's current location — needs design (candidate: `party_location_id` on a global settings table)
 
+## Categorised dropdown lists (implemented)
+
+These entity types now have a fixed dropdown for their primary category field, plus a free-text **Descriptor** field for additional detail (e.g. "Ocean World", "Year 1247 AE", "Undead"):
+
+- **Locations** — 22 types: Sector, Star System, Star / Singularity, World, Space Station, Wilderness, Ruin, Settlement, District, Fortification, Residence, Commerce, Tavern / Inn, Place of Worship, Government, Prison, Guild / Organization, Workshop, Research / Laboratory, Medical / Healthcare, Entertainment, Transport Hub
+- **Lore & Knowledge** — 12 categories: History, Myth & Legend, Religion & Faith, Magic / Technology, Culture & Society, Politics & Law, Cosmology, Bestiary, Languages & Scripts, Artifacts & Relics, Geography & Astronomy, Economy & Trade
+
+**Items** — needs the same treatment. Add a category dropdown (types TBD — think weapon, armour, consumable, tool, currency, relic, document, vehicle, misc) plus a Descriptor field. Design the list before implementing.
+
 ## Next steps
 
-1. **Test the GM app end-to-end** — dev server is running (`pnpm --filter gm dev`). Walk through CRUD for each entity type and note any UI issues.
-2. **Apply planned schema additions** — write and run the Supabase migration, update `packages/db/src/types.ts`, wire up the new fields in GM app forms and detail pages.
-3. **Build the player portal** (`apps/player`) — new Next.js app using `createBrowserClient()` from `packages/db`, reads only `visible = true` rows. Pages needed: locations list, location detail (with shops/inventory), NPC list (visible NPCs with only revealed facts showing), lore list.
-4. **Deploy player portal to Vercel** — connect GitHub repo, set env vars (`NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`).
-5. **Future features** (after player portal is functional):
+1. **Build the player portal** (`apps/player`) — this is the next major feature. Details:
+   - New Next.js app using `createBrowserClient()` from `packages/db`
+   - Reads only `visible = true` rows (locations, NPCs, factions, lore, plot threads) and only `revealed = true` npc_facts
+   - **Login / user accounts**: Players need their own accounts to log in to the web portal. Use Supabase Auth. Each player account is linked to a `player_characters` row so the app knows who they are. Design needed: a `profiles` table or a `auth_user_id` column on `player_characters`.
+   - **Player-editable fields**: Some things players should be able to edit themselves (e.g. session notes, their own PC's notes/background). Most content is GM-only. Define the boundary carefully before building.
+   - Pages needed: locations list, location detail (shops/inventory), NPC list (visible NPCs + revealed facts only), lore list, their own PC sheet
+   - Deploy to Vercel — set env vars (`NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`)
+2. **Apply remaining planned schema additions** — see "Planned schema additions" section below.
+3. **Future features**:
+   - **Item category list** — add dropdown + descriptor to Items (see note above)
+   - **Live spellcheck** — investigate browser-native `spellCheck` attribute on textarea/input elements (free, no library needed). If richer highlighting is needed, consider a lightweight library. Add to all MentionTextarea and text input fields.
+   - **History timeline page** — scrollable timeline UI for `lore_entries` where `category = 'History'`. Requires schema additions: `ALTER TABLE lore_entries ADD COLUMN major_event BOOLEAN DEFAULT FALSE; ALTER TABLE lore_entries ADD COLUMN event_timestamp TEXT;`. When `major_event = true` and `event_timestamp` is set, entry appears on the timeline. UI: page anchored at "current time", scroll up = past, scroll down = future.
    - Map image overlay with pin positions (`x, y` on `locations`)
    - NPC portrait / image upload
-   - Shop inventory management UI (currently schema exists but no UI for `shop_inventory`)
+   - Shop inventory management UI (schema exists, no UI yet for `shop_inventory`)
    - @mention / rich text editor (Tiptap)

@@ -9,10 +9,10 @@ const nav = [
     items: [{ label: 'Dashboard', href: '/' }],
   },
   {
-    group: 'World',
+    group: 'Setting',
     items: [
       { label: 'Locations', href: '/locations' },
-      { label: 'Lore Entries', href: '/lore' },
+      { label: 'Lore & Knowledge', href: '/lore' },
     ],
   },
   {

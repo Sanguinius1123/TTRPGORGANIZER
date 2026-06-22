@@ -14,8 +14,10 @@ const label = 'block text-sm font-medium text-zinc-700 mb-1'
 const smallInput = 'block w-full rounded border border-zinc-300 px-2 py-1.5 text-xs text-zinc-900 focus:border-indigo-500 outline-none'
 
 interface MemberLink { id: string; role: string | null; npc_id: string }
+interface PCMemberLink { id: string; role: string | null; pc_id: string }
 interface SubFaction { id: string; name: string; visible: boolean }
 interface SimpleNPC { id: string; name: string }
+interface SimplePC { id: string; name: string }
 interface FactionRel { id: string; to_faction_id: string; relationship_type: string }
 interface FactionLoc { id: string; location_id: string }
 
@@ -36,7 +38,7 @@ export default async function FactionPage({ params }: { params: Promise<{ id: st
   if (!raw) notFound()
   const faction = raw as Faction
 
-  const [r1, r2, r3, r4, r5, r6, r7, r8, r9] = await Promise.all([
+  const [r1, r2, r3, r4, r5, r6, r7, r8, r9, r10] = await Promise.all([
     supabase.from('factions').select('id, name').neq('id', id).order('name'),
     supabase.from('factions').select('id, name, visible').eq('parent_faction_id', id).order('name'),
     supabase.from('npc_factions').select('id, role, npc_id').eq('faction_id', id),
@@ -46,17 +48,28 @@ export default async function FactionPage({ params }: { params: Promise<{ id: st
     supabase.from('faction_relationships').select('id, to_faction_id, relationship_type').eq('from_faction_id', id).order('created_at'),
     supabase.from('faction_locations').select('id, location_id').eq('faction_id', id).order('created_at'),
     supabase.from('locations').select('id, name').order('name'),
+    supabase.from('pc_factions').select('id, role, pc_id').eq('faction_id', id),
   ])
 
-  const allFactions  = (r1.data ?? []) as Array<{ id: string; name: string }>
-  const subFactions  = (r2.data ?? []) as SubFaction[]
-  const memberLinks  = (r3.data ?? []) as MemberLink[]
-  const allNpcs      = (r4.data ?? []) as SimpleNPC[]
-  const speciesList  = (r5.data ?? []) as Array<{ id: string; name: string }>
-  const culturesList = (r6.data ?? []) as Array<{ id: string; name: string }>
-  const factionRels  = (r7.data ?? []) as FactionRel[]
-  const factionLocs  = (r8.data ?? []) as FactionLoc[]
-  const allLocations = (r9.data ?? []) as Array<{ id: string; name: string }>
+  const allFactions   = (r1.data ?? []) as Array<{ id: string; name: string }>
+  const subFactions   = (r2.data ?? []) as SubFaction[]
+  const memberLinks   = (r3.data ?? []) as MemberLink[]
+  const allNpcs       = (r4.data ?? []) as SimpleNPC[]
+  const speciesList   = (r5.data ?? []) as Array<{ id: string; name: string }>
+  const culturesList  = (r6.data ?? []) as Array<{ id: string; name: string }>
+  const factionRels   = (r7.data ?? []) as FactionRel[]
+  const factionLocs   = (r8.data ?? []) as FactionLoc[]
+  const allLocations  = (r9.data ?? []) as Array<{ id: string; name: string }>
+  const pcMemberLinks = (r10.data ?? []) as PCMemberLink[]
+
+  // Fetch only the PCs that are actually members
+  const pcIds = pcMemberLinks.map(m => m.pc_id)
+  let pcById: Record<string, SimplePC> = {}
+  if (pcIds.length > 0) {
+    const { data: pcRaw } = await supabase.from('player_characters').select('id, name').in('id', pcIds)
+    const pcs = (pcRaw ?? []) as SimplePC[]
+    pcById = Object.fromEntries(pcs.map(p => [p.id, p]))
+  }
 
   const npcById      = Object.fromEntries(allNpcs.map((n) => [n.id, n]))
   const factionById  = Object.fromEntries(allFactions.map((f) => [f.id, f]))
@@ -167,7 +180,7 @@ export default async function FactionPage({ params }: { params: Promise<{ id: st
             </section>
           )}
 
-          {memberLinks.length > 0 && (
+          {(memberLinks.length > 0 || pcMemberLinks.length > 0) && (
             <section className="mb-8">
               <h2 className="text-sm font-semibold text-zinc-700 uppercase tracking-wide mb-3">Members</h2>
               <div className="flex flex-wrap gap-2">
@@ -177,6 +190,15 @@ export default async function FactionPage({ params }: { params: Promise<{ id: st
                     <Link key={m.id} href={`/npcs/${npc.id}`} className="inline-flex items-center gap-1.5 rounded-full border border-zinc-200 bg-white px-3 py-1 text-sm text-zinc-700 hover:border-indigo-300">
                       {npc.name}
                       {m.role && <span className="text-zinc-400 text-xs">· {m.role}</span>}
+                    </Link>
+                  ) : null
+                })}
+                {pcMemberLinks.map((m) => {
+                  const pc = pcById[m.pc_id]
+                  return pc ? (
+                    <Link key={m.id} href={`/player-characters/${pc.id}`} className="inline-flex items-center gap-1.5 rounded-full border border-indigo-200 bg-indigo-50 px-3 py-1 text-sm text-indigo-700 hover:border-indigo-400">
+                      {pc.name}
+                      {m.role && <span className="text-indigo-400 text-xs">· {m.role}</span>}
                     </Link>
                   ) : null
                 })}
