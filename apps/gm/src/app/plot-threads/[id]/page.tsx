@@ -5,8 +5,8 @@ import MentionTextarea from '@/components/MentionTextarea'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 
-const input = 'block w-full rounded-md border border-zinc-300 px-3 py-2 text-sm text-zinc-900 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none'
-const label = 'block text-sm font-medium text-zinc-700 mb-1'
+const input = 'block w-full rounded-md border border-slate-600 bg-slate-700 px-3 py-2 text-sm text-slate-100 focus:border-indigo-400 focus:ring-1 focus:ring-indigo-400 outline-none'
+const label = 'block text-sm font-medium text-slate-300 mb-1'
 
 interface ChildThread { id: string; title: string; type: string; status: string }
 
@@ -35,31 +35,31 @@ export default async function PlotThreadPage({ params }: { params: Promise<{ id:
   return (
     <div className="p-8 max-w-3xl">
       <div className="flex items-center gap-3 mb-6">
-        <Link href="/plot-threads" className="text-sm text-zinc-500 hover:text-zinc-700">Plot Threads</Link>
+        <Link href="/plot-threads" className="text-sm text-slate-500 hover:text-slate-300">Plot Threads</Link>
         {parent && (
           <>
-            <span className="text-zinc-300">/</span>
-            <Link href={`/plot-threads/${parent.id}`} className="text-sm text-zinc-500 hover:text-zinc-700">{parent.title}</Link>
+            <span className="text-slate-600">/</span>
+            <Link href={`/plot-threads/${parent.id}`} className="text-sm text-slate-500 hover:text-slate-300">{parent.title}</Link>
           </>
         )}
-        <span className="text-zinc-300">/</span>
-        <span className="text-sm text-zinc-900 font-medium">{thread.title}</span>
+        <span className="text-slate-600">/</span>
+        <span className="text-sm text-slate-100 font-medium">{thread.title}</span>
       </div>
 
       <div className="flex items-start justify-between mb-6">
-        <h1 className="text-2xl font-bold text-zinc-900">{thread.title}</h1>
+        <h1 className="text-2xl font-bold text-slate-100">{thread.title}</h1>
         <form action={togglePlotThreadVisibility}>
           <input type="hidden" name="id" value={thread.id} />
           <input type="hidden" name="visible" value={String(thread.visible)} />
           <button type="submit" className={`rounded-full px-3 py-1 text-xs font-medium border transition-colors ${
-            thread.visible ? 'bg-green-50 text-green-700 border-green-200 hover:bg-green-100' : 'bg-zinc-100 text-zinc-600 border-zinc-200 hover:bg-zinc-200'
+            thread.visible ? 'bg-green-900/40 text-green-400 border-green-700 hover:bg-green-900/60' : 'bg-slate-700 text-slate-400 border-slate-700 hover:bg-slate-600'
           }`}>
             {thread.visible ? 'Visible to players' : 'Hidden from players'}
           </button>
         </form>
       </div>
 
-      <form action={updatePlotThread} className="bg-white rounded-lg border border-zinc-200 p-6 space-y-5 mb-8">
+      <form action={updatePlotThread} className="bg-slate-800 rounded-lg border border-slate-700 p-6 space-y-5 mb-8">
         <input type="hidden" name="id" value={thread.id} />
         <div>
           <label className={label}>Title</label>
@@ -95,7 +95,7 @@ export default async function PlotThreadPage({ params }: { params: Promise<{ id:
           <MentionTextarea name="description" defaultValue={thread.description ?? ''} rows={4} className={`${input} resize-none`} />
         </div>
         <div>
-          <label className={label}>Notes <span className="text-xs text-zinc-400">(private)</span></label>
+          <label className={label}>Notes <span className="text-xs text-slate-500">(private)</span></label>
           <MentionTextarea name="notes" defaultValue={thread.notes ?? ''} rows={3} className={`${input} resize-none`} />
         </div>
         <div className="flex gap-3 pt-2">
@@ -107,27 +107,27 @@ export default async function PlotThreadPage({ params }: { params: Promise<{ id:
 
       {children.length > 0 && (
         <section className="mb-8">
-          <h2 className="text-sm font-semibold text-zinc-700 uppercase tracking-wide mb-3">Related Threads & Hooks</h2>
-          <div className="bg-white rounded-lg border border-zinc-200 overflow-hidden">
+          <h2 className="text-sm font-semibold text-slate-300 uppercase tracking-wide mb-3">Related Threads & Hooks</h2>
+          <div className="bg-slate-800 rounded-lg border border-slate-700 overflow-hidden">
             <table className="w-full text-sm">
               <tbody>
                 {children.map((c) => (
-                  <tr key={c.id} className="border-b border-zinc-100 last:border-0 hover:bg-zinc-50">
+                  <tr key={c.id} className="border-b border-slate-700/50 last:border-0 hover:bg-slate-800">
                     <td className="px-4 py-2.5">
-                      <Link href={`/plot-threads/${c.id}`} className="font-medium text-zinc-900 hover:text-indigo-600">{c.title}</Link>
+                      <Link href={`/plot-threads/${c.id}`} className="font-medium text-slate-100 hover:text-indigo-400">{c.title}</Link>
                     </td>
                     <td className="px-4 py-2.5">
                       <span className={`inline-flex rounded-full px-2 py-0.5 text-xs font-medium ${
-                        c.type === 'objective' ? 'bg-indigo-100 text-indigo-800' :
-                        c.type === 'hook' ? 'bg-amber-100 text-amber-800' :
-                        'bg-zinc-100 text-zinc-700'
+                        c.type === 'objective' ? 'bg-indigo-900/40 text-indigo-300' :
+                        c.type === 'hook' ? 'bg-amber-100 text-amber-300' :
+                        'bg-slate-700 text-slate-300'
                       }`}>{c.type}</span>
                     </td>
                     <td className="px-4 py-2.5 text-right">
                       <span className={`inline-flex rounded-full px-2 py-0.5 text-xs font-medium ${
-                        c.status === 'active' ? 'bg-green-100 text-green-800' :
-                        c.status === 'completed' ? 'bg-zinc-100 text-zinc-500' :
-                        'bg-red-100 text-red-700'
+                        c.status === 'active' ? 'bg-green-900/40 text-green-400' :
+                        c.status === 'completed' ? 'bg-slate-700 text-slate-500' :
+                        'bg-red-900/30 text-red-400'
                       }`}>{c.status}</span>
                     </td>
                   </tr>
@@ -138,10 +138,10 @@ export default async function PlotThreadPage({ params }: { params: Promise<{ id:
         </section>
       )}
 
-      <div className="border-t border-zinc-200 pt-6">
+      <div className="border-t border-slate-700 pt-6">
         <form action={deletePlotThread}>
           <input type="hidden" name="id" value={thread.id} />
-          <button type="submit" className="rounded-md bg-red-50 border border-red-200 px-4 py-2 text-sm font-medium text-red-700 hover:bg-red-100">
+          <button type="submit" className="rounded-md bg-red-900/30 border border-red-700 px-4 py-2 text-sm font-medium text-red-400 hover:bg-red-900/50">
             Delete Thread
           </button>
         </form>

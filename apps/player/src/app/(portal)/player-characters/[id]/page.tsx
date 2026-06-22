@@ -31,40 +31,40 @@ export default async function PCDetailPage({ params }: { params: Promise<{ id: s
   const speciesIdByName  = Object.fromEntries(speciesList.map(s => [s.name, s.id]))
   const cultureIdByName  = Object.fromEntries(culturesList.map(c => [c.name, c.id]))
 
-  const field = 'text-sm text-zinc-800'
-  const label = 'text-xs font-medium text-zinc-500 mb-0.5'
+  const field = 'text-sm text-slate-100'
+  const label = 'text-xs font-medium text-slate-500 mb-0.5'
 
   return (
     <div className="p-8 max-w-4xl">
       <div className="flex items-center gap-2 mb-6 text-sm">
-        <Link href="/" className="text-zinc-500 hover:text-zinc-700">My Character</Link>
-        <span className="text-zinc-300">/</span>
-        <span className="text-zinc-900 font-medium">{pc.name}</span>
+        <Link href="/" className="text-slate-500 hover:text-slate-300">My Character</Link>
+        <span className="text-slate-600">/</span>
+        <span className="text-slate-100 font-medium">{pc.name}</span>
       </div>
 
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-zinc-900">{pc.name}</h1>
-        {pc.player_name && <p className="text-sm text-zinc-500 mt-0.5">Played by {pc.player_name}</p>}
+        <h1 className="text-2xl font-bold text-slate-100">{pc.name}</h1>
+        {pc.player_name && <p className="text-sm text-slate-500 mt-0.5">Played by {pc.player_name}</p>}
       </div>
 
       <div className="space-y-6">
-        <div className="bg-white rounded-lg border border-zinc-200 p-6 space-y-5">
+        <div className="bg-slate-800 rounded-lg border border-slate-700 p-6 space-y-5">
           <div className="grid grid-cols-2 gap-5">
             <div>
               <p className={label}>Species / Ancestry</p>
               {pc.species ? (
                 speciesIdByName[pc.species]
-                  ? <Link href={`/species/${speciesIdByName[pc.species]}`} className="text-sm text-indigo-600 hover:underline">{pc.species}</Link>
+                  ? <Link href={`/species/${speciesIdByName[pc.species]}`} className="text-sm text-indigo-400 hover:underline">{pc.species}</Link>
                   : <p className={field}>{pc.species}</p>
-              ) : <p className="text-sm text-zinc-400">—</p>}
+              ) : <p className="text-sm text-slate-500">—</p>}
             </div>
             <div>
               <p className={label}>Culture</p>
               {pc.culture ? (
                 cultureIdByName[pc.culture]
-                  ? <Link href={`/cultures/${cultureIdByName[pc.culture]}`} className="text-sm text-indigo-600 hover:underline">{pc.culture}</Link>
+                  ? <Link href={`/cultures/${cultureIdByName[pc.culture]}`} className="text-sm text-indigo-400 hover:underline">{pc.culture}</Link>
                   : <p className={field}>{pc.culture}</p>
-              ) : <p className="text-sm text-zinc-400">—</p>}
+              ) : <p className="text-sm text-slate-500">—</p>}
             </div>
           </div>
           {pc.background && (
@@ -82,19 +82,19 @@ export default async function PCDetailPage({ params }: { params: Promise<{ id: s
         </div>
 
         {notes.length > 0 && (
-          <div className="bg-white rounded-lg border border-zinc-200 overflow-hidden">
-            <div className="px-5 py-3 border-b border-zinc-100 bg-zinc-50">
-              <h2 className="text-xs font-semibold text-zinc-600 uppercase tracking-wide">Session Notes</h2>
+          <div className="bg-slate-800 rounded-lg border border-slate-700 overflow-hidden">
+            <div className="px-5 py-3 border-b border-slate-700/50 bg-slate-800">
+              <h2 className="text-xs font-semibold text-slate-400 uppercase tracking-wide">Session Notes</h2>
             </div>
-            <div className="divide-y divide-zinc-100">
+            <div className="divide-y divide-slate-700/50">
               {notes.map(note => (
                 <div key={note.id} className="px-5 py-4">
                   {note.session && (
-                    <Link href={`/sessions/${note.session_id}`} className="text-xs font-semibold text-indigo-500 hover:text-indigo-700 mb-1.5 block">
+                    <Link href={`/sessions/${note.session_id}`} className="text-xs font-semibold text-indigo-500 hover:text-indigo-300 mb-1.5 block">
                       Session {note.session.session_number}{note.session.title ? ` — ${note.session.title}` : ''}
                     </Link>
                   )}
-                  <p className="text-sm text-zinc-700 whitespace-pre-wrap leading-relaxed">{note.notes_text}</p>
+                  <p className="text-sm text-slate-300 whitespace-pre-wrap leading-relaxed">{note.notes_text}</p>
                 </div>
               ))}
             </div>

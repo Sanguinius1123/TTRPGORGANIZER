@@ -58,53 +58,53 @@ export default function RegisterPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-zinc-950">
+    <div className="min-h-screen flex items-center justify-center bg-slate-900">
       <div className="w-full max-w-sm space-y-6 px-4">
         <div className="text-center">
-          <h1 className="text-2xl font-bold text-zinc-100">TTRPG Organizer</h1>
-          <p className="mt-1 text-sm text-zinc-400">Create your player account</p>
+          <h1 className="text-2xl font-bold text-slate-100">TTRPG Organizer</h1>
+          <p className="mt-1 text-sm text-slate-400">Create your player account</p>
         </div>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-xs font-medium text-zinc-400 mb-1">Display name</label>
+            <label className="block text-xs font-medium text-slate-400 mb-1">Display name</label>
             <input
               type="text"
               value={displayName}
               onChange={e => setDisplayName(e.target.value)}
               required
-              className="w-full rounded-md bg-zinc-800 border border-zinc-700 px-3 py-2 text-zinc-100 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              className="w-full rounded-md bg-slate-700 border border-slate-600 px-3 py-2 text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400"
             />
           </div>
           <div>
-            <label className="block text-xs font-medium text-zinc-400 mb-1">Email</label>
+            <label className="block text-xs font-medium text-slate-400 mb-1">Email</label>
             <input
               type="email"
               value={email}
               onChange={e => setEmail(e.target.value)}
               required
-              className="w-full rounded-md bg-zinc-800 border border-zinc-700 px-3 py-2 text-zinc-100 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              className="w-full rounded-md bg-slate-700 border border-slate-600 px-3 py-2 text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400"
             />
           </div>
           <div>
-            <label className="block text-xs font-medium text-zinc-400 mb-1">Password</label>
+            <label className="block text-xs font-medium text-slate-400 mb-1">Password</label>
             <input
               type="password"
               value={password}
               onChange={e => setPassword(e.target.value)}
               required
               minLength={6}
-              className="w-full rounded-md bg-zinc-800 border border-zinc-700 px-3 py-2 text-zinc-100 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              className="w-full rounded-md bg-slate-700 border border-slate-600 px-3 py-2 text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400"
             />
           </div>
           <div>
-            <label className="block text-xs font-medium text-zinc-400 mb-1">Access code</label>
+            <label className="block text-xs font-medium text-slate-400 mb-1">Access code</label>
             <input
               type="text"
               value={code}
               onChange={e => setCode(e.target.value)}
               required
               placeholder="Ask your GM"
-              className="w-full rounded-md bg-zinc-800 border border-zinc-700 px-3 py-2 text-zinc-100 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              className="w-full rounded-md bg-slate-700 border border-slate-600 px-3 py-2 text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400"
             />
           </div>
           {error && <p className="text-sm text-red-400">{error}</p>}
@@ -116,7 +116,7 @@ export default function RegisterPage() {
             {loading ? 'Creating account…' : 'Create account'}
           </button>
         </form>
-        <p className="text-center text-sm text-zinc-500">
+        <p className="text-center text-sm text-slate-500">
           Already have an account?{' '}
           <Link href="/login" className="text-indigo-400 hover:text-indigo-300">
             Sign in

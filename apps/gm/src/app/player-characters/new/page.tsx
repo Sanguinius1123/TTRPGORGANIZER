@@ -3,8 +3,8 @@ import { createPlayerCharacter } from '@/lib/actions/player-characters'
 import MentionTextarea from '@/components/MentionTextarea'
 import Link from 'next/link'
 
-const input = 'block w-full rounded-md border border-zinc-300 px-3 py-2 text-sm text-zinc-900 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none'
-const label = 'block text-sm font-medium text-zinc-700 mb-1'
+const input = 'block w-full rounded-md border border-slate-600 bg-slate-700 px-3 py-2 text-sm text-slate-100 focus:border-indigo-400 focus:ring-1 focus:ring-indigo-400 outline-none'
+const label = 'block text-sm font-medium text-slate-300 mb-1'
 
 export default async function NewPlayerCharacterPage() {
   const supabase = db()
@@ -18,11 +18,11 @@ export default async function NewPlayerCharacterPage() {
   return (
     <div className="p-8 max-w-2xl">
       <div className="flex items-center gap-3 mb-6">
-        <Link href="/player-characters" className="text-sm text-zinc-500 hover:text-zinc-700">Player Characters</Link>
-        <span className="text-zinc-300">/</span>
-        <span className="text-sm text-zinc-900 font-medium">New</span>
+        <Link href="/player-characters" className="text-sm text-slate-400 hover:text-slate-300">Player Characters</Link>
+        <span className="text-slate-600">/</span>
+        <span className="text-sm text-slate-100 font-medium">New</span>
       </div>
-      <h1 className="text-2xl font-bold text-zinc-900 mb-6">New Player Character</h1>
+      <h1 className="text-2xl font-bold text-slate-100 mb-6">New Player Character</h1>
 
       <form action={createPlayerCharacter} className="space-y-5">
         <div className="grid grid-cols-2 gap-4">
@@ -56,7 +56,7 @@ export default async function NewPlayerCharacterPage() {
           <MentionTextarea name="background" rows={4} className={`${input} resize-none`} />
         </div>
         <div>
-          <label className={label}>Notes <span className="text-xs text-zinc-400">(private)</span></label>
+          <label className={label}>Notes <span className="text-xs text-slate-500">(private)</span></label>
           <MentionTextarea name="notes" rows={3} className={`${input} resize-none`} />
         </div>
 
@@ -64,7 +64,7 @@ export default async function NewPlayerCharacterPage() {
           <button type="submit" className="rounded-md bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700">
             Create Character
           </button>
-          <Link href="/player-characters" className="rounded-md border border-zinc-300 bg-white px-4 py-2 text-sm font-medium text-zinc-700 hover:bg-zinc-50">
+          <Link href="/player-characters" className="rounded-md border border-slate-600 bg-slate-700 px-4 py-2 text-sm font-medium text-slate-300 hover:bg-slate-600">
             Cancel
           </Link>
         </div>

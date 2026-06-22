@@ -6,9 +6,9 @@ import MentionTextarea from '@/components/MentionTextarea'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 
-const input = 'block w-full rounded-md border border-zinc-300 px-3 py-2 text-sm text-zinc-900 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none'
-const label = 'block text-sm font-medium text-zinc-700 mb-1'
-const smallInput = 'block w-full rounded border border-zinc-300 px-2 py-1.5 text-xs text-zinc-900 focus:border-indigo-500 outline-none'
+const input = 'block w-full rounded-md border border-slate-600 bg-slate-700 px-3 py-2 text-sm text-slate-100 focus:border-indigo-400 focus:ring-1 focus:ring-indigo-400 outline-none'
+const label = 'block text-sm font-medium text-slate-300 mb-1'
+const smallInput = 'block w-full rounded border border-slate-600 bg-slate-700 px-2 py-1.5 text-xs text-slate-100 focus:border-indigo-400 outline-none'
 
 interface EncounterRow { id: string; title: string; status: string }
 interface ParticipantDrRow { encounter_id: string; role: string | null; dr: number | null; count: number }
@@ -17,15 +17,15 @@ interface SessionPlotThreadRow { id: string; plot_thread_id: string }
 interface PlotThreadRow { id: string; title: string; status: string }
 
 const threadStatusColor: Record<string, string> = {
-  active:    'bg-green-100 text-green-800',
-  completed: 'bg-zinc-100 text-zinc-500',
-  abandoned: 'bg-red-100 text-red-700',
+  active:    'bg-green-900/40 text-green-400',
+  completed: 'bg-slate-700 text-slate-500',
+  abandoned: 'bg-red-900/30 text-red-400',
 }
 
 const encounterStatusColor: Record<string, string> = {
-  archived: 'bg-zinc-100 text-zinc-500',
-  active:   'bg-blue-100 text-blue-800',
-  prep:     'bg-yellow-100 text-yellow-800',
+  archived: 'bg-slate-700 text-slate-500',
+  active:   'bg-blue-900/40 text-blue-300',
+  prep:     'bg-yellow-900/40 text-yellow-300',
 }
 
 function stripMentions(text: string): string {
@@ -91,11 +91,11 @@ export default async function SessionPage({ params }: { params: Promise<{ id: st
   return (
     <div className="p-8 max-w-5xl">
       <div className="flex items-center gap-3 mb-6">
-        <Link href="/sessions" className="text-sm text-zinc-500 hover:text-zinc-700">Sessions</Link>
-        <span className="text-zinc-300">/</span>
-        <span className="text-sm text-zinc-900 font-medium">Session {session.session_number}</span>
+        <Link href="/sessions" className="text-sm text-slate-400 hover:text-slate-300">Sessions</Link>
+        <span className="text-slate-600">/</span>
+        <span className="text-sm text-slate-100 font-medium">Session {session.session_number}</span>
       </div>
-      <h1 className="text-2xl font-bold text-zinc-900 mb-6">
+      <h1 className="text-2xl font-bold text-slate-100 mb-6">
         Session {session.session_number}{session.title ? ` — ${session.title}` : ''}
       </h1>
 
@@ -103,7 +103,7 @@ export default async function SessionPage({ params }: { params: Promise<{ id: st
 
         {/* ── Left: main content ── */}
         <div className="flex-1 min-w-0">
-          <form action={updateSession} className="bg-white rounded-lg border border-zinc-200 p-6 space-y-5 mb-8">
+          <form action={updateSession} className="bg-slate-800 rounded-lg border border-slate-700 p-6 space-y-5 mb-8">
             <input type="hidden" name="id" value={session.id} />
             <div className="grid grid-cols-2 gap-4">
               <div>
@@ -139,20 +139,20 @@ export default async function SessionPage({ params }: { params: Promise<{ id: st
 
           {playerNotes.length > 0 && (
             <section className="mb-8">
-              <h2 className="text-sm font-semibold text-zinc-700 uppercase tracking-wide mb-3">Player Notes</h2>
+              <h2 className="text-sm font-semibold text-slate-400 uppercase tracking-wide mb-3">Player Notes</h2>
               <div className="space-y-3">
                 {playerNotes.map((note) => {
                   const pcLabel = note.pc
                     ? [note.pc.name, note.pc.player_name].filter(Boolean).join(' — ')
                     : (note.author_name ?? 'Unknown player')
                   return (
-                    <div key={note.id} className="bg-white rounded-lg border border-zinc-200 overflow-hidden">
-                      <div className="flex items-center justify-between px-4 py-2.5 border-b border-zinc-100 bg-zinc-50">
-                        <p className="text-xs font-semibold text-zinc-600">{pcLabel}</p>
+                    <div key={note.id} className="bg-slate-800 rounded-lg border border-slate-700 overflow-hidden">
+                      <div className="flex items-center justify-between px-4 py-2.5 border-b border-slate-700/50 bg-slate-800">
+                        <p className="text-xs font-semibold text-slate-400">{pcLabel}</p>
                         <form action={deleteSessionNote}>
                           <input type="hidden" name="id" value={note.id} />
                           <input type="hidden" name="session_id" value={id} />
-                          <button type="submit" className="text-zinc-300 hover:text-red-500 text-xs transition-colors">Delete</button>
+                          <button type="submit" className="text-slate-600 hover:text-red-400 text-xs transition-colors">Delete</button>
                         </form>
                       </div>
                       <form action={updateSessionNote} className="p-4 space-y-2">
@@ -162,9 +162,9 @@ export default async function SessionPage({ params }: { params: Promise<{ id: st
                           name="notes_text"
                           defaultValue={note.notes_text ? stripMentions(note.notes_text) : ''}
                           rows={3}
-                          className="block w-full rounded border border-zinc-200 px-3 py-2 text-sm text-zinc-800 focus:border-indigo-400 focus:outline-none resize-none"
+                          className="block w-full rounded border border-slate-700 bg-slate-700 px-3 py-2 text-sm text-slate-100 focus:border-indigo-400 focus:outline-none resize-none"
                         />
-                        <button type="submit" className="rounded bg-zinc-700 px-3 py-1.5 text-xs font-medium text-white hover:bg-zinc-600">
+                        <button type="submit" className="rounded bg-slate-700 px-3 py-1.5 text-xs font-medium text-white hover:bg-slate-600">
                           Save
                         </button>
                       </form>
@@ -175,10 +175,10 @@ export default async function SessionPage({ params }: { params: Promise<{ id: st
             </section>
           )}
 
-          <div className="border-t border-zinc-200 pt-6">
+          <div className="border-t border-slate-700 pt-6">
             <form action={deleteSession}>
               <input type="hidden" name="id" value={session.id} />
-              <button type="submit" className="rounded-md bg-red-50 border border-red-200 px-4 py-2 text-sm font-medium text-red-700 hover:bg-red-100">
+              <button type="submit" className="rounded-md bg-red-900/30 border border-red-700 px-4 py-2 text-sm font-medium text-red-400 hover:bg-red-900/50">
                 Delete Session
               </button>
             </form>
@@ -189,13 +189,13 @@ export default async function SessionPage({ params }: { params: Promise<{ id: st
         <div className="w-72 shrink-0 space-y-4">
 
           {/* Encounters panel */}
-          <div className="bg-white rounded-lg border border-zinc-200 overflow-hidden">
-            <div className="px-4 py-2.5 border-b border-zinc-100 bg-zinc-50 flex items-center justify-between">
-              <h3 className="text-xs font-semibold text-zinc-600 uppercase tracking-wide">Encounters</h3>
-              <Link href="/encounters/new" className="text-xs text-indigo-600 hover:text-indigo-700 font-medium">+ New</Link>
+          <div className="bg-slate-800 rounded-lg border border-slate-700 overflow-hidden">
+            <div className="px-4 py-2.5 border-b border-slate-700/50 bg-slate-800 flex items-center justify-between">
+              <h3 className="text-xs font-semibold text-slate-400 uppercase tracking-wide">Encounters</h3>
+              <Link href="/encounters/new" className="text-xs text-indigo-400 hover:text-indigo-300 font-medium">+ New</Link>
             </div>
             {availableEncounters.length > 0 && (
-              <form action={addEncounterToSession} className="px-3 pt-2.5 pb-2 border-b border-zinc-100 flex gap-1.5">
+              <form action={addEncounterToSession} className="px-3 pt-2.5 pb-2 border-b border-slate-700/50 flex gap-1.5">
                 <input type="hidden" name="session_id" value={id} />
                 <select name="id" required className={`${smallInput} flex-1`}>
                   <option value="">Link existing…</option>
@@ -210,34 +210,34 @@ export default async function SessionPage({ params }: { params: Promise<{ id: st
             )}
             <div className="p-3 space-y-1">
               {encounters.length === 0 && (
-                <p className="text-xs text-zinc-400 px-1 py-1">No encounters linked.</p>
+                <p className="text-xs text-slate-500 px-1 py-1">No encounters linked.</p>
               )}
               {encounters.map((e) => {
                 const netDr = netDrByEncounter[e.id]
                 const hasDr = netDr !== undefined
                 return (
-                  <div key={e.id} className="flex items-center gap-2 group rounded px-1 py-1.5 hover:bg-zinc-50">
+                  <div key={e.id} className="flex items-center gap-2 group rounded px-1 py-1.5 hover:bg-slate-700/50">
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-1.5 min-w-0">
-                        <Link href={`/encounters/${e.id}`} className="text-sm font-medium text-zinc-900 hover:text-indigo-600 truncate">
+                        <Link href={`/encounters/${e.id}`} className="text-sm font-medium text-slate-100 hover:text-indigo-400 truncate">
                           {e.title}
                         </Link>
                         {hasDr && (
                           <span className={`shrink-0 inline-flex rounded px-1 py-0.5 text-xs font-semibold ${
-                            netDr > 0 ? 'bg-red-50 text-red-600' : netDr < 0 ? 'bg-green-50 text-green-700' : 'bg-zinc-100 text-zinc-500'
+                            netDr > 0 ? 'bg-red-900/30 text-red-400' : netDr < 0 ? 'bg-green-900/40 text-green-400' : 'bg-slate-700 text-slate-500'
                           }`}>
                             DR {formatDr(netDr)}
                           </span>
                         )}
                       </div>
-                      <span className={`inline-flex rounded-full px-1.5 py-0.5 text-xs font-medium ${encounterStatusColor[e.status] ?? 'bg-zinc-100 text-zinc-600'}`}>
+                      <span className={`inline-flex rounded-full px-1.5 py-0.5 text-xs font-medium ${encounterStatusColor[e.status] ?? 'bg-slate-700 text-slate-400'}`}>
                         {e.status}
                       </span>
                     </div>
                     <form action={removeEncounterFromSession}>
                       <input type="hidden" name="id" value={e.id} />
                       <input type="hidden" name="session_id" value={id} />
-                      <button type="submit" className="opacity-0 group-hover:opacity-100 text-zinc-300 hover:text-red-500 text-xs shrink-0">✕</button>
+                      <button type="submit" className="opacity-0 group-hover:opacity-100 text-slate-600 hover:text-red-400 text-xs shrink-0">✕</button>
                     </form>
                   </div>
                 )
@@ -246,13 +246,13 @@ export default async function SessionPage({ params }: { params: Promise<{ id: st
           </div>
 
           {/* Plot Threads panel */}
-          <div className="bg-white rounded-lg border border-zinc-200 overflow-hidden">
-            <div className="px-4 py-2.5 border-b border-zinc-100 bg-zinc-50 flex items-center justify-between">
-              <h3 className="text-xs font-semibold text-zinc-600 uppercase tracking-wide">Plot Threads</h3>
-              <Link href="/plot-threads/new" className="text-xs text-indigo-600 hover:text-indigo-700 font-medium">+ New</Link>
+          <div className="bg-slate-800 rounded-lg border border-slate-700 overflow-hidden">
+            <div className="px-4 py-2.5 border-b border-slate-700/50 bg-slate-800 flex items-center justify-between">
+              <h3 className="text-xs font-semibold text-slate-400 uppercase tracking-wide">Plot Threads</h3>
+              <Link href="/plot-threads/new" className="text-xs text-indigo-400 hover:text-indigo-300 font-medium">+ New</Link>
             </div>
             {availableThreads.length > 0 && (
-              <form action={addSessionPlotThread} className="px-3 pt-2.5 pb-2 border-b border-zinc-100 flex gap-1.5">
+              <form action={addSessionPlotThread} className="px-3 pt-2.5 pb-2 border-b border-slate-700/50 flex gap-1.5">
                 <input type="hidden" name="session_id" value={id} />
                 <select name="plot_thread_id" required className={`${smallInput} flex-1`}>
                   <option value="">Link existing…</option>
@@ -265,15 +265,15 @@ export default async function SessionPage({ params }: { params: Promise<{ id: st
             )}
             <div className="p-3 space-y-1">
               {sessionThreadLinks.length === 0 && (
-                <p className="text-xs text-zinc-400 px-1 py-1">No threads linked.</p>
+                <p className="text-xs text-slate-500 px-1 py-1">No threads linked.</p>
               )}
               {sessionThreadLinks.map((link) => {
                 const thread = threadById[link.plot_thread_id]
                 if (!thread) return null
                 return (
-                  <div key={link.id} className="flex items-center gap-2 group rounded px-1 py-1.5 hover:bg-zinc-50">
+                  <div key={link.id} className="flex items-center gap-2 group rounded px-1 py-1.5 hover:bg-slate-700/50">
                     <div className="flex-1 min-w-0">
-                      <Link href={`/plot-threads/${thread.id}`} className="text-sm font-medium text-zinc-900 hover:text-indigo-600 block truncate">
+                      <Link href={`/plot-threads/${thread.id}`} className="text-sm font-medium text-slate-100 hover:text-indigo-400 block truncate">
                         {thread.title}
                       </Link>
                       <span className={`inline-flex rounded-full px-1.5 py-0.5 text-xs font-medium ${threadStatusColor[thread.status] ?? ''}`}>
@@ -283,7 +283,7 @@ export default async function SessionPage({ params }: { params: Promise<{ id: st
                     <form action={removeSessionPlotThread}>
                       <input type="hidden" name="id" value={link.id} />
                       <input type="hidden" name="session_id" value={id} />
-                      <button type="submit" className="opacity-0 group-hover:opacity-100 text-zinc-300 hover:text-red-500 text-xs shrink-0">✕</button>
+                      <button type="submit" className="opacity-0 group-hover:opacity-100 text-slate-600 hover:text-red-400 text-xs shrink-0">✕</button>
                     </form>
                   </div>
                 )

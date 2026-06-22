@@ -15,15 +15,15 @@ interface ThreadRow {
 }
 
 const typeColor: Record<string, string> = {
-  thread: 'bg-zinc-100 text-zinc-700',
-  hook: 'bg-amber-100 text-amber-800',
-  objective: 'bg-indigo-100 text-indigo-800',
+  thread: 'bg-slate-700 text-slate-300',
+  hook: 'bg-amber-900/40 text-amber-300',
+  objective: 'bg-indigo-900/40 text-indigo-300',
 }
 
 const statusColor: Record<string, string> = {
-  active: 'bg-green-100 text-green-800',
-  completed: 'bg-zinc-100 text-zinc-500',
-  abandoned: 'bg-red-100 text-red-700',
+  active: 'bg-green-900/40 text-green-400',
+  completed: 'bg-slate-700 text-slate-500',
+  abandoned: 'bg-red-900/30 text-red-400',
 }
 
 type SearchParams = Promise<{ type?: string; status?: string; visible?: string }>
@@ -59,8 +59,8 @@ export default async function PlotThreadsPage({ searchParams }: { searchParams: 
     <div className="p-8">
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-2xl font-bold text-zinc-900">Plot Threads</h1>
-          <p className="text-sm text-zinc-500 mt-1">{threads.length} entries</p>
+          <h1 className="text-2xl font-bold text-slate-100">Plot Threads</h1>
+          <p className="text-sm text-slate-500 mt-1">{threads.length} entries</p>
         </div>
         <Link href="/plot-threads/new" className="rounded-md bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700">
           New Thread
@@ -72,29 +72,29 @@ export default async function PlotThreadsPage({ searchParams }: { searchParams: 
       </Suspense>
 
       {!threads.length ? (
-        <div className="rounded-lg border border-dashed border-zinc-300 p-12 text-center">
-          <p className="text-zinc-500 text-sm">No plot threads match the current filters.</p>
-          <Link href="/plot-threads/new" className="mt-3 inline-block text-sm font-medium text-indigo-600 hover:text-indigo-700">
+        <div className="rounded-lg border border-dashed border-slate-600 p-12 text-center">
+          <p className="text-slate-500 text-sm">No plot threads match the current filters.</p>
+          <Link href="/plot-threads/new" className="mt-3 inline-block text-sm font-medium text-indigo-400 hover:text-indigo-300">
             Create the first one →
           </Link>
         </div>
       ) : (
-        <div className="bg-white rounded-lg border border-zinc-200 overflow-hidden">
+        <div className="bg-slate-800 rounded-lg border border-slate-700 overflow-hidden">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b border-zinc-200 bg-zinc-50">
-                <th className="text-left px-4 py-3 font-medium text-zinc-600">Title</th>
-                <th className="text-left px-4 py-3 font-medium text-zinc-600">Type</th>
-                <th className="text-left px-4 py-3 font-medium text-zinc-600">Parent</th>
-                <th className="text-left px-4 py-3 font-medium text-zinc-600">Status</th>
-                <th className="text-left px-4 py-3 font-medium text-zinc-600">Visible</th>
+              <tr className="border-b border-slate-700 bg-slate-800">
+                <th className="text-left px-4 py-3 font-medium text-slate-400">Title</th>
+                <th className="text-left px-4 py-3 font-medium text-slate-400">Type</th>
+                <th className="text-left px-4 py-3 font-medium text-slate-400">Parent</th>
+                <th className="text-left px-4 py-3 font-medium text-slate-400">Status</th>
+                <th className="text-left px-4 py-3 font-medium text-slate-400">Visible</th>
               </tr>
             </thead>
             <tbody>
               {threads.map((t) => (
-                <ClickableRow key={t.id} href={`/plot-threads/${t.id}`} className="border-b border-zinc-100 last:border-0 hover:bg-zinc-50">
+                <ClickableRow key={t.id} href={`/plot-threads/${t.id}`} className="border-b border-slate-700/50 last:border-0 hover:bg-slate-700/50">
                   <td className="px-4 py-3">
-                    <SubLink href={`/plot-threads/${t.id}`} className="font-medium text-zinc-900 hover:text-indigo-600">
+                    <SubLink href={`/plot-threads/${t.id}`} className="font-medium text-slate-100 hover:text-indigo-400">
                       {t.title}
                     </SubLink>
                   </td>
@@ -105,8 +105,8 @@ export default async function PlotThreadsPage({ searchParams }: { searchParams: 
                   </td>
                   <td className="px-4 py-3">
                     {t.parent
-                      ? <SubLink href={`/plot-threads/${t.parent.id}`} className="text-zinc-500 hover:text-indigo-600">{t.parent.title}</SubLink>
-                      : <span className="text-zinc-400">—</span>}
+                      ? <SubLink href={`/plot-threads/${t.parent.id}`} className="text-slate-400 hover:text-indigo-400">{t.parent.title}</SubLink>
+                      : <span className="text-slate-500">—</span>}
                   </td>
                   <td className="px-4 py-3">
                     <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${statusColor[t.status] ?? ''}`}>
@@ -118,7 +118,7 @@ export default async function PlotThreadsPage({ searchParams }: { searchParams: 
                       <input type="hidden" name="id" value={t.id} />
                       <input type="hidden" name="visible" value={String(t.visible)} />
                       <button type="submit" className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium cursor-pointer transition-colors ${
-                        t.visible ? 'bg-green-100 text-green-800 hover:bg-green-200' : 'bg-zinc-100 text-zinc-600 hover:bg-zinc-200'
+                        t.visible ? 'bg-green-900/40 text-green-400 hover:bg-green-900/60' : 'bg-slate-700 text-slate-400 hover:bg-slate-600'
                       }`}>
                         {t.visible ? 'Visible' : 'Hidden'}
                       </button>

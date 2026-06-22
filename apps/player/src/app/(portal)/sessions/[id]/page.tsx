@@ -36,39 +36,39 @@ export default async function SessionDetailPage({ params }: { params: Promise<{ 
   return (
     <div className="p-8 max-w-4xl">
       <div className="flex items-center gap-2 mb-6 text-sm">
-        <Link href="/sessions" className="text-zinc-500 hover:text-zinc-700">Sessions</Link>
-        <span className="text-zinc-300">/</span>
-        <span className="text-zinc-900 font-medium">Session {session.session_number}</span>
+        <Link href="/sessions" className="text-slate-400 hover:text-slate-300">Sessions</Link>
+        <span className="text-slate-600">/</span>
+        <span className="text-slate-100 font-medium">Session {session.session_number}</span>
       </div>
 
       <div className="mb-6">
-        <p className="text-xs font-semibold text-zinc-400 uppercase tracking-wide mb-1">Session {session.session_number}</p>
-        <h1 className="text-2xl font-bold text-zinc-900">{session.title ?? 'Untitled'}</h1>
+        <p className="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1">Session {session.session_number}</p>
+        <h1 className="text-2xl font-bold text-slate-100">{session.title ?? 'Untitled'}</h1>
       </div>
 
       <div className="space-y-6">
         {session.summary && (
-          <div className="bg-white rounded-lg border border-zinc-200 p-6">
-            <h2 className="text-xs font-semibold text-zinc-500 uppercase tracking-wide mb-3">Summary</h2>
-            <p className="text-zinc-700 whitespace-pre-wrap text-sm leading-relaxed">{session.summary}</p>
+          <div className="bg-slate-800 rounded-lg border border-slate-700 p-6">
+            <h2 className="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-3">Summary</h2>
+            <p className="text-slate-300 whitespace-pre-wrap text-sm leading-relaxed">{session.summary}</p>
           </div>
         )}
 
         {session.loose_threads && (
-          <div className="bg-white rounded-lg border border-zinc-200 p-6">
-            <h2 className="text-xs font-semibold text-zinc-500 uppercase tracking-wide mb-3">Loose Threads</h2>
-            <p className="text-zinc-700 whitespace-pre-wrap text-sm leading-relaxed">{session.loose_threads}</p>
+          <div className="bg-slate-800 rounded-lg border border-slate-700 p-6">
+            <h2 className="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-3">Loose Threads</h2>
+            <p className="text-slate-300 whitespace-pre-wrap text-sm leading-relaxed">{session.loose_threads}</p>
           </div>
         )}
 
-        <div className="bg-white rounded-lg border border-zinc-200 overflow-hidden">
-          <div className="px-6 py-4 border-b border-zinc-100 bg-zinc-50 flex items-center justify-between">
-            <h2 className="text-xs font-semibold text-zinc-600 uppercase tracking-wide">Player Notes</h2>
-            <span className="text-xs text-zinc-400">{notes.length} {notes.length === 1 ? 'note' : 'notes'}</span>
+        <div className="bg-slate-800 rounded-lg border border-slate-700 overflow-hidden">
+          <div className="px-6 py-4 border-b border-slate-700/50 bg-slate-800 flex items-center justify-between">
+            <h2 className="text-xs font-semibold text-slate-400 uppercase tracking-wide">Player Notes</h2>
+            <span className="text-xs text-slate-500">{notes.length} {notes.length === 1 ? 'note' : 'notes'}</span>
           </div>
-          <div className="divide-y divide-zinc-100">
+          <div className="divide-y divide-slate-700/50">
             {notes.length === 0 && !myPC && (
-              <p className="px-6 py-4 text-sm text-zinc-400">No player notes yet.</p>
+              <p className="px-6 py-4 text-sm text-slate-500">No player notes yet.</p>
             )}
             {notes.map(note => {
               const pc = note.pc_id ? pcById[note.pc_id] : null
@@ -85,15 +85,15 @@ export default async function SessionDetailPage({ params }: { params: Promise<{ 
 
               return (
                 <div key={note.id} className="px-6 py-4">
-                  <p className="text-xs font-semibold text-indigo-600 mb-1.5">{pcLabel}</p>
-                  <p className="text-sm text-zinc-700 whitespace-pre-wrap leading-relaxed">{note.notes_text}</p>
+                  <p className="text-xs font-semibold text-indigo-400 mb-1.5">{pcLabel}</p>
+                  <p className="text-sm text-slate-300 whitespace-pre-wrap leading-relaxed">{note.notes_text}</p>
                 </div>
               )
             })}
 
             {myPC && (
-              <div className="px-6 py-4 bg-zinc-50">
-                <p className="text-xs font-semibold text-indigo-600 mb-3">
+              <div className="px-6 py-4 bg-slate-700/30">
+                <p className="text-xs font-semibold text-indigo-400 mb-3">
                   {[myPC.name, myPC.player_name].filter(Boolean).join(' — ')} (you)
                 </p>
                 <NoteForm

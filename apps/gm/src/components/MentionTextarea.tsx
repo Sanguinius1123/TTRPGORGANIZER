@@ -9,10 +9,10 @@ const CHIP_BG: Record<string, string> = {
   location:      'bg-blue-100 text-blue-700',
   npc:           'bg-purple-100 text-purple-700',
   faction:       'bg-orange-100 text-orange-700',
-  item:          'bg-green-100 text-green-700',
+  item:          'bg-green-900/40 text-green-400',
   session:       'bg-teal-100 text-teal-700',
   lore:          'bg-amber-100 text-amber-700',
-  'plot-thread': 'bg-red-100 text-red-700',
+  'plot-thread': 'bg-red-900/30 text-red-400',
   pc:            'bg-indigo-100 text-indigo-700',
   species:       'bg-rose-100 text-rose-700',
   culture:       'bg-cyan-100 text-cyan-700',
@@ -39,7 +39,7 @@ const TYPE_COLOR: Record<string, string> = {
   session:       'text-teal-600',
   lore:          'text-amber-600',
   'plot-thread': 'text-red-600',
-  pc:            'text-indigo-600',
+  pc:            'text-indigo-400',
   species:       'text-rose-600',
   culture:       'text-cyan-600',
 }
@@ -76,7 +76,7 @@ function valueToHtml(text: string): string {
       const m = part.match(/^\[\[([^:]+):([^|]+)\|([^\]]+)\]\]$/)
       if (m) {
         const [, type, , name] = m
-        const bg = CHIP_BG[type] ?? 'bg-zinc-100 text-zinc-700'
+        const bg = CHIP_BG[type] ?? 'bg-slate-700 text-slate-300'
         return `<span contenteditable="false" data-mention="${part.replace(/"/g, '&quot;')}" class="${CHIP_CLASS} ${bg}">${escHtml(name)}</span>`
       }
       return part.split('\n').map(escHtml).join('<br>')
@@ -192,7 +192,7 @@ export default function MentionTextarea({
     const chip = document.createElement('span')
     chip.contentEditable = 'false'
     chip.dataset.mention = `[[${s.type}:${s.id}|${s.name}]]`
-    chip.className = `${CHIP_CLASS} ${CHIP_BG[s.type] ?? 'bg-zinc-100 text-zinc-700'}`
+    chip.className = `${CHIP_CLASS} ${CHIP_BG[s.type] ?? 'bg-slate-700 text-slate-300'}`
     chip.textContent = s.name
 
     // Insert at the collapsed deletion point (splits the text node)
@@ -445,7 +445,7 @@ export default function MentionTextarea({
       />
       {suggestions.length > 0 && dropPos && (
         <ul
-          className="absolute z-50 bg-white rounded-lg shadow-lg border border-zinc-200 py-1 w-72 max-h-56 overflow-y-auto"
+          className="absolute z-50 bg-slate-800 rounded-lg shadow-lg border border-slate-700 py-1 w-72 max-h-56 overflow-y-auto"
           style={{ top: dropPos.top, left: dropPos.left }}
           onMouseDown={e => e.preventDefault()}
         >
@@ -453,17 +453,17 @@ export default function MentionTextarea({
             <li key={`${s.type}-${s.id}`}>
               <button
                 type="button"
-                className={`w-full flex items-center gap-3 px-3 py-2 text-sm text-left ${i === activeIdx ? 'bg-indigo-50' : 'hover:bg-zinc-50'}`}
+                className={`w-full flex items-center gap-3 px-3 py-2 text-sm text-left ${i === activeIdx ? 'bg-indigo-900/40' : 'hover:bg-slate-700/50'}`}
                 onMouseDown={e => { e.preventDefault(); pick(s) }}
               >
-                <span className={`shrink-0 text-xs font-medium w-14 ${TYPE_COLOR[s.type] ?? 'text-zinc-400'}`}>
+                <span className={`shrink-0 text-xs font-medium w-14 ${TYPE_COLOR[s.type] ?? 'text-slate-500'}`}>
                   {TYPE_LABEL[s.type] ?? s.type}
                 </span>
-                <span className="font-medium text-zinc-900 truncate">{s.name}</span>
+                <span className="font-medium text-slate-100 truncate">{s.name}</span>
               </button>
             </li>
           ))}
-          <li className="px-3 py-1.5 text-xs text-zinc-400 border-t border-zinc-100">
+          <li className="px-3 py-1.5 text-xs text-slate-500 border-t border-slate-700/50">
             ↑↓ navigate · Enter select · Esc close
           </li>
         </ul>

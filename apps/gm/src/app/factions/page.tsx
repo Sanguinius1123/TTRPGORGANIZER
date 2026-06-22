@@ -53,8 +53,8 @@ export default async function FactionsPage({ searchParams }: { searchParams: Sea
     <div className="p-8">
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-2xl font-bold text-zinc-900">Factions</h1>
-          <p className="text-sm text-zinc-500 mt-1">{factions.length} entries</p>
+          <h1 className="text-2xl font-bold text-slate-100">Factions</h1>
+          <p className="text-sm text-slate-500 mt-1">{factions.length} entries</p>
         </div>
         <Link href="/factions/new" className="rounded-md bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700">
           New Faction
@@ -66,57 +66,57 @@ export default async function FactionsPage({ searchParams }: { searchParams: Sea
       </Suspense>
 
       {!factions.length ? (
-        <div className="rounded-lg border border-dashed border-zinc-300 p-12 text-center">
-          <p className="text-zinc-500 text-sm">No factions match the current filters.</p>
-          <Link href="/factions/new" className="mt-3 inline-block text-sm font-medium text-indigo-600 hover:text-indigo-700">
+        <div className="rounded-lg border border-dashed border-slate-600 p-12 text-center">
+          <p className="text-slate-500 text-sm">No factions match the current filters.</p>
+          <Link href="/factions/new" className="mt-3 inline-block text-sm font-medium text-indigo-400 hover:text-indigo-300">
             Create the first one →
           </Link>
         </div>
       ) : (
-        <div className="bg-white rounded-lg border border-zinc-200 overflow-hidden">
+        <div className="bg-slate-800 rounded-lg border border-slate-700 overflow-hidden">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b border-zinc-200 bg-zinc-50">
-                <th className="text-left px-4 py-3 font-medium text-zinc-600">Name</th>
-                <th className="text-left px-4 py-3 font-medium text-zinc-600">Parent Faction</th>
-                <th className="text-left px-4 py-3 font-medium text-zinc-600">Species</th>
-                <th className="text-left px-4 py-3 font-medium text-zinc-600">Culture</th>
-                <th className="text-left px-4 py-3 font-medium text-zinc-600">Visible</th>
+              <tr className="border-b border-slate-700 bg-slate-800">
+                <th className="text-left px-4 py-3 font-medium text-slate-400">Name</th>
+                <th className="text-left px-4 py-3 font-medium text-slate-400">Parent Faction</th>
+                <th className="text-left px-4 py-3 font-medium text-slate-400">Species</th>
+                <th className="text-left px-4 py-3 font-medium text-slate-400">Culture</th>
+                <th className="text-left px-4 py-3 font-medium text-slate-400">Visible</th>
               </tr>
             </thead>
             <tbody>
               {factions.map((f) => (
-                <ClickableRow key={f.id} href={`/factions/${f.id}`} className="border-b border-zinc-100 last:border-0 hover:bg-zinc-50">
+                <ClickableRow key={f.id} href={`/factions/${f.id}`} className="border-b border-slate-700/50 last:border-0 hover:bg-slate-700/50">
                   <td className="px-4 py-3">
-                    <SubLink href={`/factions/${f.id}`} className="font-medium text-zinc-900 hover:text-indigo-600">
+                    <SubLink href={`/factions/${f.id}`} className="font-medium text-slate-100 hover:text-indigo-400">
                       {f.name}
                     </SubLink>
                   </td>
                   <td className="px-4 py-3">
                     {f.parent
-                      ? <SubLink href={`/factions/${f.parent.id}`} className="text-zinc-500 hover:text-indigo-600">{f.parent.name}</SubLink>
-                      : <span className="text-zinc-400">—</span>}
+                      ? <SubLink href={`/factions/${f.parent.id}`} className="text-slate-500 hover:text-indigo-400">{f.parent.name}</SubLink>
+                      : <span className="text-slate-500">—</span>}
                   </td>
                   <td className="px-4 py-3">
                     {f.species
                       ? speciesIdByName[f.species]
-                        ? <SubLink href={`/species/${speciesIdByName[f.species]}`} className="text-zinc-500 hover:text-indigo-600">{f.species}</SubLink>
-                        : <span className="text-zinc-500">{f.species}</span>
-                      : <span className="text-zinc-400">—</span>}
+                        ? <SubLink href={`/species/${speciesIdByName[f.species]}`} className="text-slate-500 hover:text-indigo-400">{f.species}</SubLink>
+                        : <span className="text-slate-500">{f.species}</span>
+                      : <span className="text-slate-500">—</span>}
                   </td>
                   <td className="px-4 py-3">
                     {f.culture
                       ? cultureIdByName[f.culture]
-                        ? <SubLink href={`/cultures/${cultureIdByName[f.culture]}`} className="text-zinc-500 hover:text-indigo-600">{f.culture}</SubLink>
-                        : <span className="text-zinc-500">{f.culture}</span>
-                      : <span className="text-zinc-400">—</span>}
+                        ? <SubLink href={`/cultures/${cultureIdByName[f.culture]}`} className="text-slate-500 hover:text-indigo-400">{f.culture}</SubLink>
+                        : <span className="text-slate-500">{f.culture}</span>
+                      : <span className="text-slate-500">—</span>}
                   </td>
                   <StopPropCell className="px-4 py-3">
                     <form action={toggleFactionVisibility}>
                       <input type="hidden" name="id" value={f.id} />
                       <input type="hidden" name="visible" value={String(f.visible)} />
                       <button type="submit" className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium cursor-pointer transition-colors ${
-                        f.visible ? 'bg-green-100 text-green-800 hover:bg-green-200' : 'bg-zinc-100 text-zinc-600 hover:bg-zinc-200'
+                        f.visible ? 'bg-green-900/40 text-green-400 hover:bg-green-900/60' : 'bg-slate-700 text-slate-400 hover:bg-slate-600'
                       }`}>
                         {f.visible ? 'Visible' : 'Hidden'}
                       </button>

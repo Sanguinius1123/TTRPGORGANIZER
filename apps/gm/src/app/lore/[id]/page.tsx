@@ -5,8 +5,8 @@ import MentionTextarea from '@/components/MentionTextarea'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 
-const input = 'block w-full rounded-md border border-zinc-300 px-3 py-2 text-sm text-zinc-900 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none'
-const label = 'block text-sm font-medium text-zinc-700 mb-1'
+const input = 'block w-full rounded-md border border-slate-600 bg-slate-700 px-3 py-2 text-sm text-slate-100 focus:border-indigo-400 focus:ring-1 focus:ring-indigo-400 outline-none'
+const label = 'block text-sm font-medium text-slate-300 mb-1'
 
 const LORE_CATEGORIES = [
   'History', 'Myth & Legend', 'Religion & Faith', 'Magic / Technology',
@@ -24,25 +24,25 @@ export default async function LoreEntryPage({ params }: { params: Promise<{ id: 
   return (
     <div className="p-8 max-w-3xl">
       <div className="flex items-center gap-3 mb-6">
-        <Link href="/lore" className="text-sm text-zinc-500 hover:text-zinc-700">Lore & Knowledge</Link>
-        <span className="text-zinc-300">/</span>
-        <span className="text-sm text-zinc-900 font-medium">{entry.title}</span>
+        <Link href="/lore" className="text-sm text-slate-500 hover:text-slate-300">Lore & Knowledge</Link>
+        <span className="text-slate-600">/</span>
+        <span className="text-sm text-slate-100 font-medium">{entry.title}</span>
       </div>
 
       <div className="flex items-start justify-between mb-6">
-        <h1 className="text-2xl font-bold text-zinc-900">{entry.title}</h1>
+        <h1 className="text-2xl font-bold text-slate-100">{entry.title}</h1>
         <form action={toggleLoreVisibility}>
           <input type="hidden" name="id" value={entry.id} />
           <input type="hidden" name="visible" value={String(entry.visible)} />
           <button type="submit" className={`rounded-full px-3 py-1 text-xs font-medium border transition-colors ${
-            entry.visible ? 'bg-green-50 text-green-700 border-green-200 hover:bg-green-100' : 'bg-zinc-100 text-zinc-600 border-zinc-200 hover:bg-zinc-200'
+            entry.visible ? 'bg-green-900/40 text-green-400 border-green-700 hover:bg-green-900/60' : 'bg-slate-700 text-slate-400 border-slate-700 hover:bg-slate-600'
           }`}>
             {entry.visible ? 'Visible to players' : 'Hidden from players'}
           </button>
         </form>
       </div>
 
-      <form action={updateLoreEntry} className="bg-white rounded-lg border border-zinc-200 p-6 space-y-5 mb-8">
+      <form action={updateLoreEntry} className="bg-slate-800 rounded-lg border border-slate-700 p-6 space-y-5 mb-8">
         <input type="hidden" name="id" value={entry.id} />
         <div>
           <label className={label}>Title</label>
@@ -72,10 +72,10 @@ export default async function LoreEntryPage({ params }: { params: Promise<{ id: 
         </div>
       </form>
 
-      <div className="border-t border-zinc-200 pt-6">
+      <div className="border-t border-slate-700 pt-6">
         <form action={deleteLoreEntry}>
           <input type="hidden" name="id" value={entry.id} />
-          <button type="submit" className="rounded-md bg-red-50 border border-red-200 px-4 py-2 text-sm font-medium text-red-700 hover:bg-red-100">
+          <button type="submit" className="rounded-md bg-red-900/30 border border-red-700 px-4 py-2 text-sm font-medium text-red-400 hover:bg-red-900/50">
             Delete Entry
           </button>
         </form>

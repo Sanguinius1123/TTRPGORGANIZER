@@ -19,10 +19,10 @@ const COLOR: Record<string, string> = {
   npc:          'text-purple-600',
   faction:      'text-orange-600',
   item:         'text-green-600',
-  session:      'text-zinc-600',
+  session:      'text-slate-400',
   lore:         'text-amber-600',
   'plot-thread':'text-red-600',
-  pc:           'text-indigo-600',
+  pc:           'text-indigo-400',
   species:      'text-teal-600',
   culture:      'text-cyan-600',
 }
@@ -43,7 +43,7 @@ export function renderMentions(text: string | null | undefined): React.ReactNode
     if (match.index > last) parts.push(text.slice(last, match.index))
 
     const route = ROUTE[type]
-    const color = COLOR[type] ?? 'text-indigo-600'
+    const color = COLOR[type] ?? 'text-indigo-400'
 
     parts.push(
       <Link

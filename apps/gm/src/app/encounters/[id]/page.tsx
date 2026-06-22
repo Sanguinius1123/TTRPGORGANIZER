@@ -5,8 +5,8 @@ import MentionTextarea from '@/components/MentionTextarea'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 
-const input = 'block w-full rounded-md border border-zinc-300 px-3 py-2 text-sm text-zinc-900 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none'
-const label = 'block text-sm font-medium text-zinc-700 mb-1'
+const input = 'block w-full rounded-md border border-slate-600 bg-slate-700 px-3 py-2 text-sm text-slate-100 focus:border-indigo-400 focus:ring-1 focus:ring-indigo-400 outline-none'
+const label = 'block text-sm font-medium text-slate-300 mb-1'
 
 interface EncParticipant {
   id: string
@@ -20,8 +20,8 @@ interface SimpleNPC { id: string; name: string }
 
 const roleColor: Record<string, string> = {
   enemy:   'text-red-600',
-  ally:    'text-green-600',
-  neutral: 'text-zinc-500',
+  ally:    'text-green-400',
+  neutral: 'text-slate-500',
 }
 
 function formatDr(dr: number): string {
@@ -61,27 +61,27 @@ export default async function EncounterPage({ params }: { params: Promise<{ id: 
   return (
     <div className="p-8 max-w-3xl">
       <div className="flex items-center gap-3 mb-6">
-        <Link href="/encounters" className="text-sm text-zinc-500 hover:text-zinc-700">Encounters</Link>
-        <span className="text-zinc-300">/</span>
-        <span className="text-sm text-zinc-900 font-medium">{enc.title}</span>
+        <Link href="/encounters" className="text-sm text-slate-500 hover:text-slate-300">Encounters</Link>
+        <span className="text-slate-600">/</span>
+        <span className="text-sm text-slate-100 font-medium">{enc.title}</span>
       </div>
 
       <div className="flex items-center gap-4 mb-6">
-        <h1 className="text-2xl font-bold text-zinc-900">{enc.title}</h1>
+        <h1 className="text-2xl font-bold text-slate-100">{enc.title}</h1>
         {hasDr && (
           <span className={`inline-flex items-center rounded-md px-2.5 py-1 text-sm font-semibold border ${
             netDr > 0
-              ? 'bg-red-50 text-red-700 border-red-200'
+              ? 'bg-red-900/30 text-red-400 border-red-700'
               : netDr < 0
-              ? 'bg-green-50 text-green-700 border-green-200'
-              : 'bg-zinc-50 text-zinc-600 border-zinc-200'
+              ? 'bg-green-900/40 text-green-400 border-green-700'
+              : 'bg-slate-800 text-slate-400 border-slate-700'
           }`}>
             Net DR {formatDr(netDr)}
           </span>
         )}
       </div>
 
-      <form action={updateEncounter} className="bg-white rounded-lg border border-zinc-200 p-6 space-y-5 mb-8">
+      <form action={updateEncounter} className="bg-slate-800 rounded-lg border border-slate-700 p-6 space-y-5 mb-8">
         <input type="hidden" name="id" value={enc.id} />
         <div>
           <label className={label}>Title</label>
@@ -116,7 +116,7 @@ export default async function EncounterPage({ params }: { params: Promise<{ id: 
           <MentionTextarea name="notes" defaultValue={enc.notes ?? ''} rows={4} placeholder="Setup, tactics, terrain, objectives…" className={`${input} resize-none`} />
         </div>
         <div>
-          <label className={label}>Summary <span className="text-xs text-zinc-400">(fill in after the encounter)</span></label>
+          <label className={label}>Summary <span className="text-xs text-slate-500">(fill in after the encounter)</span></label>
           <MentionTextarea name="summary" defaultValue={enc.summary ?? ''} rows={3} className={`${input} resize-none`} />
         </div>
         <div className="flex gap-3 pt-2">
@@ -127,19 +127,19 @@ export default async function EncounterPage({ params }: { params: Promise<{ id: 
       </form>
 
       <section className="mb-8">
-        <h2 className="text-sm font-semibold text-zinc-700 uppercase tracking-wide mb-3">Participants</h2>
+        <h2 className="text-sm font-semibold text-slate-300 uppercase tracking-wide mb-3">Participants</h2>
         {!parts.length ? (
-          <p className="text-sm text-zinc-400 mb-3">No participants yet.</p>
+          <p className="text-sm text-slate-500 mb-3">No participants yet.</p>
         ) : (
-          <div className="bg-white rounded-lg border border-zinc-200 overflow-hidden mb-3">
+          <div className="bg-slate-800 rounded-lg border border-slate-700 overflow-hidden mb-3">
             <table className="w-full text-sm">
               <thead>
-                <tr className="border-b border-zinc-200 bg-zinc-50">
-                  <th className="text-left px-4 py-2.5 font-medium text-zinc-600">Label</th>
-                  <th className="text-left px-4 py-2.5 font-medium text-zinc-600">Count</th>
-                  <th className="text-left px-4 py-2.5 font-medium text-zinc-600">DR</th>
-                  <th className="text-left px-4 py-2.5 font-medium text-zinc-600">Role</th>
-                  <th className="text-left px-4 py-2.5 font-medium text-zinc-600">NPC</th>
+                <tr className="border-b border-slate-700 bg-slate-800">
+                  <th className="text-left px-4 py-2.5 font-medium text-slate-400">Label</th>
+                  <th className="text-left px-4 py-2.5 font-medium text-slate-400">Count</th>
+                  <th className="text-left px-4 py-2.5 font-medium text-slate-400">DR</th>
+                  <th className="text-left px-4 py-2.5 font-medium text-slate-400">Role</th>
+                  <th className="text-left px-4 py-2.5 font-medium text-slate-400">NPC</th>
                   <th />
                 </tr>
               </thead>
@@ -147,23 +147,23 @@ export default async function EncounterPage({ params }: { params: Promise<{ id: 
                 {parts.map((p) => {
                   const linkedNpc = p.npc_id ? npcById[p.npc_id] : null
                   return (
-                    <tr key={p.id} className="border-b border-zinc-100 last:border-0">
-                      <td className="px-4 py-2.5 font-medium text-zinc-900">{p.label}</td>
-                      <td className="px-4 py-2.5 text-zinc-500">{p.count}</td>
-                      <td className="px-4 py-2.5 text-zinc-500">{p.dr !== null ? formatDr(p.dr) : '—'}</td>
-                      <td className={`px-4 py-2.5 font-medium ${roleColor[p.role ?? ''] ?? 'text-zinc-500'}`}>
+                    <tr key={p.id} className="border-b border-slate-700/50 last:border-0">
+                      <td className="px-4 py-2.5 font-medium text-slate-100">{p.label}</td>
+                      <td className="px-4 py-2.5 text-slate-500">{p.count}</td>
+                      <td className="px-4 py-2.5 text-slate-500">{p.dr !== null ? formatDr(p.dr) : '—'}</td>
+                      <td className={`px-4 py-2.5 font-medium ${roleColor[p.role ?? ''] ?? 'text-slate-500'}`}>
                         {p.role ?? '—'}
                       </td>
                       <td className="px-4 py-2.5">
                         {linkedNpc
-                          ? <Link href={`/npcs/${linkedNpc.id}`} className="text-indigo-600 hover:text-indigo-700">{linkedNpc.name}</Link>
-                          : <span className="text-zinc-400">—</span>}
+                          ? <Link href={`/npcs/${linkedNpc.id}`} className="text-indigo-400 hover:text-indigo-300">{linkedNpc.name}</Link>
+                          : <span className="text-slate-500">—</span>}
                       </td>
                       <td className="px-4 py-2.5 text-right">
                         <form action={deleteParticipant}>
                           <input type="hidden" name="id" value={p.id} />
                           <input type="hidden" name="encounter_id" value={id} />
-                          <button type="submit" className="text-zinc-300 hover:text-red-500 text-xs">✕</button>
+                          <button type="submit" className="text-slate-600 hover:text-red-500 text-xs">✕</button>
                         </form>
                       </td>
                     </tr>
@@ -174,7 +174,7 @@ export default async function EncounterPage({ params }: { params: Promise<{ id: 
           </div>
         )}
 
-        <form action={addParticipant} className="bg-white rounded-lg border border-zinc-200 p-4 space-y-3">
+        <form action={addParticipant} className="bg-slate-800 rounded-lg border border-slate-700 p-4 space-y-3">
           <input type="hidden" name="encounter_id" value={id} />
           <div className="grid grid-cols-4 gap-3">
             <div className="col-span-2">
@@ -200,7 +200,7 @@ export default async function EncounterPage({ params }: { params: Promise<{ id: 
               </select>
             </div>
             <div>
-              <label className={label}>Linked NPC <span className="text-xs text-zinc-400">(optional)</span></label>
+              <label className={label}>Linked NPC <span className="text-xs text-slate-500">(optional)</span></label>
               <select name="npc_id" className={input}>
                 <option value="">— None —</option>
                 {npcs.map((n) => <option key={n.id} value={n.id}>{n.name}</option>)}
@@ -213,10 +213,10 @@ export default async function EncounterPage({ params }: { params: Promise<{ id: 
         </form>
       </section>
 
-      <div className="border-t border-zinc-200 pt-6">
+      <div className="border-t border-slate-700 pt-6">
         <form action={deleteEncounter}>
           <input type="hidden" name="id" value={enc.id} />
-          <button type="submit" className="rounded-md bg-red-50 border border-red-200 px-4 py-2 text-sm font-medium text-red-700 hover:bg-red-100">
+          <button type="submit" className="rounded-md bg-red-900/30 border border-red-700 px-4 py-2 text-sm font-medium text-red-400 hover:bg-red-900/50">
             Delete Encounter
           </button>
         </form>

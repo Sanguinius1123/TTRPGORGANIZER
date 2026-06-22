@@ -47,7 +47,7 @@ export function NoteForm({ sessionId, pcId, profileId, existingNote }: Props) {
         onChange={e => { setText(e.target.value); setSaved(false) }}
         rows={4}
         placeholder="What did your character do or observe this session?"
-        className="w-full rounded-md bg-white border border-zinc-200 px-3 py-2 text-sm text-zinc-800 focus:outline-none focus:ring-2 focus:ring-indigo-500 resize-none"
+        className="w-full rounded-md bg-slate-700 border border-slate-600 px-3 py-2 text-sm text-slate-100 focus:outline-none focus:ring-2 focus:ring-indigo-400 resize-none"
       />
       <div className="flex items-center gap-3">
         <button
@@ -57,7 +57,7 @@ export function NoteForm({ sessionId, pcId, profileId, existingNote }: Props) {
         >
           {saving ? 'Saving…' : existingNote ? 'Save changes' : 'Post note'}
         </button>
-        {saved && <span className="text-xs text-green-600">Saved!</span>}
+        {saved && <span className="text-xs text-green-400">Saved!</span>}
       </div>
     </form>
   )

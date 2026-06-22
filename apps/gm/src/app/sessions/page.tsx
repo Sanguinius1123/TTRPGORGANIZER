@@ -22,8 +22,8 @@ export default async function SessionsPage() {
     <div className="p-8">
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-2xl font-bold text-zinc-900">Sessions</h1>
-          <p className="text-sm text-zinc-500 mt-1">{sessions.length} sessions logged</p>
+          <h1 className="text-2xl font-bold text-slate-100">Sessions</h1>
+          <p className="text-sm text-slate-500 mt-1">{sessions.length} sessions logged</p>
         </div>
         <Link href="/sessions/new" className="rounded-md bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700">
           Log Session
@@ -31,9 +31,9 @@ export default async function SessionsPage() {
       </div>
 
       {!sessions.length ? (
-        <div className="rounded-lg border border-dashed border-zinc-300 p-12 text-center">
-          <p className="text-zinc-500 text-sm">No sessions logged yet.</p>
-          <Link href="/sessions/new" className="mt-3 inline-block text-sm font-medium text-indigo-600 hover:text-indigo-700">
+        <div className="rounded-lg border border-dashed border-slate-600 p-12 text-center">
+          <p className="text-slate-500 text-sm">No sessions logged yet.</p>
+          <Link href="/sessions/new" className="mt-3 inline-block text-sm font-medium text-indigo-400 hover:text-indigo-300">
             Log the first one →
           </Link>
         </div>
@@ -45,22 +45,22 @@ export default async function SessionsPage() {
               <Link
                 key={s.id}
                 href={`/sessions/${s.id}`}
-                className="flex items-start gap-4 bg-white rounded-lg border border-zinc-200 p-4 hover:border-indigo-300 hover:shadow-sm transition-all"
+                className="flex items-start gap-4 bg-slate-800 rounded-lg border border-slate-700 p-4 hover:border-indigo-300 hover:shadow-sm transition-all"
               >
                 <span className="shrink-0 flex items-center justify-center w-10 h-10 rounded-full bg-indigo-50 text-indigo-700 font-bold text-sm">
                   {s.session_number}
                 </span>
                 <div className="min-w-0 flex-1">
                   <div className="flex items-center gap-2 flex-wrap">
-                    <p className="font-medium text-zinc-900">{s.title ?? `Session ${s.session_number}`}</p>
+                    <p className="font-medium text-slate-100">{s.title ?? `Session ${s.session_number}`}</p>
                     {faction && (
-                      <span className="inline-flex items-center rounded-full bg-indigo-50 px-2 py-0.5 text-xs font-medium text-indigo-700">
+                      <span className="inline-flex items-center rounded-full bg-indigo-900/40 px-2 py-0.5 text-xs font-medium text-indigo-300">
                         {faction.name}
                       </span>
                     )}
                   </div>
                   {s.summary && (
-                    <p className="text-sm text-zinc-500 mt-0.5 line-clamp-2">{stripMentions(s.summary)}</p>
+                    <p className="text-sm text-slate-500 mt-0.5 line-clamp-2">{stripMentions(s.summary)}</p>
                   )}
                 </div>
               </Link>

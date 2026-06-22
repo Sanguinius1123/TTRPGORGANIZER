@@ -5,8 +5,8 @@ import MentionTextarea from '@/components/MentionTextarea'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 
-const input = 'block w-full rounded-md border border-zinc-300 px-3 py-2 text-sm text-zinc-900 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none'
-const label = 'block text-sm font-medium text-zinc-700 mb-1'
+const input = 'block w-full rounded-md border border-slate-600 bg-slate-700 px-3 py-2 text-sm text-slate-100 focus:border-indigo-400 focus:ring-1 focus:ring-indigo-400 outline-none'
+const label = 'block text-sm font-medium text-slate-300 mb-1'
 
 export default async function ItemPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
@@ -18,13 +18,13 @@ export default async function ItemPage({ params }: { params: Promise<{ id: strin
   return (
     <div className="p-8 max-w-2xl">
       <div className="flex items-center gap-3 mb-6">
-        <Link href="/items" className="text-sm text-zinc-500 hover:text-zinc-700">Items</Link>
-        <span className="text-zinc-300">/</span>
-        <span className="text-sm text-zinc-900 font-medium">{item.name}</span>
+        <Link href="/items" className="text-sm text-slate-400 hover:text-slate-300">Items</Link>
+        <span className="text-slate-600">/</span>
+        <span className="text-sm text-slate-100 font-medium">{item.name}</span>
       </div>
-      <h1 className="text-2xl font-bold text-zinc-900 mb-6">{item.name}</h1>
+      <h1 className="text-2xl font-bold text-slate-100 mb-6">{item.name}</h1>
 
-      <form action={updateItem} className="bg-white rounded-lg border border-zinc-200 p-6 space-y-5 mb-8">
+      <form action={updateItem} className="bg-slate-800 rounded-lg border border-slate-700 p-6 space-y-5 mb-8">
         <input type="hidden" name="id" value={item.id} />
         <div>
           <label className={label}>Name</label>
@@ -51,10 +51,10 @@ export default async function ItemPage({ params }: { params: Promise<{ id: strin
         </div>
       </form>
 
-      <div className="border-t border-zinc-200 pt-6">
+      <div className="border-t border-slate-700 pt-6">
         <form action={deleteItem}>
           <input type="hidden" name="id" value={item.id} />
-          <button type="submit" className="rounded-md bg-red-50 border border-red-200 px-4 py-2 text-sm font-medium text-red-700 hover:bg-red-100">
+          <button type="submit" className="rounded-md bg-red-900/30 border border-red-700 px-4 py-2 text-sm font-medium text-red-400 hover:bg-red-900/50">
             Delete Item
           </button>
         </form>

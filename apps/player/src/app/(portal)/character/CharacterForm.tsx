@@ -94,7 +94,7 @@ export function CharacterForm({ pc, speciesList, culturesList }: Props) {
           value={fields.private_notes}
           onChange={set('private_notes')}
           rows={3}
-          className={`${textarea} border-amber-200 focus:ring-amber-400`}
+          className={`${textarea} border-amber-700 focus:ring-amber-500`}
           placeholder="Your private thoughts, plans, secrets…"
         />
       </Field>
@@ -107,21 +107,21 @@ export function CharacterForm({ pc, speciesList, culturesList }: Props) {
         >
           {saving ? 'Saving…' : 'Save changes'}
         </button>
-        {saved && <span className="text-sm text-green-600">Saved!</span>}
+        {saved && <span className="text-sm text-green-400">Saved!</span>}
       </div>
     </form>
   )
 }
 
-const input = 'w-full rounded-md bg-white border border-zinc-200 px-3 py-2 text-sm text-zinc-800 focus:outline-none focus:ring-2 focus:ring-indigo-500'
+const input = 'w-full rounded-md bg-slate-700 border border-slate-600 px-3 py-2 text-sm text-slate-100 focus:outline-none focus:ring-2 focus:ring-indigo-400'
 const textarea = `${input} resize-none`
 
 function Field({ label, children, viewHref }: { label: string; children: React.ReactNode; viewHref?: string }) {
   return (
     <div>
       <div className="flex items-center justify-between mb-1">
-        <label className="text-xs font-medium text-zinc-500">{label}</label>
-        {viewHref && <a href={viewHref} className="text-xs text-indigo-500 hover:text-indigo-700">View →</a>}
+        <label className="text-xs font-medium text-slate-400">{label}</label>
+        {viewHref && <a href={viewHref} className="text-xs text-indigo-400 hover:text-indigo-300">View →</a>}
       </div>
       {children}
     </div>

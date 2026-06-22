@@ -14,7 +14,7 @@ export default async function PortalLayout({ children }: { children: React.React
     .single()
 
   return (
-    <div className="flex h-screen overflow-hidden bg-zinc-50">
+    <div className="flex h-screen overflow-hidden bg-slate-900">
       <Nav displayName={profile?.display_name ?? user.email ?? 'Player'} />
       <main className="flex-1 overflow-y-auto">{children}</main>
     </div>

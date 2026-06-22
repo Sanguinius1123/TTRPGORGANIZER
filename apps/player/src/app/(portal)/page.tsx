@@ -25,10 +25,10 @@ export default async function HomePage({ searchParams }: { searchParams: SearchP
   if (allMyPCs.length === 0) {
     return (
       <div className="p-8 max-w-2xl">
-        <h1 className="text-2xl font-bold text-zinc-900 mb-6">My Character</h1>
-        <div className="bg-amber-50 border border-amber-200 rounded-lg p-6">
-          <p className="text-sm font-medium text-amber-800">No character assigned</p>
-          <p className="text-sm text-amber-700 mt-1">
+        <h1 className="text-2xl font-bold text-slate-100 mb-6">My Character</h1>
+        <div className="bg-amber-900/30 border border-amber-700 rounded-lg p-6">
+          <p className="text-sm font-medium text-amber-300">No character assigned</p>
+          <p className="text-sm text-amber-300 mt-1">
             Ask your GM to assign you a player character to unlock your character sheet.
           </p>
         </div>
@@ -73,10 +73,10 @@ export default async function HomePage({ searchParams }: { searchParams: SearchP
   return (
     <div className="p-8 max-w-5xl">
       <div className="flex items-center gap-4 mb-6">
-        <h1 className="text-2xl font-bold text-zinc-900">{pc.name}</h1>
+        <h1 className="text-2xl font-bold text-slate-100">{pc.name}</h1>
         {allMyPCs.length > 1 && (
           <div className="flex items-center gap-2">
-            <span className="text-xs text-zinc-400">Character:</span>
+            <span className="text-xs text-slate-500">Character:</span>
             <div className="flex gap-1">
               {allMyPCs.map(c => (
                 <Link
@@ -85,7 +85,7 @@ export default async function HomePage({ searchParams }: { searchParams: SearchP
                   className={`px-3 py-1 rounded-full text-xs font-medium border transition-colors ${
                     c.id === pc.id
                       ? 'bg-indigo-600 text-white border-indigo-600'
-                      : 'border-zinc-300 text-zinc-600 hover:bg-zinc-50'
+                      : 'border-slate-600 text-slate-400 hover:bg-slate-700/50'
                   }`}
                 >
                   {c.name}
@@ -100,18 +100,18 @@ export default async function HomePage({ searchParams }: { searchParams: SearchP
 
         {/* ── Left: character form + factions ── */}
         <div className="flex-1 min-w-0 space-y-6">
-          <div className="bg-white rounded-lg border border-zinc-200 p-6">
+          <div className="bg-slate-800 rounded-lg border border-slate-700 p-6">
             <CharacterForm pc={pc} speciesList={speciesList} culturesList={culturesList} />
           </div>
 
           {pcFactions.length > 0 && (
-            <div className="bg-white rounded-lg border border-zinc-200 p-5">
-              <h2 className="text-xs font-semibold text-zinc-500 uppercase tracking-wide mb-3">Faction Memberships</h2>
+            <div className="bg-slate-800 rounded-lg border border-slate-700 p-5">
+              <h2 className="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-3">Faction Memberships</h2>
               <ul className="space-y-1.5">
                 {pcFactions.map(({ faction, role }) => (
                   <li key={faction!.id} className="flex items-center gap-2 text-sm">
-                    <Link href={`/factions/${faction!.id}`} className="text-indigo-600 hover:underline font-medium">{faction!.name}</Link>
-                    {role && <span className="text-zinc-400">· {role}</span>}
+                    <Link href={`/factions/${faction!.id}`} className="text-indigo-400 hover:underline font-medium">{faction!.name}</Link>
+                    {role && <span className="text-slate-500">· {role}</span>}
                   </li>
                 ))}
               </ul>
@@ -121,27 +121,27 @@ export default async function HomePage({ searchParams }: { searchParams: SearchP
 
         {/* ── Right: party sidebar ── */}
         <div className="w-64 shrink-0">
-          <div className="bg-white rounded-lg border border-zinc-200 overflow-hidden">
-            <div className="px-4 py-2.5 border-b border-zinc-100 bg-zinc-50">
-              <h3 className="text-xs font-semibold text-zinc-600 uppercase tracking-wide">
+          <div className="bg-slate-800 rounded-lg border border-slate-700 overflow-hidden">
+            <div className="px-4 py-2.5 border-b border-slate-700/50 bg-slate-800">
+              <h3 className="text-xs font-semibold text-slate-400 uppercase tracking-wide">
                 {partyFaction ? partyFaction.name : 'Party'}
               </h3>
             </div>
             <div className="p-3 space-y-1">
               {!pc.party_faction_id ? (
-                <p className="text-xs text-zinc-400 px-1 py-1">No party faction assigned.</p>
+                <p className="text-xs text-slate-500 px-1 py-1">No party faction assigned.</p>
               ) : partyMembers.length === 0 ? (
-                <p className="text-xs text-zinc-400 px-1 py-1">No other visible party members.</p>
+                <p className="text-xs text-slate-500 px-1 py-1">No other visible party members.</p>
               ) : (
                 partyMembers.map(member => (
                   <Link
                     key={member.id}
                     href={`/player-characters/${member.id}`}
-                    className="flex flex-col rounded px-1 py-2 hover:bg-zinc-50 transition-colors"
+                    className="flex flex-col rounded px-1 py-2 hover:bg-slate-700/50 transition-colors"
                   >
-                    <span className="text-sm font-medium text-zinc-900 hover:text-indigo-600">{member.name}</span>
+                    <span className="text-sm font-medium text-slate-100 hover:text-indigo-400">{member.name}</span>
                     {(member.player_name || member.species) && (
-                      <span className="text-xs text-zinc-400">
+                      <span className="text-xs text-slate-500">
                         {[member.player_name, member.species].filter(Boolean).join(' · ')}
                       </span>
                     )}
