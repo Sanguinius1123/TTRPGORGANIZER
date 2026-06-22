@@ -1,7 +1,7 @@
 import { db } from '@/lib/db'
 import {
   updatePlayerCharacter, deletePlayerCharacter, togglePlayerCharacterVisibility,
-  setPcLocation, addPcFaction, removePcFaction,
+  setPcLocation, addPcFaction, removePcFaction, setPartyFaction,
 } from '@/lib/actions/player-characters'
 import { assignProfileToPC } from '@/lib/actions/settings'
 import { PlayerCharacter } from '@ttrpg/db'
@@ -56,25 +56,45 @@ export default async function PlayerCharacterPage({ params }: { params: Promise<
           {pc.player_name && <p className="text-sm text-zinc-500 mt-0.5">Played by {pc.player_name}</p>}
         </div>
 
-        {/* ── Player account assignment ── */}
-        <form action={assignProfileToPC} className="flex items-center gap-2 shrink-0">
-          <input type="hidden" name="pc_id" value={pc.id} />
-          <label className="text-xs font-medium text-zinc-500 whitespace-nowrap">Player account</label>
-          <select
-            key={pc.profile_id ?? ''}
-            name="profile_id"
-            defaultValue={pc.profile_id ?? ''}
-            className={smallInput + ' w-44'}
-          >
-            <option value="">— Unassigned —</option>
-            {profiles.map(p => (
-              <option key={p.id} value={p.id}>{p.display_name ?? p.id}</option>
-            ))}
-          </select>
-          <button type="submit" className="rounded bg-indigo-600 px-2.5 py-1.5 text-xs font-medium text-white hover:bg-indigo-700 whitespace-nowrap">
-            Assign
-          </button>
-        </form>
+        {/* ── Assignment controls ── */}
+        <div className="flex flex-col gap-2 shrink-0">
+          <form action={assignProfileToPC} className="flex items-center gap-2">
+            <input type="hidden" name="pc_id" value={pc.id} />
+            <label className="text-xs font-medium text-zinc-500 whitespace-nowrap w-24 text-right">Player account</label>
+            <select
+              key={pc.profile_id ?? ''}
+              name="profile_id"
+              defaultValue={pc.profile_id ?? ''}
+              className={smallInput + ' w-44'}
+            >
+              <option value="">— Unassigned —</option>
+              {profiles.map(p => (
+                <option key={p.id} value={p.id}>{p.display_name ?? p.id}</option>
+              ))}
+            </select>
+            <button type="submit" className="rounded bg-indigo-600 px-2.5 py-1.5 text-xs font-medium text-white hover:bg-indigo-700 whitespace-nowrap">
+              Assign
+            </button>
+          </form>
+          <form action={setPartyFaction} className="flex items-center gap-2">
+            <input type="hidden" name="pc_id" value={pc.id} />
+            <label className="text-xs font-medium text-zinc-500 whitespace-nowrap w-24 text-right">Party faction</label>
+            <select
+              key={pc.party_faction_id ?? ''}
+              name="party_faction_id"
+              defaultValue={pc.party_faction_id ?? ''}
+              className={smallInput + ' w-44'}
+            >
+              <option value="">— None —</option>
+              {allFactions.map(f => (
+                <option key={f.id} value={f.id}>{f.name}</option>
+              ))}
+            </select>
+            <button type="submit" className="rounded bg-indigo-600 px-2.5 py-1.5 text-xs font-medium text-white hover:bg-indigo-700 whitespace-nowrap">
+              Set
+            </button>
+          </form>
+        </div>
 
         <form action={togglePlayerCharacterVisibility}>
           <input type="hidden" name="id" value={pc.id} />

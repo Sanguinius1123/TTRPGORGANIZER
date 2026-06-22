@@ -5,15 +5,15 @@ import { usePathname, useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 
 const navItems = [
-  { label: 'Home',      href: '/' },
-  { label: 'Sessions',  href: '/sessions' },
-  { label: 'Locations', href: '/locations' },
-  { label: 'NPCs',      href: '/npcs' },
-  { label: 'Factions',  href: '/factions' },
-  { label: 'Lore',      href: '/lore' },
+  { label: 'My Character', href: '/' },
+  { label: 'Sessions',     href: '/sessions' },
+  { label: 'Locations',    href: '/locations' },
+  { label: 'NPCs',         href: '/npcs' },
+  { label: 'Factions',     href: '/factions' },
+  { label: 'Lore',         href: '/lore' },
 ]
 
-export function Nav({ displayName, myPCId }: { displayName: string; myPCId: string | null }) {
+export function Nav({ displayName }: { displayName: string }) {
   const pathname = usePathname()
   const router = useRouter()
   const isActive = (href: string) => href === '/' ? pathname === '/' : pathname.startsWith(href)
@@ -44,18 +44,6 @@ export function Nav({ displayName, myPCId }: { displayName: string; myPCId: stri
             {label}
           </Link>
         ))}
-        {myPCId && (
-          <Link
-            href={`/character`}
-            className={`flex items-center px-3 py-2 rounded-md text-sm transition-colors ${
-              pathname === '/character'
-                ? 'bg-zinc-700 text-white font-medium'
-                : 'text-zinc-400 hover:text-zinc-100 hover:bg-zinc-800'
-            }`}
-          >
-            My Character
-          </Link>
-        )}
       </nav>
       <div className="px-4 py-4 border-t border-zinc-700 space-y-1">
         <p className="text-xs text-zinc-500 truncate">{displayName}</p>

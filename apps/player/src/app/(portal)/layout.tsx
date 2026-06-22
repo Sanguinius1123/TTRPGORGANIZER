@@ -13,15 +13,9 @@ export default async function PortalLayout({ children }: { children: React.React
     .eq('id', user.id)
     .single()
 
-  const { data: myPC } = await supabase
-    .from('player_characters')
-    .select('id, name')
-    .eq('profile_id', user.id)
-    .maybeSingle()
-
   return (
     <div className="flex h-screen overflow-hidden bg-zinc-50">
-      <Nav displayName={profile?.display_name ?? user.email ?? 'Player'} myPCId={myPC?.id ?? null} />
+      <Nav displayName={profile?.display_name ?? user.email ?? 'Player'} />
       <main className="flex-1 overflow-y-auto">{children}</main>
     </div>
   )

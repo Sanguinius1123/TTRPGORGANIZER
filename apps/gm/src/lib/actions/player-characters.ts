@@ -71,6 +71,15 @@ export async function togglePlayerCharacterVisibility(formData: FormData) {
   revalidatePath('/player-characters')
 }
 
+export async function setPartyFaction(formData: FormData) {
+  const supabase = db()
+  const id               = formData.get('pc_id') as string
+  const party_faction_id = (formData.get('party_faction_id') as string) || null
+  const { error } = await supabase.from('player_characters').update({ party_faction_id }).eq('id', id)
+  if (error) throw new Error(error.message)
+  revalidatePath(`/player-characters/${id}`)
+}
+
 export async function addPcFaction(formData: FormData) {
   const supabase = db()
   const pc_id      = formData.get('pc_id') as string

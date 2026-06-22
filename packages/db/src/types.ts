@@ -68,6 +68,7 @@ export interface Database {
           visible: boolean
           current_location_id: string | null
           profile_id: string | null
+          party_faction_id: string | null
           created_at: string
         }
         Insert: Partial<Omit<Database['public']['Tables']['player_characters']['Row'], 'id' | 'created_at'>>
