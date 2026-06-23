@@ -23,7 +23,7 @@ export default async function PlayerSubMapPage({ params, searchParams }: { param
       .from('locations')
       .select('*')
       .eq('parent_location_id', id)
-      .eq('visible', true)
+      .or('visible.eq.true,waypoint.eq.true')
       .not('map_x', 'is', null)
       .order('name'),
     supabase.from('location_connections').select('*'),

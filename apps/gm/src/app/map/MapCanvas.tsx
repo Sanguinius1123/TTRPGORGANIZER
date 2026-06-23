@@ -632,7 +632,6 @@ function MapCanvasInner({
     e.preventDefault()
     e.stopPropagation()
     const d = node.data as LocationData
-    if (d.waypoint) return
     setCreationMenu(null)
     setConfigPanel(null)
     setNodeMenu({ screenX: e.clientX, screenY: e.clientY, nodeId: node.id, nodeData: d })
@@ -1171,15 +1170,17 @@ function MapCanvasInner({
               }}
             >
               <div className="text-[11px] text-slate-500 mb-2 truncate px-1">
-                {nodeMenu.nodeData.name ?? '(unnamed)'}
+                {nodeMenu.nodeData.waypoint ? 'Waypoint' : (nodeMenu.nodeData.name ?? '(unnamed)')}
               </div>
               <div className="flex flex-col gap-1">
-                <button
-                  onClick={() => { setNodeMenu(null); router.push(`/locations/${nodeMenu.nodeId}`) }}
-                  className="text-xs text-left text-slate-200 hover:text-white hover:bg-slate-700 rounded px-2 py-1.5 transition-colors"
-                >
-                  Details
-                </button>
+                {!nodeMenu.nodeData.waypoint && (
+                  <button
+                    onClick={() => { setNodeMenu(null); router.push(`/locations/${nodeMenu.nodeId}`) }}
+                    className="text-xs text-left text-slate-200 hover:text-white hover:bg-slate-700 rounded px-2 py-1.5 transition-colors"
+                  >
+                    Details
+                  </button>
+                )}
                 {currentScale !== 'local' && (
                   <>
                     <label className="flex items-center gap-2 text-xs text-slate-300 cursor-pointer hover:bg-slate-700 rounded px-2 py-1.5">
@@ -1191,22 +1192,26 @@ function MapCanvasInner({
                       />
                       Visible to players
                     </label>
-                    <label className="flex items-center gap-2 text-xs text-slate-300 cursor-pointer hover:bg-slate-700 rounded px-2 py-1.5">
-                      <input
-                        type="checkbox"
-                        checked={nodeMenu.nodeData.rawLoc.has_submap}
-                        onChange={() => handleToggleSubmap(nodeMenu.nodeId, !nodeMenu.nodeData.rawLoc.has_submap)}
-                        className="accent-indigo-500"
-                      />
-                      Has sub-map
-                    </label>
-                    <button
-                      onClick={() => { setNodeMenu(null); router.push(`/map/${nodeMenu.nodeId}`) }}
-                      disabled={!nodeMenu.nodeData.rawLoc.has_submap}
-                      className="text-xs text-left text-slate-200 hover:text-white hover:bg-slate-700 rounded px-2 py-1.5 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
-                    >
-                      Open Sub-map
-                    </button>
+                    {!nodeMenu.nodeData.waypoint && (
+                      <>
+                        <label className="flex items-center gap-2 text-xs text-slate-300 cursor-pointer hover:bg-slate-700 rounded px-2 py-1.5">
+                          <input
+                            type="checkbox"
+                            checked={nodeMenu.nodeData.rawLoc.has_submap}
+                            onChange={() => handleToggleSubmap(nodeMenu.nodeId, !nodeMenu.nodeData.rawLoc.has_submap)}
+                            className="accent-indigo-500"
+                          />
+                          Has sub-map
+                        </label>
+                        <button
+                          onClick={() => { setNodeMenu(null); router.push(`/map/${nodeMenu.nodeId}`) }}
+                          disabled={!nodeMenu.nodeData.rawLoc.has_submap}
+                          className="text-xs text-left text-slate-200 hover:text-white hover:bg-slate-700 rounded px-2 py-1.5 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+                        >
+                          Open Sub-map
+                        </button>
+                      </>
+                    )}
                   </>
                 )}
               </div>

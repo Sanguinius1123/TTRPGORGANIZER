@@ -1,6 +1,6 @@
 'use client'
 
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { useCallback, useContext, useEffect, useMemo, useRef, useState, createContext } from 'react'
 import { useRouter } from 'next/navigation'
 import {
   ReactFlow,
@@ -12,6 +12,8 @@ import {
   useNodesState,
   useEdgesState,
   useReactFlow,
+  Handle,
+  Position,
   type Node,
   type Edge,
   type NodeProps,
@@ -87,9 +89,12 @@ type LocationData = {
   hasSubmap: boolean
 }
 
-function LocationNode({ data, positionAbsoluteX, positionAbsoluteY, selected }: NodeProps) {
+const hiddenHandle: React.CSSProperties = { opacity: 0, width: 0, height: 0, minWidth: 0, minHeight: 0 }
+
+function LocationNode({ id, data, positionAbsoluteX, positionAbsoluteY, selected }: NodeProps) {
   const d = data as LocationData
   const [hovered, setHovered] = useState(false)
+  const { onDoubleClickNode } = useContext(MapViewContext)
 
   if (d.waypoint) {
     const wColor = TERRAIN_COLORS[d.terrain ?? ''] || '#64748b'
@@ -107,6 +112,8 @@ function LocationNode({ data, positionAbsoluteX, positionAbsoluteY, selected }: 
         onMouseEnter={() => setHovered(true)}
         onMouseLeave={() => setHovered(false)}
       >
+        <Handle type="source" position={Position.Top} style={hiddenHandle} />
+        <Handle type="target" position={Position.Top} style={hiddenHandle} />
         {hovered && (
           <div style={{
             position: 'absolute',
@@ -141,6 +148,9 @@ function LocationNode({ data, positionAbsoluteX, positionAbsoluteY, selected }: 
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
     >
+      <Handle type="source" position={Position.Top} style={hiddenHandle} />
+      <Handle type="target" position={Position.Top} style={hiddenHandle} />
+
       {/* Label above */}
       <div style={{
         position: 'absolute',
@@ -173,20 +183,22 @@ function LocationNode({ data, positionAbsoluteX, positionAbsoluteY, selected }: 
         </div>
       )}
 
-      <div style={{
-        width: 48,
-        height: 48,
-        borderRadius: '50%',
-        border: `2px solid ${color}`,
-        backgroundColor: `${color}22`,
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        fontSize: '18px',
-        cursor: 'pointer',
-        outline: selected ? '2px solid #818cf8' : undefined,
-        outlineOffset: selected ? '3px' : undefined,
-      }}>
+      <div
+        onDoubleClick={() => onDoubleClickNode(id, d.hasSubmap)}
+        style={{
+          width: 48,
+          height: 48,
+          borderRadius: '50%',
+          border: `2px solid ${color}`,
+          backgroundColor: `${color}22`,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          fontSize: '18px',
+          cursor: 'pointer',
+          outline: selected ? '2px solid #818cf8' : undefined,
+          outlineOffset: selected ? '3px' : undefined,
+        }}>
         {symbol}
       </div>
 
@@ -219,6 +231,9 @@ function LocationNode({ data, positionAbsoluteX, positionAbsoluteY, selected }: 
 
 const nodeTypes = { locationNode: LocationNode }
 const edgeTypes = { floatingCircle: FloatingCircleEdge }
+
+type MapViewContextValue = { onDoubleClickNode: (id: string, hasSubmap: boolean) => void }
+const MapViewContext = createContext<MapViewContextValue>({ onDoubleClickNode: () => {} })
 
 function toNode(loc: Location, typeRules: MapTypeRule[]): Node {
   const ruleColor = typeRules.find(r => r.parent_type === loc.type)?.color
@@ -317,6 +332,14 @@ function MapViewInner({ locations, connections, distanceScale, travelUnit, typeR
   const [routePlanning, setRoutePlanning] = useState(false)
   const [route, setRoute] = useState<string[]>([])
 
+  const onDoubleClickNode = useCallback((nodeId: string, hasSubmap: boolean) => {
+    if (routePlanning) return
+    if (hasSubmap) router.push(`/map/${nodeId}`)
+    else router.push(`/locations/${nodeId}`)
+  }, [routePlanning, router])
+
+  const mapViewContextValue = useMemo(() => ({ onDoubleClickNode }), [onDoubleClickNode])
+
   const locById = useMemo(() => new Map(locations.map(l => [l.id, l])), [locations])
 
   const initialNodes = useMemo(() => locations.map(l => toNode(l, typeRules)), [locations, typeRules])
@@ -358,17 +381,6 @@ function MapViewInner({ locations, connections, distanceScale, travelUnit, typeR
     setRoute([...route, node.id])
   }, [routePlanning, route, connections])
 
-  // Double click: navigate to location detail
-  const onNodeDoubleClick = useCallback<NodeMouseHandler<Node>>((_event, node) => {
-    const d = node.data as LocationData
-    if (d.waypoint || routePlanning) return
-    if (d.hasSubmap) {
-      router.push(`/map/${node.id}`)
-    } else {
-      router.push(`/locations/${node.id}`)
-    }
-  }, [routePlanning, router])
-
   // Use onPaneClick to detect double-click on empty canvas (go up to parent map)
   const lastPaneClickTime = useRef<number>(0)
   const onPaneClick = useCallback(() => {
@@ -388,6 +400,7 @@ function MapViewInner({ locations, connections, distanceScale, travelUnit, typeR
   )
 
   return (
+    <MapViewContext.Provider value={mapViewContextValue}>
     <div className="h-full flex" style={{ position: 'relative' }}>
       <div className="flex-1 bg-slate-950" style={{ position: 'relative' }}>
         <ReactFlow
@@ -396,7 +409,6 @@ function MapViewInner({ locations, connections, distanceScale, travelUnit, typeR
           onNodesChange={onNodesChange}
           onEdgesChange={onEdgesChange}
           onNodeClick={onNodeClick}
-          onNodeDoubleClick={onNodeDoubleClick}
           onPaneClick={onPaneClick}
           nodeTypes={nodeTypes}
           edgeTypes={edgeTypes}
@@ -498,6 +510,7 @@ function MapViewInner({ locations, connections, distanceScale, travelUnit, typeR
         </div>
       )}
     </div>
+    </MapViewContext.Provider>
   )
 }
 

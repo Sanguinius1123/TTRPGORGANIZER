@@ -7,7 +7,7 @@ export default async function MapPage({ searchParams }: { searchParams: Promise<
   const supabase = await createClient()
 
   const results = await Promise.all([
-    supabase.from('locations').select('*').eq('visible', true).is('parent_location_id', null).not('map_x', 'is', null).order('name'),
+    supabase.from('locations').select('*').or('visible.eq.true,waypoint.eq.true').is('parent_location_id', null).not('map_x', 'is', null).order('name'),
     supabase.from('location_connections').select('*'),
     supabase.from('map_type_rules').select('*').is('parent_type', null).maybeSingle(),
     supabase.from('map_type_rules').select('*'),
