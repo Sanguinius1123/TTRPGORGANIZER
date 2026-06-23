@@ -29,7 +29,7 @@ export default async function LocationPage({ params }: { params: Promise<{ id: s
 
   const [r1, r2, r3] = await Promise.all([
     supabase.from('locations').select('id, name').neq('id', id).order('name'),
-    supabase.from('locations').select('id, name, type, visible').eq('parent_location_id', id).order('name'),
+    supabase.from('locations').select('id, name, type, visible').eq('parent_location_id', id).neq('waypoint', true).order('name'),
     supabase.from('shops').select('id, name').eq('location_id', id).order('name'),
   ])
 

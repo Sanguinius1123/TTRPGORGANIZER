@@ -12,8 +12,6 @@ import {
   useNodesState,
   useEdgesState,
   useReactFlow,
-  Handle,
-  Position,
   type Node,
   type Edge,
   type NodeProps,
@@ -174,8 +172,6 @@ function LocationNode({ data, positionAbsoluteX, positionAbsoluteY, selected }: 
           {d.descriptor}
         </div>
       )}
-
-      <Handle type="target" position={Position.Top} style={{ opacity: 0 }} />
 
       <div style={{
         width: 48,
