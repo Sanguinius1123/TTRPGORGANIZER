@@ -6,6 +6,7 @@ import {
   useContext,
   useEffect,
   useMemo,
+  useRef,
   useState,
 } from 'react'
 import { useRouter } from 'next/navigation'
@@ -674,13 +675,22 @@ function MapCanvasInner({
     setEdgeBidirectional(conn.bidirectional)
   }, [localConnections])
 
-  // Double-click empty canvas to go up to parent map, centered on this location's node
-  const onCanvasDoubleClick = useCallback((e: React.MouseEvent) => {
-    const target = e.target as HTMLElement
-    if (!target.classList.contains('react-flow__pane')) return
-    if (!mapLocationId) return
-    const parentRoute = parentId ? `/map/${parentId}` : '/map'
-    router.push(`${parentRoute}?focus=${mapLocationId}`)
+  // Use onPaneClick to detect double-click on empty canvas (go up to parent map)
+  // React Flow's onPaneClick already filters out node/edge clicks, so this is reliable
+  const lastPaneClickTime = useRef<number>(0)
+  const onPaneClick = useCallback(() => {
+    setCreationMenu(null)
+    setEdgePanel(null)
+    setConfigPanel(null)
+    setNodeMenu(null)
+    const now = Date.now()
+    if (now - lastPaneClickTime.current < 300 && mapLocationId) {
+      const parentRoute = parentId ? `/map/${parentId}` : '/map'
+      router.push(`${parentRoute}?focus=${mapLocationId}`)
+      lastPaneClickTime.current = 0
+    } else {
+      lastPaneClickTime.current = now
+    }
   }, [mapLocationId, parentId, router])
 
   const saveEdgeTravelTime = useCallback(async (value: string) => {
@@ -839,7 +849,7 @@ function MapCanvasInner({
         </div>
 
         {/* Canvas */}
-        <div className="flex-1 h-full bg-slate-950" style={{ position: 'relative' }} onDoubleClick={onCanvasDoubleClick}>
+        <div className="flex-1 h-full bg-slate-950" style={{ position: 'relative' }}>
           <ReactFlow
             nodes={visibleNodes}
             edges={edges}
@@ -850,7 +860,7 @@ function MapCanvasInner({
             onEdgeClick={onEdgeClick}
             onPaneContextMenu={onPaneContextMenu}
             onNodeContextMenu={onNodeContextMenu}
-            onPaneClick={() => { setCreationMenu(null); setEdgePanel(null); setConfigPanel(null); setNodeMenu(null) }}
+            onPaneClick={onPaneClick}
             nodeTypes={nodeTypes}
             edgeTypes={edgeTypes}
             connectionMode={ConnectionMode.Loose}

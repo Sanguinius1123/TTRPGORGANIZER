@@ -1,6 +1,6 @@
 'use client'
 
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import {
   ReactFlow,
@@ -367,13 +367,17 @@ function MapViewInner({ locations, connections, distanceScale, travelUnit, typeR
     router.push(`/locations/${node.id}`)
   }, [routePlanning, router])
 
-  // Double click empty canvas: go up to parent map
-  const onCanvasDoubleClick = useCallback((e: React.MouseEvent) => {
-    const target = e.target as HTMLElement
-    if (!target.classList.contains('react-flow__pane')) return
-    if (!locationId) return
-    const parentRoute = parentLocationId ? `/map/${parentLocationId}` : '/map'
-    router.push(`${parentRoute}?focus=${locationId}`)
+  // Use onPaneClick to detect double-click on empty canvas (go up to parent map)
+  const lastPaneClickTime = useRef<number>(0)
+  const onPaneClick = useCallback(() => {
+    const now = Date.now()
+    if (now - lastPaneClickTime.current < 300 && locationId) {
+      const parentRoute = parentLocationId ? `/map/${parentLocationId}` : '/map'
+      router.push(`${parentRoute}?focus=${locationId}`)
+      lastPaneClickTime.current = 0
+    } else {
+      lastPaneClickTime.current = now
+    }
   }, [locationId, parentLocationId, router])
 
   const routeTotal = useMemo(
@@ -383,7 +387,7 @@ function MapViewInner({ locations, connections, distanceScale, travelUnit, typeR
 
   return (
     <div className="h-full flex" style={{ position: 'relative' }}>
-      <div className="flex-1 bg-slate-950" style={{ position: 'relative' }} onDoubleClick={onCanvasDoubleClick}>
+      <div className="flex-1 bg-slate-950" style={{ position: 'relative' }}>
         <ReactFlow
           nodes={nodes}
           edges={edges}
@@ -391,6 +395,7 @@ function MapViewInner({ locations, connections, distanceScale, travelUnit, typeR
           onEdgesChange={onEdgesChange}
           onNodeClick={onNodeClick}
           onNodeDoubleClick={onNodeDoubleClick}
+          onPaneClick={onPaneClick}
           nodeTypes={nodeTypes}
           edgeTypes={edgeTypes}
           nodesDraggable={false}
