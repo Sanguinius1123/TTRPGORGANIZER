@@ -1,6 +1,6 @@
 'use client'
 
-import { useCallback, useContext, useEffect, useMemo, useRef, useState, createContext } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import {
   ReactFlow,
@@ -94,7 +94,6 @@ const hiddenHandle: React.CSSProperties = { opacity: 0, width: 0, height: 0, min
 function LocationNode({ id, data, positionAbsoluteX, positionAbsoluteY, selected }: NodeProps) {
   const d = data as LocationData
   const [hovered, setHovered] = useState(false)
-  const { onDoubleClickNode } = useContext(MapViewContext)
 
   if (d.waypoint) {
     const wColor = TERRAIN_COLORS[d.terrain ?? ''] || '#64748b'
@@ -184,7 +183,7 @@ function LocationNode({ id, data, positionAbsoluteX, positionAbsoluteY, selected
       )}
 
       <div
-        onDoubleClick={() => onDoubleClickNode(id, d.hasSubmap)}
+        onDoubleClick={() => _nodeDoubleClick(id, d.hasSubmap)}
         style={{
           width: 48,
           height: 48,
@@ -232,8 +231,9 @@ function LocationNode({ id, data, positionAbsoluteX, positionAbsoluteY, selected
 const nodeTypes = { locationNode: LocationNode }
 const edgeTypes = { floatingCircle: FloatingCircleEdge }
 
-type MapViewContextValue = { onDoubleClickNode: (id: string, hasSubmap: boolean) => void }
-const MapViewContext = createContext<MapViewContextValue>({ onDoubleClickNode: () => {} })
+// Module-level ref — updated by MapViewInner on every render cycle.
+// Avoids context-propagation issues with React Flow's internal rendering.
+let _nodeDoubleClick: (id: string, hasSubmap: boolean) => void = () => {}
 
 function toNode(loc: Location, typeRules: MapTypeRule[]): Node {
   const ruleColor = typeRules.find(r => r.parent_type === loc.type)?.color
@@ -332,13 +332,14 @@ function MapViewInner({ locations, connections, distanceScale, travelUnit, typeR
   const [routePlanning, setRoutePlanning] = useState(false)
   const [route, setRoute] = useState<string[]>([])
 
-  const onDoubleClickNode = useCallback((nodeId: string, hasSubmap: boolean) => {
-    if (routePlanning) return
-    if (hasSubmap) router.push(`/map/${nodeId}`)
-    else router.push(`/locations/${nodeId}`)
+  useEffect(() => {
+    _nodeDoubleClick = (nodeId: string, hasSubmap: boolean) => {
+      if (routePlanning) return
+      if (hasSubmap) router.push(`/map/${nodeId}`)
+      else router.push(`/locations/${nodeId}`)
+    }
+    return () => { _nodeDoubleClick = () => {} }
   }, [routePlanning, router])
-
-  const mapViewContextValue = useMemo(() => ({ onDoubleClickNode }), [onDoubleClickNode])
 
   const locById = useMemo(() => new Map(locations.map(l => [l.id, l])), [locations])
 
@@ -400,7 +401,6 @@ function MapViewInner({ locations, connections, distanceScale, travelUnit, typeR
   )
 
   return (
-    <MapViewContext.Provider value={mapViewContextValue}>
     <div className="h-full flex" style={{ position: 'relative' }}>
       <div className="flex-1 bg-slate-950" style={{ position: 'relative' }}>
         <ReactFlow
@@ -510,7 +510,6 @@ function MapViewInner({ locations, connections, distanceScale, travelUnit, typeR
         </div>
       )}
     </div>
-    </MapViewContext.Provider>
   )
 }
 
