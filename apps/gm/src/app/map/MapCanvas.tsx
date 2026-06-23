@@ -41,6 +41,7 @@ import {
   toggleLocationSubmap,
   setLocationVisibility,
   createMapLocation,
+  updateLocationWaypoint,
 } from '@/lib/actions/locations'
 import {
   createLocationConnection,
@@ -812,6 +813,27 @@ function MapCanvasInner({
     await setLocationVisibility(nodeId, newValue)
   }, [setNodes])
 
+  const handleUpdatePathModifiers = useCallback(async (nodeId: string, modifiers: string[]) => {
+    const loc = locationsState.get(nodeId)
+    setLocationsState(prev => {
+      const next = new Map(prev)
+      const existing = next.get(nodeId)
+      if (existing) next.set(nodeId, { ...existing, path_modifiers: modifiers })
+      setEdges(recomputeEdges(next, localConnections))
+      return next
+    })
+    setNodes(prev => prev.map(n => {
+      if (n.id !== nodeId) return n
+      const d = n.data as LocationData
+      return { ...n, data: { ...d, pathModifiers: modifiers, rawLoc: { ...d.rawLoc, path_modifiers: modifiers } } }
+    }))
+    setNodeMenu(prev => prev ? {
+      ...prev,
+      nodeData: { ...prev.nodeData, pathModifiers: modifiers, rawLoc: { ...prev.nodeData.rawLoc, path_modifiers: modifiers } },
+    } : null)
+    await updateLocationWaypoint(nodeId, loc?.terrain ?? null, modifiers)
+  }, [locationsState, setNodes, setEdges, recomputeEdges, localConnections])
+
   const visibleNodes = useMemo(() =>
     showHidden ? nodes : nodes.filter(n => {
       const d = n.data as LocationData
@@ -1213,6 +1235,27 @@ function MapCanvasInner({
                       </>
                     )}
                   </>
+                )}
+                {(currentScale === 'body' || currentScale === 'local') && PATH_MODIFIER_LIST.length > 0 && (
+                  <div className="mt-1 pt-1 border-t border-slate-700">
+                    <div className="text-[10px] text-slate-500 px-2 py-1 uppercase tracking-wide">Path Modifiers</div>
+                    {PATH_MODIFIER_LIST.map(p => (
+                      <label key={p} className="flex items-center gap-2 text-xs text-slate-300 cursor-pointer hover:bg-slate-700 rounded px-2 py-1">
+                        <input
+                          type="checkbox"
+                          checked={nodeMenu.nodeData.pathModifiers.includes(p)}
+                          onChange={e => {
+                            const next = e.target.checked
+                              ? [...nodeMenu.nodeData.pathModifiers, p]
+                              : nodeMenu.nodeData.pathModifiers.filter(x => x !== p)
+                            handleUpdatePathModifiers(nodeMenu.nodeId, next)
+                          }}
+                          className="accent-indigo-500"
+                        />
+                        {p}
+                      </label>
+                    ))}
+                  </div>
                 )}
               </div>
             </div>
