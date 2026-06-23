@@ -28,7 +28,7 @@ export default async function LocationDetailPage({ params }: { params: Promise<{
     parent = p as { id: string; name: string } | null
   }
 
-  const visibleIds = await buildVisibleMentionSet(supabase, [location.description])
+  const visibleIds = await buildVisibleMentionSet(supabase, [location.description, location.area])
 
   // Load inventory for each shop
   const inventories = shops.length > 0
@@ -77,7 +77,7 @@ export default async function LocationDetailPage({ params }: { params: Promise<{
               {location.area && (
                 <div>
                   <dt className="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1">Area</dt>
-                  <dd className="text-sm text-slate-100">{location.area}</dd>
+                  <dd className="text-sm text-slate-100">{renderMentions(location.area, visibleIds)}</dd>
                 </div>
               )}
             </dl>
