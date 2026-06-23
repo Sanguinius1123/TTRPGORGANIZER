@@ -31,7 +31,7 @@ TTRPGorganizer/
   pnpm-workspace.yaml
 ```
 
-Package manager: **pnpm** with workspaces. Run `pnpm --filter gm dev` to start the GM app.
+Package manager: **pnpm** with workspaces. Run `pnpm --filter gm dev` to start the GM app (port 3000). Run `pnpm --filter player dev` to start the player portal (port 3001).
 
 ## Supabase CLI access
 
@@ -54,6 +54,8 @@ Do not ask the user to run migrations manually — run them directly.
 | Auth | Supabase Auth | Single GM account — login page at `/login` |
 | Deployment | Vercel | Player portal; GM app runs locally |
 | Package manager | pnpm | Workspaces |
+| Node map | `@xyflow/react` v12 | Installed in both apps |
+| PNG export | `html-to-image` | GM app only |
 
 ## Player portal (@supabase/ssr type gotcha)
 
@@ -77,19 +79,27 @@ All migrations applied. All tables exist.
 ```
 -- Core entities
 factions            (id, name, parent_faction_id FK self, disposition, goal, description, image_url, visible, species text, culture text, created_at)
-locations           (id, name, type, descriptor, status, area, description, parent_location_id FK self, image_url, visible, created_at)
-location_connections(id, from_location_id FK, to_location_id FK, travel_time, travel_cost, bidirectional, notes, created_at)
+locations           (id, name text|null, type, descriptor, status, area, description, parent_location_id FK self,
+                     image_url, visible, map_x float, map_y float, waypoint bool, terrain text,
+                     path_modifiers text[], has_submap bool DEFAULT false, created_at)
+                    -- name is nullable (waypoints have no name)
+                    -- map_x/map_y: NULL = not placed on canvas
+                    -- waypoint: true = anonymous routing dot, no name, not visible to players
+                    -- has_submap: true = clicking this node on the map drills into /map/[id]
+location_connections(id, from_location_id FK, to_location_id FK, travel_time, travel_cost, bidirectional,
+                     notes, travel_time_manual bool DEFAULT false, created_at)
+                    -- travel_time_manual: false = auto-calculated from pixel distance + terrain
 species             (id, name, description, origin_location_id FK nullable, created_at)
 cultures            (id, name, description, created_at)
 player_characters   (id, name, player_name, species text, culture text, background, notes, image_url, visible, current_location_id FK nullable, created_at)
 npcs                (id, name, species text, profession, culture text, background, disposition, notes, image_url, visible, current_location_id FK nullable, created_at)
-items               (id, name, description, base_price, item_type, created_at)
+items               (id, name, description, base_price, item_type, location_id FK locations(id) nullable, created_at)
 shops               (id, name, location_id FK, created_at)
 shop_inventory      (id, shop_id FK, item_id FK, price_override, available, created_at)
 sessions            (id, session_number, title, summary, loose_threads, faction_id FK nullable, created_at)
 encounters          (id, title, location_id FK, session_id FK, status, summary, notes, created_at)
 encounter_participants(id, encounter_id FK, npc_id FK nullable, label, count, role, notes, dr, created_at)
-lore_entries        (id, title, category, descriptor, description, visible, created_at)
+lore_entries        (id, title, category, descriptor, description, visible, major_event bool DEFAULT false, event_timestamp text, created_at)
 plot_threads        (id, title, type, description, status, notes, parent_id FK self, visible, created_at)
 
 -- Junction / relationship tables
@@ -105,16 +115,27 @@ character_relationships(id, from_npc_id FK, from_pc_id FK, to_npc_id FK, to_pc_i
   -- directional: A→B ≠ B→A (one NPC may not know the other exists)
 session_plot_threads(id, session_id FK, plot_thread_id FK, created_at)
 session_notes       (id, session_id FK, pc_id FK nullable, author_name, notes_text, created_at)
+lore_locations      (id, lore_id FK, location_id FK, notes, created_at)
+  -- UNIQUE(lore_id, location_id); links lore entries to one or more locations
+
+-- Map configuration tables
+map_type_rules      (id, parent_type, child_types text[], color, travel_unit, distance_scale float, created_at)
+  -- kept in DB but no longer used in UI; superseded by map_configs + SCALE_TYPES in mapUtils.ts
+map_configs         (id, location_id FK nullable UNIQUE, map_scale text, travel_unit text, distance_scale float, created_at)
+  -- one row per map level; location_id NULL = root map config
+  -- map_scale: 'galaxy' | 'system' | 'body' | 'local'
+  -- unique partial indexes: one root config, one per location
 ```
 
-**Visibility model:** `visible` boolean on most tables (GM toggles to expose to players). `revealed` boolean on `npc_facts` (per-fact granularity — some facts about an NPC are public, others secret). No session-number-based reveal tracking.
+**Visibility model:** `visible` boolean on most tables (GM toggles to expose to players). `revealed` boolean on `npc_facts` (per-fact granularity). `has_submap` on `locations` (per-location map drill-down).
+
+**"Unknown" convention:** `NULL` means unknown/nowhere for all location FKs. Never create a fake "Unknown" location row. UI displays `NULL` as "Unknown" or "Nomadic" depending on context.
 
 ## What has been built — GM app
 
-The GM app (`apps/gm`) is fully built and the TypeScript build passes clean.
+Both apps build clean (`pnpm --filter gm build` and `pnpm --filter player build` pass with zero type errors).
 
-### Pages
-All 11 entity types have three pages each:
+### Pages — GM app
 
 | Entity | List | Detail/Edit | New |
 |--------|------|-------------|-----|
@@ -129,36 +150,149 @@ All 11 entity types have three pages each:
 | Encounters | `/encounters` | `/encounters/[id]` | `/encounters/new` |
 | Lore | `/lore` | `/lore/[id]` | `/lore/new` |
 | Plot Threads | `/plot-threads` | `/plot-threads/[id]` | `/plot-threads/new` |
+| **Map** | `/map` | `/map/[id]` (sub-map) | — |
+| **Timeline** | `/lore/timeline` | — | — |
 
 ### Key features per detail page
-- **Locations**: edit form, visibility toggle, parent location selector, sub-locations table, shops list
+- **Locations**: edit form, visibility toggle, parent location selector, sub-locations table, shops list; name is nullable (waypoints)
 - **NPCs**: edit form, visibility toggle, facts section with per-fact `revealed` checkbox, faction membership chips
 - **Factions**: edit form, visibility toggle, parent faction selector, sub-factions table, NPC members table
 - **Encounters**: edit form, status selector, linked location/session, participant table with Add Participant form
 - **Sessions**: edit form, linked encounters list
 - **Plot Threads**: edit form, visibility toggle, parent thread selector, child threads table
+- **Items**: edit form + "Current Location" dropdown (`items.location_id`)
+- **Lore**: edit form, visibility toggle, Event Timestamp + Major Event (History entries), "Linked Locations" section
 
 ### Server Actions (`apps/gm/src/lib/actions/`)
-One file per entity. Each implements: `create*`, `update*`, `delete*`, `toggle*Visibility` (where applicable). Encounters also have `addParticipant`, `deleteParticipant`. NPCs also have `addNpcFact`, `updateNpcFact`, `deleteNpcFact`, `addNpcFaction`, `removeNpcFaction`.
+- `locations.ts` — create, update, delete, toggleVisibility, updateLocationPosition, placeLocationOnMap, removeLocationFromMap, updateLocationWaypoint, createWaypoint, toggleLocationSubmap, createMapLocation
+- `connections.ts` — createLocationConnection, updateConnectionTravelTime, updateConnectionBidirectional, deleteLocationConnection
+- `mapConfigs.ts` — upsertMapConfig
+- `loreLocations.ts` — addLoreLocation, removeLoreLocation
+- `lore.ts` — create, update, delete, toggleVisibility (includes event_timestamp, major_event)
+- `items.ts` — create, update, delete (includes location_id)
+- All other entities: `create*`, `update*`, `delete*`, `toggle*Visibility` (where applicable)
 
 ### Auth
 Login page at `/login` with Supabase email/password. Middleware at `src/middleware.ts` redirects unauthenticated users to `/login`.
 
-## Key design decisions and why
+## Node map — what's built
 
-**Supabase over SQLite-in-repo:** The player portal is deployed online and needs concurrent read/write access with the GM's local environment. SQLite in a repo can't support this.
+The map is fully implemented as a hierarchical node graph using `@xyflow/react` v12.
 
-**Relational DB over flat Markdown files / wiki:** NPCs need per-fact visibility toggling. Locations have shops; shops have items; the same item can have different prices per location — inherently relational.
+### Map files
+- `apps/gm/src/app/map/MapCanvas.tsx` — main canvas component (client)
+- `apps/gm/src/app/map/FloatingCircleEdge.tsx` — custom edge: straight line touching circle boundary
+- `apps/gm/src/app/map/Breadcrumb.tsx` — breadcrumb nav for sub-maps
+- `apps/gm/src/app/map/page.tsx` — root map server page
+- `apps/gm/src/app/map/[id]/page.tsx` — sub-map server page
+- `apps/gm/src/lib/mapUtils.ts` — TERRAIN_MULT, PATH_MULT, TERRAIN_COLORS, TERRAIN_LIST, PATH_MODIFIER_LIST, SCALE_TYPES, calcTravelCost
 
-**Two separate apps (gm + player), same Supabase project:** The GM app uses the service-role key (full CRUD). The player portal uses the anon key (reads only `visible = true` / `revealed = true` rows). Both share `packages/db`.
+### Node types
+- **Named location nodes** — 48px circle, type symbol inside, name label above. Color by location type. Dashed border if `visible = false`.
+- **Waypoint nodes** — 16px dot, terrain color, no label. For anonymous routing points.
 
-**Per-fact NPC visibility (`npc_facts` table):** A `visible` boolean on the `npcs` row would be all-or-nothing. The junction table allows individual facts to be revealed independently.
+### Edge behavior
+- `FloatingCircleEdge` — straight line from nearest point on source circle to nearest point on target circle. No arrowheads. Label shows travel cost at midpoint.
+- Travel time: auto-calculated from pixel distance ÷ distance_scale × terrain multiplier × path modifier. GM can type to override (`travel_time_manual = true`). Clearing the field recalculates.
 
-**Directional `character_relationships`:** A→B is not the same as B→A. One NPC may be plotting against another who doesn't even know they exist.
+### Map scale system
+The `map_configs` table stores per-map-level config. The `map_scale` field drives which location types appear in the right-click creation menu:
 
-**`encounter_participants` has a `label` field, not FK-only:** Most encounter participants are not worth tracking as full NPCs. `label` is a free-text description; `npc_id` is an optional FK for linking named NPCs.
+| Scale | Available types |
+|-------|----------------|
+| `galaxy` | Sector, Star System, POI |
+| `system` | World, Space Station, Star / Singularity, Planetoid, POI |
+| `body` | Wilderness, Ruin, Settlement, District, Fortification, Residence, Commerce, Tavern / Inn, Place of Worship, Government, Prison, Guild / Organization, Workshop, Research / Laboratory, Medical / Healthcare, Entertainment, Transport Hub, POI |
+| `local` | District, Residence, Commerce, Tavern / Inn, Place of Worship, Government, Prison, Guild / Organization, Workshop, Research / Laboratory, Medical / Healthcare, Entertainment, Transport Hub, Fortification, POI |
 
-**Map as node graph first, image map later:** Locations are nodes; `location_connections` is the edge list. Schema needs nullable `x float` and `y float` on `locations` for canvas positions — add these when building the map. A background image is optional and purely cosmetic; the node graph is immediately useful without one.
+`local` scale: no anonymous waypoints, no submap toggles, node click always goes to detail page.
+
+POI nodes show `descriptor` as a small subtitle below the circle.
+
+### GM map interactions
+- **Drag node** → saves position via `updateLocationPosition`
+- **Right-click canvas** → creation menu: scale-appropriate type list → name input → Create. "Anonymous waypoint" option (non-local scales). "Config…" to open config panel.
+- **Right-click node** → context menu: "Details" button, "Has sub-map" checkbox (calls `toggleLocationSubmap`), "Open Sub-map" button (disabled if unchecked). Hidden on local scale.
+- **Left-click node** → navigates to sub-map (`/map/[id]`) if `has_submap = true`, else to `/locations/[id]`. Always `/locations/[id]` on local scale.
+- **Double-click background** → navigate up one map level (or to `/map` from root)
+- **Click edge** → edge panel: travel time input (auto/manual), bidirectional toggle, delete
+- **Config panel** (via right-click → Config): map_scale dropdown, travel_unit, distance_scale — saved to `map_configs`
+- **Unplaced sidebar** — locations with `parent_location_id` matching current map but no `map_x/y`. Click "Place" to drop on canvas.
+- **Show/hide invisible** toggle — dims or hides nodes with `visible = false`
+- **PNG export** button — exports current canvas view via `html-to-image`
+- **New Location** button on sub-maps — links to `/locations/new?parent=[id]`
+
+### Player portal map
+- `/map` and `/map/[id]` — same visual style, read-only
+- Only visible locations (`visible = true`) and connections where both endpoints are visible
+- **Route planner** — "Plan Route" toggle; click nodes to build a route step by step; shows per-leg travel cost and running total; only directly connected visible nodes selectable
+- Node click: same has_submap logic as GM
+
+### Setting up a new map
+1. Go to `/map` — canvas is empty
+2. Right-click canvas → "Config" → set Map Scale (galaxy/system/body/local), Travel Unit, Distance Scale
+3. Right-click canvas → pick a type → enter name → location is created and placed
+4. Or: create locations at `/locations/new`, then use the unplaced sidebar on `/map` to drag them onto the canvas
+5. To enable sub-maps: right-click a node → check "Has sub-map" → "Open Sub-map" to enter it
+6. Inside the sub-map, set its own Config (scale, travel unit, distance scale)
+
+## History Timeline
+
+`/lore/timeline` — vertical timeline of all `lore_entries` where `category = 'History'`.
+- **Major events** (`major_event = true`): large card with indigo border, title + description preview
+- **Minor events**: small dot, title only
+- `event_timestamp` (free text) shown as a display label (era, year, etc.) — not used for sorting; sorted by `created_at`
+- "+ New Event" button links to `/lore/new?category=History`
+
+## Categorised dropdown lists (implemented)
+
+- **Locations** — 24 types: Sector, Star System, Star / Singularity, World, Space Station, **Planetoid**, Wilderness, Ruin, Settlement, District, Fortification, Residence, Commerce, Tavern / Inn, Place of Worship, Government, Prison, Guild / Organization, Workshop, Research / Laboratory, Medical / Healthcare, Entertainment, Transport Hub, **POI**
+- **Lore & Knowledge** — 12 categories: History, Myth & Legend, Religion & Faith, Magic / Technology, Culture & Society, Politics & Law, Cosmology, Bestiary, Languages & Scripts, Artifacts & Relics, Geography & Astronomy, Economy & Trade
+
+**Items** — needs the same treatment. Add a category dropdown (types TBD — think weapon, armour, consumable, tool, currency, relic, document, vehicle, misc) plus a Descriptor field. Confirm list with user before implementing.
+
+## Player portal — what's built
+
+`apps/player` is a full Next.js 16 app running on port 3001.
+
+### Auth flow
+- Players self-register at `/register` with email + password + **access code** (validated against `settings.registration_code`)
+- On registration, a `profiles` row is created linking `auth.users.id` → `profiles.id`
+- GM assigns a `player_characters` row to a player by setting `player_characters.profile_id` from the GM Settings page
+- Session managed via `@supabase/ssr` cookies; middleware at `src/middleware.ts` enforces auth on all routes except `/login` and `/register`
+
+### Pages
+| Page | Route | Notes |
+|------|-------|-------|
+| My Character | `/` | Character sheet + editable fields + party sidebar; multi-PC switcher via `?pc=` param |
+| PC detail (other) | `/player-characters/[id]` | Read-only sheet for another player's PC |
+| Sessions list | `/sessions` | Summary preview strips mention tokens |
+| Session detail | `/sessions/[id]` | GM summary + loose threads + player notes; one note per PC per session (upsert) |
+| Locations list | `/locations` | visible only, filter bar |
+| Location detail | `/locations/[id]` | sub-locations + shop inventory |
+| NPCs list | `/npcs` | visible only, filter bar |
+| NPC detail | `/npcs/[id]` | revealed facts only; mentions rendered |
+| Factions list | `/factions` | visible only, filter bar |
+| Faction detail | `/factions/[id]` | visible NPC members; mentions rendered |
+| Lore | `/lore` | tabbed: Lore / Species / Cultures, category chip filters |
+| Lore detail | `/lore/[id]`, `/species/[id]`, `/cultures/[id]` | mentions rendered |
+| Map | `/map`, `/map/[id]` | read-only node map with route planner |
+| (redirect) | `/character` | → `/` |
+
+### Key design decisions
+- Home page (`/`) is the character sheet, not a dashboard
+- Multi-PC support: one profile can be assigned to multiple `player_characters`; `?pc=<id>` param switches between them
+- `party_faction_id` FK on `player_characters` → `factions(id)` — GM sets per PC on the PC detail page; player portal uses it to populate the party sidebar
+- Session notes: one note per PC per session (upsert); GM can edit/delete any note; players can edit their own
+- `private_notes` on `player_characters` only shown on `/` (your own sheet)
+- RLS enforces all visibility and write permissions at the database level
+
+### @mention rendering (player portal)
+Mentions in the format `[[type:id|name]]` are rendered in all detail pages using:
+- `apps/player/src/lib/mentions.tsx` — `renderMentions(text, visibleIds)`, `stripMentions(text)`, `extractMentions(texts)`
+- `apps/player/src/lib/mentionVisibility.ts` — `buildVisibleMentionSet(supabase, texts)` — batch-queries visibility via RLS
+
+**Visible mentions** render as colored clickable links. **Hidden mentions** render as glitch effects (block chars, noise, `REDACTED`, symbol noise) with corruption bleed into surrounding characters.
 
 ## Critical TypeScript gotchas — hand-written Database types
 
@@ -179,45 +313,34 @@ interface Database {
 
 ### 2. Every table must have `Relationships: []`
 Without it, `supabase.from('table')` returns `PostgrestQueryBuilder<Database, never, ...>` and everything types as `never`.
-```typescript
-factions: {
-  Row: { /* ... */ }
-  Insert: Partial<Omit<Row, 'id' | 'created_at'>>
-  Update: Partial<Omit<Row, 'id' | 'created_at'>>
-  Relationships: []
-}
-```
 
 ### 3. `Insert` must be `Partial<Omit<Row, 'id' | 'created_at'>>`
-Using bare `Omit<Row, ...>` makes all fields required in insert payloads, including nullable fields like `image_url`. Wrapping in `Partial<>` matches Supabase codegen behaviour.
+Wrapping in `Partial<>` matches Supabase codegen behaviour and allows nullable fields to be omitted.
 
 ### 4. Query result casting patterns
 
-**Single entity fetch** (`.single()` + `notFound()`):
+**Single entity fetch:**
 ```typescript
 const { data: raw } = await supabase.from('factions').select('*').eq('id', id).single()
 if (!raw) notFound()
-const faction = raw as Faction   // cast AFTER the null check
+const faction = raw as Faction
 ```
 
-**List fetch**:
+**List fetch:**
 ```typescript
 const { data: rawItems } = await supabase.from('items').select('*').order('name')
 const items = (rawItems ?? []) as Item[]
 ```
 
-**Partial select** (`select('id, name')`):
+**Partial select:**
 ```typescript
 const { data: rawData } = await supabase.from('factions').select('id, name').order('name')
 const factions = (rawData ?? []) as Array<{ id: string; name: string }>
 ```
 
-**Never use join aliases** (`select('*, alias:fk(field)')`): These cause the result type to collapse to `never` with hand-written types. Fetch related entities in separate queries instead, then build a lookup map:
-```typescript
-const npcById = Object.fromEntries(npcs.map(n => [n.id, n]))
-```
+**Never use join aliases** (`select('*, alias:fk(field)')`): causes result type to collapse to `never`. Fetch related entities in separate queries and build lookup maps.
 
-**Promise.all with selects**: Index into results array and cast explicitly — don't use destructuring when any query might type as `never`:
+**Promise.all with selects** — index into results array, don't destructure:
 ```typescript
 const results = await Promise.all([
   supabase.from('locations').select('id, name').order('name'),
@@ -227,162 +350,19 @@ const locations = (results[0].data ?? []) as Array<{ id: string; name: string }>
 const sessions  = (results[1].data ?? []) as Array<{ id: string; session_number: number }>
 ```
 
-## Planned schema additions (not yet migrated)
+### 5. @xyflow/react v12 NodeProps
+`NodeProps` does NOT have `xPos`/`yPos`. Use `positionAbsoluteX` and `positionAbsoluteY` instead.
 
-### New columns
-- `items.location_id FK locations(id)` — where the item currently is (nullable)
+### 6. onPaneContextMenu type
+`onPaneContextMenu` expects `(event: MouseEvent | React.MouseEvent) => void` — must accept both types.
 
-### New tables
-- `lore_locations (id, lore_id FK, location_id FK, notes, created_at)` — lore entries tied to one or more locations
+## Next steps (priority order)
 
-### "Unknown" convention
-`NULL` means unknown/nowhere for all location FKs. Never create a fake "Unknown" location row. UI displays `NULL` as "Unknown" or "Nomadic" depending on context.
-
-## Player portal — what's built
-
-`apps/player` is a full Next.js 16 app running on port 3001.
-
-### Auth flow
-- Players self-register at `/register` with email + password + **access code** (validated against `settings.registration_code`)
-- On registration, a `profiles` row is created linking `auth.users.id` → `profiles.id`
-- GM assigns a `player_characters` row to a player by setting `player_characters.profile_id` from the GM Settings page
-- Session managed via `@supabase/ssr` cookies; middleware at `src/middleware.ts` enforces auth on all routes except `/login` and `/register`
-
-### Pages
-| Page | Route | Notes |
-|------|-------|-------|
-| My Character | `/` | Character sheet + editable fields + party sidebar; multi-PC switcher via `?pc=` param |
-| PC detail (other) | `/player-characters/[id]` | Read-only sheet for another player's PC; redirects to `/` if it's your own |
-| Sessions list | `/sessions` | Summary preview strips mention tokens |
-| Session detail | `/sessions/[id]` | GM summary + loose threads + player notes; one note per PC per session (upsert) |
-| Locations list | `/locations` | visible only, filter bar |
-| Location detail | `/locations/[id]` | sub-locations + shop inventory |
-| NPCs list | `/npcs` | visible only, filter bar |
-| NPC detail | `/npcs/[id]` | revealed facts only; mentions rendered |
-| Factions list | `/factions` | visible only, filter bar |
-| Faction detail | `/factions/[id]` | visible NPC members; mentions rendered |
-| Lore | `/lore` | tabbed: Lore / Species / Cultures, category chip filters |
-| Lore detail | `/lore/[id]`, `/species/[id]`, `/cultures/[id]` | mentions rendered |
-| (redirect) | `/character` | → `/` |
-
-### Key design decisions
-- Home page (`/`) is the character sheet, not a dashboard
-- Multi-PC support: one profile can be assigned to multiple `player_characters`; `?pc=<id>` param switches between them
-- `party_faction_id` FK on `player_characters` → `factions(id)` — GM sets per PC on the PC detail page; player portal uses it to populate the party sidebar
-- Session notes: one note per PC per session (upsert); GM can edit/delete any note for moderation; players can edit their own
-- Note display: "PC Name — Player Name" format
-- Players can see all visible PCs but can only edit their own; `/player-characters/[id]` is read-only for others
-- `private_notes` on `player_characters` is only rendered on `/` (your own sheet) — not shown on other players' views
-- RLS enforces all visibility and write permissions at the database level
-
-### @mention rendering (player portal)
-Mentions in the format `[[type:id|name]]` are rendered in all detail pages using:
-- `apps/player/src/lib/mentions.tsx` — `renderMentions(text, visibleIds)`, `stripMentions(text)`, `extractMentions(texts)`
-- `apps/player/src/lib/mentionVisibility.ts` — `buildVisibleMentionSet(supabase, texts)` — batch-queries visibility via RLS and returns a `Set<string>` of visible IDs
-
-**Visible mentions** render as colored clickable links (color varies by entity type). **Hidden mentions** (entity not visible to players) render as a randomly chosen glitch effect (block chars, alphanumeric noise, `REDACTED` badge, or symbol noise), with 3 surrounding non-space characters also scrambled to simulate "corruption bleed". The glitch style is picked server-side on each page load.
-
-List-page summaries (e.g. sessions list) use `stripMentions` — no visibility queries needed for a preview.
-
-### @mention / rich text — Tiptap upgrade (future)
-- Replace MentionTextarea with Tiptap rich-text editor
-- `@` triggers autocomplete searching across all entity types by name
-- Mentions stored by entity ID internally so renames don't break links
-
-### Player portal distance calculator (after portal is built)
-- When party's current location is known, show travel distance/cost to other visible locations
-- Uses `location_connections` graph with Dijkstra shortest-path traversal
-- Requires a way to track party's current location — needs design (candidate: `party_location_id` on a global settings table)
-
-## Categorised dropdown lists (implemented)
-
-These entity types now have a fixed dropdown for their primary category field, plus a free-text **Descriptor** field for additional detail (e.g. "Ocean World", "Year 1247 AE", "Undead"):
-
-- **Locations** — 22 types: Sector, Star System, Star / Singularity, World, Space Station, Wilderness, Ruin, Settlement, District, Fortification, Residence, Commerce, Tavern / Inn, Place of Worship, Government, Prison, Guild / Organization, Workshop, Research / Laboratory, Medical / Healthcare, Entertainment, Transport Hub
-- **Lore & Knowledge** — 12 categories: History, Myth & Legend, Religion & Faith, Magic / Technology, Culture & Society, Politics & Law, Cosmology, Bestiary, Languages & Scripts, Artifacts & Relics, Geography & Astronomy, Economy & Trade
-
-**Items** — needs the same treatment. Add a category dropdown (types TBD — think weapon, armour, consumable, tool, currency, relic, document, vehicle, misc) plus a Descriptor field. Design the list before implementing.
-
-## Next steps
-
-1. **Node map** — see detailed plan below. This is the top priority.
-2. **Apply remaining planned schema additions**
-   - `items.location_id FK locations(id)` — nullable, where the item currently is
-   - `lore_locations (id, lore_id FK, location_id FK, notes, created_at)` — lore entries tied to locations
-3. **Item category + descriptor** — add category dropdown and Descriptor field to Items. Suggested types: weapon, armour, consumable, tool, currency, relic, document, vehicle, misc. Confirm list with user before implementing.
-4. **Future features** (roughly in priority order):
-   - **Live spellcheck** — add `spellCheck` attribute to all `textarea`/`input` fields (browser-native, free). Add to MentionTextarea and all edit forms in both apps.
-   - **Shop inventory management UI** — schema exists (`shop_inventory`), no GM UI yet for adding/editing items in a shop
-   - **History timeline page** — scrollable timeline for `lore_entries` where `category = 'History'`. Needs schema: `ALTER TABLE lore_entries ADD COLUMN major_event BOOLEAN DEFAULT FALSE; ALTER TABLE lore_entries ADD COLUMN event_timestamp TEXT;`. UI: anchored at "current time", scroll up = past, scroll down = future.
-   - **NPC portrait / image upload** — needs Supabase Storage setup
-   - **@mention Tiptap upgrade** — replace MentionTextarea with Tiptap rich-text editor
-
-## Node map — design and implementation plan
-
-### Concept
-A strict node-based map. Players move along edges only — no freeform movement. This works for fantasy (settlement-to-settlement, POIs like caves and keeps) and sci-fi (star system-to-star system; a system is like a settlement). Sub-locations inside a settlement (shops, districts) do NOT appear on the map — they belong on the location detail page, not the map canvas.
-
-The **edge IS the zone.** Encounter flavor (terrain, hazards, random table hints) lives in `location_connections.notes`, not in separate zone polygons. E.g. "Road through the Darkwood — bandit territory" or "Jump lane to Kepler — contested space, pirate interdiction."
-
-### Schema changes needed
-```sql
-ALTER TABLE locations ADD COLUMN map_x float;
-ALTER TABLE locations ADD COLUMN map_y float;
-```
-Both nullable. NULL means the location has no position set yet and won't appear on the canvas. Run via `npx supabase db push` after creating the migration file.
-
-Also add `locations.map_x` and `locations.map_y` to `packages/db/src/types.ts` `Location` Row type.
-
-### Library
-**React Flow** (`@xyflow/react`) — install in `apps/gm` and `apps/player`. Purpose-built for node/edge graphs: drag-to-reposition nodes, renders edges with labels, zoom/pan, supports background images. MIT license.
-
-```
-pnpm --filter gm add @xyflow/react
-pnpm --filter player add @xyflow/react
-```
-
-### GM map page (`apps/gm/src/app/(dashboard)/map/page.tsx`)
-- Fetch all locations where `map_x IS NOT NULL AND map_y IS NOT NULL` → render as React Flow nodes
-- Fetch all `location_connections` → render as React Flow edges; label with `travel_time` if set
-- Unpositioned locations shown in a sidebar panel so the GM can drag them onto the canvas to place them
-- On node drag-end: server action `updateLocationPosition(id, x, y)` saves new coordinates
-- Clicking a node navigates to `/locations/[id]`
-- Node style: name label, location `type` shown as a small badge, dim if `visible = false`
-- Add a nav link "Map" to the GM sidebar
-
-### Player portal map page (`apps/player/src/app/(portal)/map/page.tsx`)
-- Same layout but read-only (no dragging, no position saving)
-- Only fetch locations where `visible = true AND map_x IS NOT NULL AND map_y IS NOT NULL`
-- Only show `location_connections` where both endpoints are visible
-- Clicking a node navigates to `/locations/[id]`
-- Add "Map" nav link to player portal sidebar
-
-### PNG export (GM map only)
-Install `html-to-image` in the GM app:
-```
-pnpm --filter gm add html-to-image
-```
-Add an "Export PNG" button on the GM map page. On click:
-```typescript
-import { toPng } from 'html-to-image'
-const dataUrl = await toPng(document.querySelector('.react-flow') as HTMLElement)
-const a = document.createElement('a'); a.href = dataUrl; a.download = 'map.png'; a.click()
-```
-This exports a labeled snapshot of the current canvas view. **Use case:** import into Wonderdraft as a reference/tracing layer, draw geography around the node positions, export the finished Wonderdraft map, then use it as the background image URL.
-
-### Background image (defer — not needed to start)
-The node graph is immediately useful without a background image. When the user is ready:
-- Add a `map_background_url text` column to the `settings` table (or a new `map_settings` table)
-- React Flow supports `<Background>` component or a CSS background-image on the `.react-flow__renderer` wrapper
-- The x,y coordinates set during the abstract phase become accurate pin positions once the Wonderdraft export is dropped behind them
-
-**Workflow:** Place nodes in app → Export PNG → Import PNG as reference layer in Wonderdraft → Draw geography → Export Wonderdraft PNG → Upload URL to app settings → nodes now sit on top of real map art.
-
-### What to build first
-1. Migration: add `map_x`, `map_y` to `locations`
-2. Update `packages/db/src/types.ts`
-3. Install React Flow in both apps
-4. GM map page (draggable, saves positions, sidebar for unplaced locations)
-5. Player portal map page (read-only, visible-only)
-6. PNG export button on GM map
-7. Background image URL field (defer)
+1. **"Unknown" visibility toggle on map** — ability to mark locations as visible to players but show as "???" / unknown type. Design TBD: per-location toggle or per-map setting. Remind user when ready.
+2. **Item category + descriptor** — add category dropdown (weapon, armour, consumable, tool, currency, relic, document, vehicle, misc) and Descriptor field to Items. Confirm list before implementing.
+3. **Shop inventory management UI** — schema exists (`shop_inventory`), no GM UI yet for adding/editing items in a shop. Discuss design before building.
+4. **Map background image** — `map_background_url` column on `map_configs` (or settings). React Flow renders it behind nodes. Workflow: place nodes → Export PNG → trace in Wonderdraft → upload art URL → nodes sit on real map.
+5. **@mention Tiptap upgrade** — replace MentionTextarea with Tiptap rich-text editor; `@` triggers autocomplete across all entity types.
+6. **NPC portrait / image upload** — needs Supabase Storage setup.
+7. **Live spellcheck** — add `spellCheck` attribute to all textarea/input fields (browser-native).
+8. **POI-scale type list expansion** — currently uses existing location types. May want room/corridor/chamber/etc. types for dungeon/interior maps.

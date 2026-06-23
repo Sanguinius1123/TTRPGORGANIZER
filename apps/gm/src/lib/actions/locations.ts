@@ -3,6 +3,7 @@
 import { db } from '@/lib/db'
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
+import type { Location } from '@ttrpg/db'
 
 export async function createLocation(formData: FormData) {
   const supabase = db()
@@ -63,4 +64,94 @@ export async function toggleLocationVisibility(formData: FormData) {
   if (error) throw new Error(error.message)
   revalidatePath(`/locations/${id}`)
   revalidatePath('/locations')
+}
+
+export async function updateLocationPosition(id: string, x: number, y: number) {
+  const supabase = db()
+  const { error } = await supabase.from('locations').update({ map_x: x, map_y: y }).eq('id', id)
+  if (error) throw new Error(error.message)
+  // no revalidatePath — position saves are fire-and-forget during drag
+}
+
+export async function placeLocationOnMap(id: string, x: number, y: number) {
+  const supabase = db()
+  const { error } = await supabase.from('locations').update({ map_x: x, map_y: y }).eq('id', id)
+  if (error) throw new Error(error.message)
+  revalidatePath('/map')
+}
+
+export async function removeLocationFromMap(id: string) {
+  const supabase = db()
+  const { error } = await supabase.from('locations').update({ map_x: null, map_y: null }).eq('id', id)
+  if (error) throw new Error(error.message)
+  revalidatePath('/map')
+}
+
+export async function updateLocationWaypoint(
+  id: string,
+  terrain: string | null,
+  path_modifiers: string[]
+) {
+  const supabase = db()
+  const { error } = await supabase
+    .from('locations')
+    .update({ terrain, path_modifiers })
+    .eq('id', id)
+  if (error) throw new Error(error.message)
+  revalidatePath('/map')
+}
+
+export async function createWaypoint(
+  map_x: number,
+  map_y: number,
+  terrain: string | null,
+  parent_location_id: string | null
+) {
+  const supabase = db()
+  const { data, error } = await supabase
+    .from('locations')
+    .insert({ name: null, waypoint: true, map_x, map_y, terrain, path_modifiers: [], parent_location_id, visible: false })
+    .select('id')
+    .single()
+  if (error) throw new Error(error.message)
+  revalidatePath('/map')
+  return data as { id: string }
+}
+
+export async function toggleLocationSubmap(id: string, hasSubmap: boolean) {
+  const supabase = db()
+  const { error } = await supabase
+    .from('locations')
+    .update({ has_submap: hasSubmap })
+    .eq('id', id)
+  if (error) throw new Error(error.message)
+  revalidatePath('/map')
+  revalidatePath(`/map/${id}`)
+}
+
+export async function createMapLocation(
+  name: string,
+  locType: string,
+  map_x: number,
+  map_y: number,
+  parent_location_id: string | null
+) {
+  const supabase = db()
+  const { data, error } = await supabase
+    .from('locations')
+    .insert({
+      name,
+      type: locType,
+      waypoint: false,
+      visible: false,
+      map_x,
+      map_y,
+      parent_location_id: parent_location_id ?? null,
+    })
+    .select()
+    .single()
+  if (error) throw new Error(error.message)
+  revalidatePath('/map')
+  if (parent_location_id) revalidatePath(`/map/${parent_location_id}`)
+  return data as Location
 }

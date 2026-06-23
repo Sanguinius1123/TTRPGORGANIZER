@@ -75,7 +75,7 @@ export default async function NpcPage({ params }: { params: Promise<{ id: string
             <input type="hidden" name="id" value={npc.id} />
             <div>
               <label className={label}>Name</label>
-              <input name="name" defaultValue={npc.name} required className={input} />
+              <input spellCheck name="name" defaultValue={npc.name} required className={input} />
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div>
@@ -92,7 +92,7 @@ export default async function NpcPage({ params }: { params: Promise<{ id: string
               </div>
               <div>
                 <label className={label}>Profession</label>
-                <input name="profession" defaultValue={npc.profession ?? ''} className={input} />
+                <input spellCheck name="profession" defaultValue={npc.profession ?? ''} className={input} />
               </div>
             </div>
             <div>
@@ -154,7 +154,7 @@ export default async function NpcPage({ params }: { params: Promise<{ id: string
             </div>
             <form action={addNpcFact} className="flex gap-2">
               <input type="hidden" name="npc_id" value={id} />
-              <input name="fact_text" required placeholder="Add a fact…" className={`${input} flex-1`} />
+              <input spellCheck name="fact_text" required placeholder="Add a fact…" className={`${input} flex-1`} />
               <button type="submit" className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-medium text-white hover:bg-indigo-700 whitespace-nowrap">
                 Add Fact
               </button>
@@ -210,7 +210,7 @@ export default async function NpcPage({ params }: { params: Promise<{ id: string
                 {allFactions.map((f) => <option key={f.id} value={f.id}>{f.name}</option>)}
               </select>
               <div className="flex gap-1.5">
-                <input name="role" placeholder="Role (optional)" className={`${smallInput} flex-1`} />
+                <input spellCheck name="role" placeholder="Role (optional)" className={`${smallInput} flex-1`} />
                 <button type="submit" className="rounded bg-indigo-600 px-2.5 py-1.5 text-xs font-medium text-white hover:bg-indigo-700 whitespace-nowrap">
                   Add
                 </button>

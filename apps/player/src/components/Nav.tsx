@@ -7,6 +7,7 @@ import { createClient } from '@/lib/supabase/client'
 const navItems = [
   { label: 'My Character', href: '/' },
   { label: 'Sessions',     href: '/sessions' },
+  { label: 'Map',          href: '/map' },
   { label: 'Locations',    href: '/locations' },
   { label: 'NPCs',         href: '/npcs' },
   { label: 'Factions',     href: '/factions' },

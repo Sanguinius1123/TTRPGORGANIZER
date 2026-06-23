@@ -63,7 +63,7 @@ export default async function PlotThreadPage({ params }: { params: Promise<{ id:
         <input type="hidden" name="id" value={thread.id} />
         <div>
           <label className={label}>Title</label>
-          <input name="title" defaultValue={thread.title} required className={input} />
+          <input spellCheck name="title" defaultValue={thread.title} required className={input} />
         </div>
         <div className="grid grid-cols-2 gap-4">
           <div>

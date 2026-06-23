@@ -69,6 +69,7 @@ export default function RegisterPage() {
             <label className="block text-xs font-medium text-slate-400 mb-1">Display name</label>
             <input
               type="text"
+              spellCheck
               value={displayName}
               onChange={e => setDisplayName(e.target.value)}
               required
@@ -100,6 +101,7 @@ export default function RegisterPage() {
             <label className="block text-xs font-medium text-slate-400 mb-1">Access code</label>
             <input
               type="text"
+              spellCheck
               value={code}
               onChange={e => setCode(e.target.value)}
               required

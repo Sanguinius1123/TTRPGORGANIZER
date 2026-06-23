@@ -24,7 +24,7 @@ export default function NewLorePage() {
       <form action={createLoreEntry} className="space-y-5">
         <div>
           <label className={label}>Title <span className="text-red-500">*</span></label>
-          <input name="title" required className={input} autoFocus />
+          <input spellCheck name="title" required className={input} autoFocus />
         </div>
         <div className="grid grid-cols-2 gap-4">
           <div>
@@ -36,7 +36,7 @@ export default function NewLorePage() {
           </div>
           <div>
             <label className={label}>Descriptor</label>
-            <input name="descriptor" placeholder="Era, pantheon, creature type…" className={input} />
+            <input spellCheck name="descriptor" placeholder="Era, pantheon, creature type…" className={input} />
           </div>
         </div>
         <div>

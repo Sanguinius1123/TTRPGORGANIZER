@@ -5,6 +5,10 @@ import Link from 'next/link'
 const input = 'block w-full rounded-md border border-slate-600 bg-slate-700 px-3 py-2 text-sm text-slate-100 focus:border-indigo-400 focus:ring-1 focus:ring-indigo-400 outline-none'
 const label = 'block text-sm font-medium text-slate-300 mb-1'
 
+const ITEM_TYPES = [
+  'Weapon', 'Armour', 'Consumable', 'Tool', 'Currency', 'Relic', 'Document', 'Vehicle', 'Misc',
+]
+
 export default function NewItemPage() {
   return (
     <div className="p-8 max-w-2xl">
@@ -18,17 +22,24 @@ export default function NewItemPage() {
       <form action={createItem} className="space-y-5">
         <div>
           <label className={label}>Name <span className="text-red-500">*</span></label>
-          <input name="name" required className={input} autoFocus />
+          <input name="name" required className={input} autoFocus spellCheck />
         </div>
         <div className="grid grid-cols-2 gap-4">
           <div>
             <label className={label}>Type</label>
-            <input name="item_type" placeholder="weapon, armour, consumable…" className={input} />
+            <select name="item_type" className={input}>
+              <option value="">— None —</option>
+              {ITEM_TYPES.map(t => <option key={t} value={t}>{t}</option>)}
+            </select>
           </div>
           <div>
-            <label className={label}>Base Price</label>
-            <input name="base_price" type="number" min="0" className={input} />
+            <label className={label}>Descriptor</label>
+            <input name="descriptor" placeholder="Material, origin, enchantment…" className={input} spellCheck />
           </div>
+        </div>
+        <div>
+          <label className={label}>Base Price</label>
+          <input name="base_price" type="number" min="0" className={input} />
         </div>
         <div>
           <label className={label}>Description</label>

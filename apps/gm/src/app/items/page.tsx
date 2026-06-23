@@ -5,6 +5,10 @@ import { ClickableRow, SubLink } from '@/components/TableRow'
 import Link from 'next/link'
 import { Suspense } from 'react'
 
+const ITEM_TYPES = [
+  'Weapon', 'Armour', 'Consumable', 'Tool', 'Currency', 'Relic', 'Document', 'Vehicle', 'Misc',
+]
+
 type SearchParams = Promise<{ item_type?: string }>
 
 export default async function ItemsPage({ searchParams }: { searchParams: SearchParams }) {
@@ -12,13 +16,18 @@ export default async function ItemsPage({ searchParams }: { searchParams: Search
   const supabase = db()
 
   let q = supabase.from('items').select('*').order('name')
-  if (params.item_type) q = q.ilike('item_type', `%${params.item_type}%`)
+  if (params.item_type) q = q.eq('item_type', params.item_type)
 
   const { data: rawItems } = await q
   const items = (rawItems ?? []) as Item[]
 
   const filters = [
-    { type: 'text' as const, name: 'item_type', label: 'Type', placeholder: 'weapon, armour…' },
+    {
+      type: 'select' as const,
+      name: 'item_type',
+      label: 'Type',
+      options: ITEM_TYPES.map(t => ({ value: t, label: t })),
+    },
   ]
 
   return (
@@ -62,7 +71,10 @@ export default async function ItemsPage({ searchParams }: { searchParams: Search
                       {item.name}
                     </SubLink>
                   </td>
-                  <td className="px-4 py-3 text-slate-500">{item.item_type ?? '—'}</td>
+                  <td className="px-4 py-3 text-slate-500">
+                    {item.item_type ?? '—'}
+                    {item.descriptor && <span className="text-slate-500 ml-1">· {item.descriptor}</span>}
+                  </td>
                   <td className="px-4 py-3 text-slate-500">
                     {item.base_price != null ? item.base_price : '—'}
                   </td>

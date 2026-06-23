@@ -14,6 +14,8 @@ export async function createItem(formData: FormData) {
       description: (formData.get('description') as string) || null,
       base_price: basePrice ? parseInt(basePrice) : null,
       item_type: (formData.get('item_type') as string) || null,
+      descriptor: (formData.get('descriptor') as string) || null,
+      location_id: (formData.get('location_id') as string) || null,
     })
     .select()
     .single()
@@ -33,6 +35,8 @@ export async function updateItem(formData: FormData) {
       description: (formData.get('description') as string) || null,
       base_price: basePrice ? parseInt(basePrice) : null,
       item_type: (formData.get('item_type') as string) || null,
+      descriptor: (formData.get('descriptor') as string) || null,
+      location_id: (formData.get('location_id') as string) || null,
     })
     .eq('id', id)
 

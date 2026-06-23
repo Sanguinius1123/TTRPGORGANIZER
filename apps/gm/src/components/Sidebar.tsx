@@ -14,8 +14,10 @@ const nav = [
   {
     group: 'Setting',
     items: [
+      { label: 'Map', href: '/map' },
       { label: 'Locations', href: '/locations' },
       { label: 'Lore & Knowledge', href: '/lore' },
+      { label: 'Timeline', href: '/lore/timeline' },
     ],
   },
   {
@@ -43,8 +45,12 @@ const nav = [
 export function Sidebar() {
   const pathname = usePathname()
 
-  const isActive = (href: string) =>
-    href === '/' ? pathname === '/' : pathname.startsWith(href)
+  const isActive = (href: string) => {
+    if (href === '/') return pathname === '/'
+    if (href === '/settings') return pathname === '/settings'
+    if (href === '/lore') return pathname === '/lore' || (pathname.startsWith('/lore/') && !pathname.startsWith('/lore/timeline'))
+    return pathname.startsWith(href)
+  }
 
   return (
     <aside className="w-56 shrink-0 bg-slate-950 flex flex-col overflow-y-auto">

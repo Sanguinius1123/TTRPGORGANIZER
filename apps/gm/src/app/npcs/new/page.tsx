@@ -27,7 +27,7 @@ export default async function NewNpcPage() {
       <form action={createNpc} className="space-y-5">
         <div>
           <label className={label}>Name <span className="text-red-500">*</span></label>
-          <input name="name" required className={input} autoFocus />
+          <input spellCheck name="name" required className={input} autoFocus />
         </div>
         <div className="grid grid-cols-2 gap-4">
           <div>
@@ -39,7 +39,7 @@ export default async function NewNpcPage() {
           </div>
           <div>
             <label className={label}>Profession</label>
-            <input name="profession" className={input} />
+            <input spellCheck name="profession" className={input} />
           </div>
         </div>
         <div>

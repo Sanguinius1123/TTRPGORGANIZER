@@ -27,7 +27,7 @@ export default async function NewPlotThreadPage() {
       <form action={createPlotThread} className="space-y-5">
         <div>
           <label className={label}>Title <span className="text-red-500">*</span></label>
-          <input name="title" required className={input} autoFocus />
+          <input spellCheck name="title" required className={input} autoFocus />
         </div>
         <div className="grid grid-cols-2 gap-4">
           <div>

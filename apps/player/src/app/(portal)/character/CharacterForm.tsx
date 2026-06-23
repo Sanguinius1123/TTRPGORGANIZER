@@ -56,10 +56,10 @@ export function CharacterForm({ pc, speciesList, culturesList }: Props) {
     <form onSubmit={handleSubmit} className="space-y-5">
       <div className="grid grid-cols-2 gap-4">
         <Field label="Character name">
-          <input value={fields.name} onChange={set('name')} required className={input} />
+          <input spellCheck value={fields.name} onChange={set('name')} required className={input} />
         </Field>
         <Field label="Player name">
-          <input value={fields.player_name} onChange={set('player_name')} className={input} />
+          <input spellCheck value={fields.player_name} onChange={set('player_name')} className={input} />
         </Field>
         <Field
           label="Species / Ancestry"
@@ -82,15 +82,16 @@ export function CharacterForm({ pc, speciesList, culturesList }: Props) {
       </div>
 
       <Field label="Background">
-        <textarea value={fields.background} onChange={set('background')} rows={3} className={textarea} />
+        <textarea spellCheck value={fields.background} onChange={set('background')} rows={3} className={textarea} />
       </Field>
 
       <Field label="Notes (visible to everyone)">
-        <textarea value={fields.notes} onChange={set('notes')} rows={3} className={textarea} />
+        <textarea spellCheck value={fields.notes} onChange={set('notes')} rows={3} className={textarea} />
       </Field>
 
       <Field label="Private notes (only you can see these)">
         <textarea
+          spellCheck
           value={fields.private_notes}
           onChange={set('private_notes')}
           rows={3}

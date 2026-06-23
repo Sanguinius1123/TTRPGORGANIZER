@@ -43,6 +43,7 @@ export function NoteForm({ sessionId, pcId, profileId, existingNote }: Props) {
   return (
     <form onSubmit={handleSubmit} className="space-y-2">
       <textarea
+        spellCheck
         value={text}
         onChange={e => { setText(e.target.value); setSaved(false) }}
         rows={4}

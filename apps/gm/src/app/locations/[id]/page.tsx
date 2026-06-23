@@ -9,11 +9,12 @@ const input = 'block w-full rounded-md border border-slate-600 bg-slate-700 px-3
 const label = 'block text-sm font-medium text-slate-300 mb-1'
 
 const LOCATION_TYPES = [
-  'Sector', 'Star System', 'Star / Singularity', 'World', 'Space Station',
+  'Sector', 'Star System', 'Star / Singularity', 'Planetoid', 'World', 'Space Station',
   'Wilderness', 'Ruin', 'Settlement', 'District',
   'Fortification', 'Residence', 'Commerce', 'Tavern / Inn', 'Place of Worship',
   'Government', 'Prison', 'Guild / Organization', 'Workshop',
   'Research / Laboratory', 'Medical / Healthcare', 'Entertainment', 'Transport Hub',
+  'POI',
 ]
 
 interface SubLocation { id: string; name: string; type: string | null; visible: boolean }
@@ -53,11 +54,11 @@ export default async function LocationPage({ params }: { params: Promise<{ id: s
           </>
         )}
         <span className="text-slate-600">/</span>
-        <span className="text-sm text-slate-100 font-medium">{loc.name}</span>
+        <span className="text-sm text-slate-100 font-medium">{loc.name ?? '(unnamed)'}</span>
       </div>
 
       <div className="flex items-start justify-between mb-6">
-        <h1 className="text-2xl font-bold text-slate-100">{loc.name}</h1>
+        <h1 className="text-2xl font-bold text-slate-100">{loc.name ?? '(unnamed)'}</h1>
         <form action={toggleLocationVisibility}>
           <input type="hidden" name="id" value={loc.id} />
           <input type="hidden" name="visible" value={String(loc.visible)} />
@@ -75,7 +76,7 @@ export default async function LocationPage({ params }: { params: Promise<{ id: s
         <input type="hidden" name="id" value={loc.id} />
         <div>
           <label className={label}>Name</label>
-          <input name="name" defaultValue={loc.name} required className={input} />
+          <input name="name" defaultValue={loc.name ?? ''} required className={input} />
         </div>
         <div className="grid grid-cols-2 gap-4">
           <div>

@@ -85,7 +85,7 @@ export default async function EncounterPage({ params }: { params: Promise<{ id: 
         <input type="hidden" name="id" value={enc.id} />
         <div>
           <label className={label}>Title</label>
-          <input name="title" defaultValue={enc.title} required className={input} />
+          <input spellCheck name="title" defaultValue={enc.title} required className={input} />
         </div>
         <div className="grid grid-cols-2 gap-4">
           <div>
@@ -179,7 +179,7 @@ export default async function EncounterPage({ params }: { params: Promise<{ id: 
           <div className="grid grid-cols-4 gap-3">
             <div className="col-span-2">
               <label className={label}>Label</label>
-              <input name="label" required placeholder="6 Guards, The Warlord…" className={input} />
+              <input spellCheck name="label" required placeholder="6 Guards, The Warlord…" className={input} />
             </div>
             <div>
               <label className={label}>Count</label>

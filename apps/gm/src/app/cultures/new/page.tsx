@@ -18,7 +18,7 @@ export default function NewCulturePage() {
       <form action={createCulture} className="space-y-5">
         <div>
           <label className={label}>Name <span className="text-red-500">*</span></label>
-          <input name="name" required className={input} autoFocus />
+          <input spellCheck name="name" required className={input} autoFocus />
         </div>
         <div>
           <label className={label}>Description</label>

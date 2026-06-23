@@ -54,14 +54,14 @@ export default async function LocationDetailPage({ params }: { params: Promise<{
           </>
         )}
         <span className="text-slate-600">/</span>
-        <span className="text-slate-100 font-medium">{location.name}</span>
+        <span className="text-slate-100 font-medium">{location.name ?? '(unnamed)'}</span>
       </div>
 
       <div className="mb-6">
         <p className="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1">
           {location.type ?? 'Location'}{location.descriptor ? ` · ${location.descriptor}` : ''}
         </p>
-        <h1 className="text-2xl font-bold text-slate-100">{location.name}</h1>
+        <h1 className="text-2xl font-bold text-slate-100">{location.name ?? '(unnamed)'}</h1>
       </div>
 
       <div className="space-y-6">
@@ -100,7 +100,7 @@ export default async function LocationDetailPage({ params }: { params: Promise<{
               {subLocations.map(sub => (
                 <li key={sub.id}>
                   <Link href={`/locations/${sub.id}`} className="flex items-center justify-between px-6 py-3 hover:bg-slate-800 transition-colors">
-                    <span className="text-sm font-medium text-indigo-400 hover:underline">{sub.name}</span>
+                    <span className="text-sm font-medium text-indigo-400 hover:underline">{sub.name ?? '(unnamed)'}</span>
                     <span className="text-slate-600 text-xs">→</span>
                   </Link>
                 </li>

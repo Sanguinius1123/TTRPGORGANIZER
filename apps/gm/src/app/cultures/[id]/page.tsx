@@ -46,7 +46,7 @@ export default async function CultureDetailPage({ params }: { params: Promise<{ 
             <input type="hidden" name="id" value={culture.id} />
             <div>
               <label className={label}>Name</label>
-              <input name="name" defaultValue={culture.name} required className={input} />
+              <input spellCheck name="name" defaultValue={culture.name} required className={input} />
             </div>
             <div>
               <label className={label}>Description</label>

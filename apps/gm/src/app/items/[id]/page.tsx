@@ -8,12 +8,20 @@ import { notFound } from 'next/navigation'
 const input = 'block w-full rounded-md border border-slate-600 bg-slate-700 px-3 py-2 text-sm text-slate-100 focus:border-indigo-400 focus:ring-1 focus:ring-indigo-400 outline-none'
 const label = 'block text-sm font-medium text-slate-300 mb-1'
 
+const ITEM_TYPES = [
+  'Weapon', 'Armour', 'Consumable', 'Tool', 'Currency', 'Relic', 'Document', 'Vehicle', 'Misc',
+]
+
 export default async function ItemPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
   const supabase = db()
-  const { data: raw } = await supabase.from('items').select('*').eq('id', id).single()
-  if (!raw) notFound()
-  const item = raw as Item
+  const [itemRes, locsRes] = await Promise.all([
+    supabase.from('items').select('*').eq('id', id).single(),
+    supabase.from('locations').select('id, name').order('name'),
+  ])
+  if (!itemRes.data) notFound()
+  const item = itemRes.data as Item
+  const locations = (locsRes.data ?? []) as Array<{ id: string; name: string | null }>
 
   return (
     <div className="p-8 max-w-2xl">
@@ -28,17 +36,31 @@ export default async function ItemPage({ params }: { params: Promise<{ id: strin
         <input type="hidden" name="id" value={item.id} />
         <div>
           <label className={label}>Name</label>
-          <input name="name" defaultValue={item.name} required className={input} />
+          <input name="name" defaultValue={item.name} required className={input} spellCheck />
         </div>
         <div className="grid grid-cols-2 gap-4">
           <div>
             <label className={label}>Type</label>
-            <input name="item_type" defaultValue={item.item_type ?? ''} placeholder="weapon, armour, consumable…" className={input} />
+            <select key={item.item_type ?? ''} name="item_type" defaultValue={item.item_type ?? ''} className={input}>
+              <option value="">— None —</option>
+              {ITEM_TYPES.map(t => <option key={t} value={t}>{t}</option>)}
+            </select>
           </div>
           <div>
-            <label className={label}>Base Price</label>
-            <input name="base_price" type="number" min="0" defaultValue={item.base_price ?? ''} className={input} />
+            <label className={label}>Descriptor</label>
+            <input name="descriptor" defaultValue={item.descriptor ?? ''} placeholder="Material, origin, enchantment…" className={input} spellCheck />
           </div>
+        </div>
+        <div>
+          <label className={label}>Base Price</label>
+          <input name="base_price" type="number" min="0" defaultValue={item.base_price ?? ''} className={input} />
+        </div>
+        <div>
+          <label className={label}>Current Location</label>
+          <select key={item.location_id ?? ''} name="location_id" defaultValue={item.location_id ?? ''} className={input}>
+            <option value="">— Unknown —</option>
+            {locations.map(l => <option key={l.id} value={l.id}>{l.name ?? '(unnamed)'}</option>)}
+          </select>
         </div>
         <div>
           <label className={label}>Description</label>

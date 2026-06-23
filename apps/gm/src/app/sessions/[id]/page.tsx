@@ -112,7 +112,7 @@ export default async function SessionPage({ params }: { params: Promise<{ id: st
               </div>
               <div>
                 <label className={label}>Title</label>
-                <input name="title" defaultValue={session.title ?? ''} className={input} />
+                <input spellCheck name="title" defaultValue={session.title ?? ''} className={input} />
               </div>
             </div>
             <div>
@@ -159,6 +159,7 @@ export default async function SessionPage({ params }: { params: Promise<{ id: st
                         <input type="hidden" name="id" value={note.id} />
                         <input type="hidden" name="session_id" value={id} />
                         <textarea
+                          spellCheck
                           name="notes_text"
                           defaultValue={note.notes_text ? stripMentions(note.notes_text) : ''}
                           rows={3}

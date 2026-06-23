@@ -28,11 +28,11 @@ export default async function NewPlayerCharacterPage() {
         <div className="grid grid-cols-2 gap-4">
           <div>
             <label className={label}>Character Name <span className="text-red-500">*</span></label>
-            <input name="name" required className={input} autoFocus />
+            <input spellCheck name="name" required className={input} autoFocus />
           </div>
           <div>
             <label className={label}>Player Name</label>
-            <input name="player_name" className={input} />
+            <input spellCheck name="player_name" className={input} />
           </div>
         </div>
         <div className="grid grid-cols-2 gap-4">

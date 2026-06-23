@@ -118,7 +118,7 @@ export default async function FactionPage({ params }: { params: Promise<{ id: st
             <input type="hidden" name="id" value={faction.id} />
             <div>
               <label className={label}>Name</label>
-              <input name="name" defaultValue={faction.name} required className={input} />
+              <input spellCheck name="name" defaultValue={faction.name} required className={input} />
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div>

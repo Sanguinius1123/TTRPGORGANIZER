@@ -24,7 +24,7 @@ export interface Database {
       locations: {
         Row: {
           id: string
-          name: string
+          name: string | null
           type: string | null
           descriptor: string | null
           status: string | null
@@ -33,6 +33,12 @@ export interface Database {
           parent_location_id: string | null
           image_url: string | null
           visible: boolean
+          map_x: number | null
+          map_y: number | null
+          waypoint: boolean
+          terrain: string | null
+          path_modifiers: string[]
+          has_submap: boolean
           created_at: string
         }
         Insert: Partial<Omit<Database['public']['Tables']['locations']['Row'], 'id' | 'created_at'>>
@@ -47,11 +53,45 @@ export interface Database {
           travel_time: string | null
           travel_cost: string | null
           bidirectional: boolean
+          travel_time_manual: boolean
           notes: string | null
           created_at: string
         }
         Insert: Partial<Omit<Database['public']['Tables']['location_connections']['Row'], 'id' | 'created_at'>>
         Update: Partial<Database['public']['Tables']['location_connections']['Insert']>
+        Relationships: []
+      }
+      map_type_rules: {
+        Row: {
+          id: string
+          parent_type: string | null
+          child_types: string[]
+          color: string
+          travel_unit: string
+          distance_scale: number
+          created_at: string
+        }
+        Insert: Partial<Omit<{
+          id: string; parent_type: string | null; child_types: string[];
+          color: string; travel_unit: string; distance_scale: number; created_at: string
+        }, 'id' | 'created_at'>>
+        Update: Partial<Omit<{
+          id: string; parent_type: string | null; child_types: string[];
+          color: string; travel_unit: string; distance_scale: number; created_at: string
+        }, 'id' | 'created_at'>>
+        Relationships: []
+      }
+      map_configs: {
+        Row: {
+          id: string
+          location_id: string | null
+          map_scale: string | null
+          travel_unit: string | null
+          distance_scale: number
+          created_at: string
+        }
+        Insert: Partial<Omit<Database['public']['Tables']['map_configs']['Row'], 'id' | 'created_at'>>
+        Update: Partial<Database['public']['Tables']['map_configs']['Insert']>
         Relationships: []
       }
       player_characters: {
@@ -165,6 +205,8 @@ export interface Database {
           description: string | null
           base_price: number | null
           item_type: string | null
+          descriptor: string | null
+          location_id: string | null
           created_at: string
         }
         Insert: Partial<Omit<Database['public']['Tables']['items']['Row'], 'id' | 'created_at'>>
@@ -248,10 +290,24 @@ export interface Database {
           descriptor: string | null
           description: string | null
           visible: boolean
+          major_event: boolean
+          event_timestamp: string | null
           created_at: string
         }
         Insert: Partial<Omit<Database['public']['Tables']['lore_entries']['Row'], 'id' | 'created_at'>>
         Update: Partial<Database['public']['Tables']['lore_entries']['Insert']>
+        Relationships: []
+      }
+      lore_locations: {
+        Row: {
+          id: string
+          lore_id: string
+          location_id: string
+          notes: string | null
+          created_at: string
+        }
+        Insert: Partial<Omit<Database['public']['Tables']['lore_locations']['Row'], 'id' | 'created_at'>>
+        Update: Partial<Database['public']['Tables']['lore_locations']['Insert']>
         Relationships: []
       }
       plot_threads: {
@@ -388,6 +444,8 @@ export type Tables<T extends keyof Database['public']['Tables']> =
 export type Faction            = Tables<'factions'>
 export type Location           = Tables<'locations'>
 export type LocationConnection = Tables<'location_connections'>
+export type MapTypeRule        = Tables<'map_type_rules'>
+export type MapConfig          = Tables<'map_configs'>
 export type PlayerCharacter    = Tables<'player_characters'>
 export type NPC                = Tables<'npcs'>
 export type NPCFact            = Tables<'npc_facts'>
@@ -402,6 +460,7 @@ export type Session            = Tables<'sessions'>
 export type Encounter          = Tables<'encounters'>
 export type EncounterParticipant = Tables<'encounter_participants'>
 export type LoreEntry          = Tables<'lore_entries'>
+export type LoreLocation       = Tables<'lore_locations'>
 export type PlotThread         = Tables<'plot_threads'>
 export type Species              = Tables<'species'>
 export type Culture              = Tables<'cultures'>

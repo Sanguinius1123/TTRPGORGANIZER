@@ -116,11 +116,11 @@ export default async function PlayerCharacterPage({ params }: { params: Promise<
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <label className={label}>Character Name</label>
-                <input name="name" defaultValue={pc.name} required className={input} />
+                <input spellCheck name="name" defaultValue={pc.name} required className={input} />
               </div>
               <div>
                 <label className={label}>Player Name</label>
-                <input name="player_name" defaultValue={pc.player_name ?? ''} className={input} />
+                <input spellCheck name="player_name" defaultValue={pc.player_name ?? ''} className={input} />
               </div>
             </div>
             <div className="grid grid-cols-2 gap-4">
@@ -213,7 +213,7 @@ export default async function PlayerCharacterPage({ params }: { params: Promise<
                 {allFactions.map((f) => <option key={f.id} value={f.id}>{f.name}</option>)}
               </select>
               <div className="flex gap-1.5">
-                <input name="role" placeholder="Role (optional)" className={`${smallInput} flex-1`} />
+                <input spellCheck name="role" placeholder="Role (optional)" className={`${smallInput} flex-1`} />
                 <button type="submit" className="rounded bg-indigo-600 px-2.5 py-1.5 text-xs font-medium text-white hover:bg-indigo-700 whitespace-nowrap">
                   Add
                 </button>

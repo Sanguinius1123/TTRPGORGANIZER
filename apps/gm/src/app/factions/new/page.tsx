@@ -29,7 +29,7 @@ export default async function NewFactionPage() {
       <form action={createFaction} className="space-y-5">
         <div>
           <label className={label}>Name <span className="text-red-500">*</span></label>
-          <input name="name" required className={input} autoFocus />
+          <input spellCheck name="name" required className={input} autoFocus />
         </div>
         <div className="grid grid-cols-2 gap-4">
           <div>

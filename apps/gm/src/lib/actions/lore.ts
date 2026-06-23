@@ -32,6 +32,8 @@ export async function updateLoreEntry(formData: FormData) {
       category: (formData.get('category') as string) || null,
       descriptor: (formData.get('descriptor') as string) || null,
       description: (formData.get('description') as string) || null,
+      event_timestamp: (formData.get('event_timestamp') as string) || null,
+      major_event: formData.get('major_event') === 'true',
     })
     .eq('id', id)
 

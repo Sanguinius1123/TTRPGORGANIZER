@@ -7,17 +7,23 @@ const input = 'block w-full rounded-md border border-slate-600 bg-slate-700 px-3
 const label = 'block text-sm font-medium text-slate-300 mb-1'
 
 const LOCATION_TYPES = [
-  'Sector', 'Star System', 'Star / Singularity', 'World', 'Space Station',
+  'Sector', 'Star System', 'Star / Singularity', 'Planetoid', 'World', 'Space Station',
   'Wilderness', 'Ruin', 'Settlement', 'District',
   'Fortification', 'Residence', 'Commerce', 'Tavern / Inn', 'Place of Worship',
   'Government', 'Prison', 'Guild / Organization', 'Workshop',
   'Research / Laboratory', 'Medical / Healthcare', 'Entertainment', 'Transport Hub',
+  'POI',
 ]
 
-export default async function NewLocationPage() {
+export default async function NewLocationPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ parent?: string }>
+}) {
+  const { parent } = await searchParams
   const supabase = db()
   const { data: rawLocations } = await supabase.from('locations').select('id, name').order('name')
-  const locations = (rawLocations ?? []) as Array<{ id: string; name: string }>
+  const locations = (rawLocations ?? []) as Array<{ id: string; name: string | null }>
 
   return (
     <div className="p-8 max-w-2xl">
@@ -56,10 +62,10 @@ export default async function NewLocationPage() {
         </div>
         <div>
           <label className={label}>Parent Location</label>
-          <select name="parent_location_id" className={input}>
+          <select name="parent_location_id" className={input} defaultValue={parent ?? ''}>
             <option value="">— None —</option>
             {locations.map((l) => (
-              <option key={l.id} value={l.id}>{l.name}</option>
+              <option key={l.id} value={l.id}>{l.name ?? '(unnamed)'}</option>
             ))}
           </select>
         </div>

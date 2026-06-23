@@ -28,7 +28,7 @@ export default async function NewSessionPage() {
           </div>
           <div>
             <label className={label}>Title</label>
-            <input name="title" className={input} />
+            <input spellCheck name="title" className={input} />
           </div>
         </div>
         <div>

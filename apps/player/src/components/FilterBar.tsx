@@ -58,6 +58,7 @@ export function FilterBar({ filters }: { filters: FilterDef[] }) {
             {f.label}
             <input
               type="text"
+              spellCheck
               defaultValue={searchParams.get(f.name) ?? ''}
               placeholder={f.placeholder}
               className={`${cls} w-32`}
