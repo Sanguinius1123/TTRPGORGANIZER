@@ -107,7 +107,7 @@ export default async function LocationPage({ params }: { params: Promise<{ id: s
         </div>
         <div>
           <label className={label}>Area</label>
-          <input name="area" defaultValue={loc.area ?? ''} placeholder="Relative position within parent" className={input} />
+          <MentionTextarea name="area" defaultValue={loc.area ?? ''} placeholder="Relative position within parent" rows={2} className={`${input} resize-none`} />
         </div>
         <div>
           <label className={label}>Parent Location</label>
