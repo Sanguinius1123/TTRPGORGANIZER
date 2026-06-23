@@ -1,6 +1,6 @@
 'use client'
 
-import { useCallback, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import {
   ReactFlow,
@@ -11,6 +11,7 @@ import {
   ReactFlowProvider,
   useNodesState,
   useEdgesState,
+  useReactFlow,
   Handle,
   Position,
   type Node,
@@ -307,10 +308,14 @@ export interface MapViewProps {
   distanceScale: number
   travelUnit: string
   typeRules: MapTypeRule[]
+  locationId?: string | null
+  parentLocationId?: string | null
+  focusNodeId?: string | null
 }
 
-function MapViewInner({ locations, connections, distanceScale, travelUnit, typeRules }: MapViewProps) {
+function MapViewInner({ locations, connections, distanceScale, travelUnit, typeRules, locationId, parentLocationId, focusNodeId }: MapViewProps) {
   const router = useRouter()
+  const { fitView } = useReactFlow()
   const [routePlanning, setRoutePlanning] = useState(false)
   const [route, setRoute] = useState<string[]>([])
 
@@ -325,14 +330,18 @@ function MapViewInner({ locations, connections, distanceScale, travelUnit, typeR
   const [nodes, , onNodesChange] = useNodesState(initialNodes)
   const [edges, , onEdgesChange] = useEdgesState(initialEdges)
 
+  useEffect(() => {
+    if (!focusNodeId) return
+    const timer = setTimeout(() => {
+      fitView({ nodes: [{ id: focusNodeId }], duration: 500, padding: 1.5 })
+    }, 150)
+    return () => clearTimeout(timer)
+  }, [focusNodeId, fitView])
+
+  // Single click: route planning only
   const onNodeClick = useCallback<NodeMouseHandler<Node>>((_event, node) => {
     const d = node.data as LocationData
-    if (d.waypoint) return
-
-    if (!routePlanning) {
-      router.push(`/locations/${node.id}`)
-      return
-    }
+    if (d.waypoint || !routePlanning) return
     if (route.length === 0) {
       setRoute([node.id])
       return
@@ -349,7 +358,23 @@ function MapViewInner({ locations, connections, distanceScale, travelUnit, typeR
       return
     }
     setRoute([...route, node.id])
-  }, [routePlanning, route, connections, router])
+  }, [routePlanning, route, connections])
+
+  // Double click: navigate to location detail
+  const onNodeDoubleClick = useCallback<NodeMouseHandler<Node>>((_event, node) => {
+    const d = node.data as LocationData
+    if (d.waypoint || routePlanning) return
+    router.push(`/locations/${node.id}`)
+  }, [routePlanning, router])
+
+  // Double click empty canvas: go up to parent map
+  const onCanvasDoubleClick = useCallback((e: React.MouseEvent) => {
+    const target = e.target as HTMLElement
+    if (!target.classList.contains('react-flow__pane')) return
+    if (!locationId) return
+    const parentRoute = parentLocationId ? `/map/${parentLocationId}` : '/map'
+    router.push(`${parentRoute}?focus=${locationId}`)
+  }, [locationId, parentLocationId, router])
 
   const routeTotal = useMemo(
     () => calcRouteCost(route, locById, connections, distanceScale),
@@ -358,13 +383,14 @@ function MapViewInner({ locations, connections, distanceScale, travelUnit, typeR
 
   return (
     <div className="h-full flex" style={{ position: 'relative' }}>
-      <div className="flex-1 bg-slate-950" style={{ position: 'relative' }}>
+      <div className="flex-1 bg-slate-950" style={{ position: 'relative' }} onDoubleClick={onCanvasDoubleClick}>
         <ReactFlow
           nodes={nodes}
           edges={edges}
           onNodesChange={onNodesChange}
           onEdgesChange={onEdgesChange}
           onNodeClick={onNodeClick}
+          onNodeDoubleClick={onNodeDoubleClick}
           nodeTypes={nodeTypes}
           edgeTypes={edgeTypes}
           nodesDraggable={false}

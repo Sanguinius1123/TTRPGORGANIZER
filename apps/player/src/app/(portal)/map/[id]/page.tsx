@@ -4,8 +4,9 @@ import type { Location, LocationConnection, MapTypeRule } from '@ttrpg/db'
 import { MapView } from '../MapView'
 import Link from 'next/link'
 
-export default async function PlayerSubMapPage({ params }: { params: Promise<{ id: string }> }) {
+export default async function PlayerSubMapPage({ params, searchParams }: { params: Promise<{ id: string }>; searchParams: Promise<{ focus?: string }> }) {
   const { id } = await params
+  const { focus } = await searchParams
   const supabase = await createClient()
 
   const { data: rawLoc } = await supabase
@@ -54,6 +55,9 @@ export default async function PlayerSubMapPage({ params }: { params: Promise<{ i
           distanceScale={myRule?.distance_scale ?? 100}
           travelUnit={myRule?.travel_unit ?? 'units'}
           typeRules={typeRules}
+          locationId={id}
+          parentLocationId={location.parent_location_id}
+          focusNodeId={focus ?? null}
         />
       </div>
     </div>

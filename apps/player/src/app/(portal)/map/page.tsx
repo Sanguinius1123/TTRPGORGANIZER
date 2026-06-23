@@ -2,7 +2,8 @@ import { createClient } from '@/lib/supabase/server'
 import type { Location, LocationConnection, MapTypeRule } from '@ttrpg/db'
 import { MapView } from './MapView'
 
-export default async function MapPage() {
+export default async function MapPage({ searchParams }: { searchParams: Promise<{ focus?: string }> }) {
+  const { focus } = await searchParams
   const supabase = await createClient()
 
   const results = await Promise.all([
@@ -30,6 +31,7 @@ export default async function MapPage() {
         distanceScale={rootRule?.distance_scale ?? 100}
         travelUnit={rootRule?.travel_unit ?? 'units'}
         typeRules={typeRules}
+        focusNodeId={focus ?? null}
       />
     </div>
   )

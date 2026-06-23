@@ -25,8 +25,9 @@ async function getAncestors(
   return ancestors
 }
 
-export default async function SubMapPage({ params }: { params: Promise<{ id: string }> }) {
+export default async function SubMapPage({ params, searchParams }: { params: Promise<{ id: string }>; searchParams: Promise<{ focus?: string }> }) {
   const { id } = await params
+  const { focus } = await searchParams
   const supabase = db()
 
   const { data: rawLoc } = await supabase.from('locations').select('*').eq('id', id).single()
@@ -77,6 +78,7 @@ export default async function SubMapPage({ params }: { params: Promise<{ id: str
           parentId={location.parent_location_id}
           mapConfig={mapConfig}
           mapLocationId={id}
+          focusNodeId={focus ?? null}
         />
       </div>
     </div>

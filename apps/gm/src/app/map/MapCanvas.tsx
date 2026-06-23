@@ -183,7 +183,7 @@ function LocationNode({ id, data, positionAbsoluteX, positionAbsoluteY, selected
 
       {/* Circle */}
       <div
-        onClick={() => onNodeClickInternal(id, d)}
+        onDoubleClick={() => onNodeClickInternal(id, d)}
         style={{
           width: 48,
           height: 48,
@@ -204,6 +204,7 @@ function LocationNode({ id, data, positionAbsoluteX, positionAbsoluteY, selected
         {symbol}
         <button
           onClick={(e) => { e.stopPropagation(); removeNode(id, d.rawLoc) }}
+          onDoubleClick={(e) => e.stopPropagation()}
           style={{
             position: 'absolute',
             top: -6,
@@ -303,6 +304,7 @@ function WaypointNode({ id, data, positionAbsoluteX, positionAbsoluteY }: NodePr
       }}>
         <button
           onClick={(e) => { e.stopPropagation(); removeNode(id, d.rawLoc) }}
+          onDoubleClick={(e) => e.stopPropagation()}
           style={{
             position: 'absolute',
             top: -5,
@@ -457,6 +459,7 @@ export interface MapCanvasProps {
   parentId: string | null
   mapConfig: MapConfig | null
   mapLocationId: string | null
+  focusNodeId?: string | null
 }
 
 type EdgePanel = {
@@ -477,10 +480,10 @@ type ConfigPanel = {
 
 function MapCanvasInner({
   placed, unplaced, connections, distanceScale, travelUnit, parentId,
-  mapConfig, mapLocationId,
+  mapConfig, mapLocationId, focusNodeId,
 }: MapCanvasProps) {
   const router = useRouter()
-  const { screenToFlowPosition } = useReactFlow()
+  const { screenToFlowPosition, fitView } = useReactFlow()
   const currentScale = mapConfig?.map_scale ?? 'galaxy'
   const scaleTypes = SCALE_TYPES[currentScale] ?? SCALE_TYPES.galaxy
   const [unplacedList, setUnplacedList] = useState(unplaced)
@@ -525,6 +528,15 @@ function MapCanvasInner({
     window.addEventListener('keydown', handler)
     return () => window.removeEventListener('keydown', handler)
   }, [])
+
+  // Center on a specific node when arriving from a sub-map
+  useEffect(() => {
+    if (!focusNodeId) return
+    const timer = setTimeout(() => {
+      fitView({ nodes: [{ id: focusNodeId }], duration: 500, padding: 1.5 })
+    }, 150)
+    return () => clearTimeout(timer)
+  }, [focusNodeId, fitView])
 
   const effectiveDistanceScale = localConfig.distanceScale
   const effectiveTravelUnit = localConfig.travelUnit || travelUnit
@@ -661,6 +673,15 @@ function MapCanvasInner({
     setEdgeTravelTime(conn.travel_time ?? '')
     setEdgeBidirectional(conn.bidirectional)
   }, [localConnections])
+
+  // Double-click empty canvas to go up to parent map, centered on this location's node
+  const onCanvasDoubleClick = useCallback((e: React.MouseEvent) => {
+    const target = e.target as HTMLElement
+    if (!target.classList.contains('react-flow__pane')) return
+    if (!mapLocationId) return
+    const parentRoute = parentId ? `/map/${parentId}` : '/map'
+    router.push(`${parentRoute}?focus=${mapLocationId}`)
+  }, [mapLocationId, parentId, router])
 
   const saveEdgeTravelTime = useCallback(async (value: string) => {
     if (!edgePanel) return
@@ -818,7 +839,7 @@ function MapCanvasInner({
         </div>
 
         {/* Canvas */}
-        <div className="flex-1 h-full bg-slate-950" style={{ position: 'relative' }}>
+        <div className="flex-1 h-full bg-slate-950" style={{ position: 'relative' }} onDoubleClick={onCanvasDoubleClick}>
           <ReactFlow
             nodes={visibleNodes}
             edges={edges}

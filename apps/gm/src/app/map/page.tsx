@@ -2,7 +2,8 @@ import { db } from '@/lib/db'
 import type { Location, LocationConnection, MapConfig } from '@ttrpg/db'
 import { MapCanvas } from './MapCanvas'
 
-export default async function MapPage() {
+export default async function MapPage({ searchParams }: { searchParams: Promise<{ focus?: string }> }) {
+  const { focus } = await searchParams
   const supabase = db()
 
   const results = await Promise.all([
@@ -34,6 +35,7 @@ export default async function MapPage() {
         parentId={null}
         mapConfig={mapConfig}
         mapLocationId={null}
+        focusNodeId={focus ?? null}
       />
     </div>
   )
