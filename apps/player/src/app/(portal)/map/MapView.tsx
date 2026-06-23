@@ -183,7 +183,18 @@ function LocationNode({ id, data, positionAbsoluteX, positionAbsoluteY, selected
       )}
 
       <div
-        onDoubleClick={() => _nodeDoubleClick(id, d.hasSubmap)}
+        onClick={(e) => {
+          const now = Date.now()
+          if (_lastClickId === id && now - _lastClickTime < 350) {
+            e.stopPropagation()
+            _nodeDoubleClick(id, d.hasSubmap)
+            _lastClickTime = 0
+            _lastClickId = ''
+          } else {
+            _lastClickTime = now
+            _lastClickId = id
+          }
+        }}
         style={{
           width: 48,
           height: 48,
@@ -231,9 +242,12 @@ function LocationNode({ id, data, positionAbsoluteX, positionAbsoluteY, selected
 const nodeTypes = { locationNode: LocationNode }
 const edgeTypes = { floatingCircle: FloatingCircleEdge }
 
-// Module-level ref — updated by MapViewInner on every render cycle.
-// Avoids context-propagation issues with React Flow's internal rendering.
+// Module-level refs for navigation and double-click detection.
+// React Flow's event handling can swallow onDoubleClick; we track two
+// rapid onClick events on the same node id instead.
 let _nodeDoubleClick: (id: string, hasSubmap: boolean) => void = () => {}
+let _lastClickTime = 0
+let _lastClickId = ''
 
 function toNode(loc: Location, typeRules: MapTypeRule[]): Node {
   const ruleColor = typeRules.find(r => r.parent_type === loc.type)?.color
