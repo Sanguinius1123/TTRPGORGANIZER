@@ -118,6 +118,14 @@ export async function createWaypoint(
   return data as { id: string }
 }
 
+export async function setLocationVisibility(id: string, visible: boolean) {
+  const supabase = db()
+  const { error } = await supabase.from('locations').update({ visible }).eq('id', id)
+  if (error) throw new Error(error.message)
+  revalidatePath(`/locations/${id}`)
+  revalidatePath('/locations')
+}
+
 export async function toggleLocationSubmap(id: string, hasSubmap: boolean) {
   const supabase = db()
   const { error } = await supabase

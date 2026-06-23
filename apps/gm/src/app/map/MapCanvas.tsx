@@ -39,6 +39,7 @@ import {
   placeLocationOnMap,
   createWaypoint,
   toggleLocationSubmap,
+  setLocationVisibility,
   createMapLocation,
 } from '@/lib/actions/locations'
 import {
@@ -793,6 +794,25 @@ function MapCanvasInner({
     await toggleLocationSubmap(nodeId, newValue)
   }, [nodeMenu, setNodes])
 
+  const handleToggleVisibility = useCallback(async (nodeId: string, newValue: boolean) => {
+    setLocationsState(prev => {
+      const next = new Map(prev)
+      const existing = next.get(nodeId)
+      if (existing) next.set(nodeId, { ...existing, visible: newValue })
+      return next
+    })
+    setNodes(prev => prev.map(n => {
+      if (n.id !== nodeId) return n
+      const d = n.data as LocationData
+      return { ...n, data: { ...d, visible: newValue, rawLoc: { ...d.rawLoc, visible: newValue } } }
+    }))
+    setNodeMenu(prev => prev ? {
+      ...prev,
+      nodeData: { ...prev.nodeData, visible: newValue, rawLoc: { ...prev.nodeData.rawLoc, visible: newValue } },
+    } : null)
+    await setLocationVisibility(nodeId, newValue)
+  }, [setNodes])
+
   const visibleNodes = useMemo(() =>
     showHidden ? nodes : nodes.filter(n => {
       const d = n.data as LocationData
@@ -1162,6 +1182,15 @@ function MapCanvasInner({
                 </button>
                 {currentScale !== 'local' && (
                   <>
+                    <label className="flex items-center gap-2 text-xs text-slate-300 cursor-pointer hover:bg-slate-700 rounded px-2 py-1.5">
+                      <input
+                        type="checkbox"
+                        checked={nodeMenu.nodeData.rawLoc.visible}
+                        onChange={() => handleToggleVisibility(nodeMenu.nodeId, !nodeMenu.nodeData.rawLoc.visible)}
+                        className="accent-emerald-500"
+                      />
+                      Visible to players
+                    </label>
                     <label className="flex items-center gap-2 text-xs text-slate-300 cursor-pointer hover:bg-slate-700 rounded px-2 py-1.5">
                       <input
                         type="checkbox"
