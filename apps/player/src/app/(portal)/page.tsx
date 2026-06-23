@@ -2,7 +2,16 @@ import { createClient } from '@/lib/supabase/server'
 import { PlayerCharacter, Faction } from '@ttrpg/db'
 import { redirect } from 'next/navigation'
 import { CharacterForm } from './character/CharacterForm'
+import { PCSwitch } from './character/PCSwitch'
 import Link from 'next/link'
+
+interface PlotThreadRow { id: string; title: string; type: string; status: string }
+
+const threadStatusColor: Record<string, string> = {
+  active:    'text-green-400',
+  completed: 'text-slate-500',
+  abandoned: 'text-red-400',
+}
 
 type SearchParams = Promise<{ pc?: string }>
 
@@ -18,7 +27,7 @@ export default async function HomePage({ searchParams }: { searchParams: SearchP
     supabase.from('cultures').select('id, name').order('name'),
   ])
 
-  const allMyPCs  = (results[0].data ?? []) as PlayerCharacter[]
+  const allMyPCs     = (results[0].data ?? []) as PlayerCharacter[]
   const speciesList  = (results[1].data ?? []) as Array<{ id: string; name: string }>
   const culturesList = (results[2].data ?? []) as Array<{ id: string; name: string }>
 
@@ -36,10 +45,9 @@ export default async function HomePage({ searchParams }: { searchParams: SearchP
     )
   }
 
-  // If multiple PCs, let the player pick with ?pc=<id>; default to first
   const pc = (params.pc ? allMyPCs.find(c => c.id === params.pc) : null) ?? allMyPCs[0]
 
-  // Load faction memberships
+  // Load faction memberships + party + plot threads in parallel
   const { data: rawPCFactions } = await supabase
     .from('pc_factions').select('faction_id, role').eq('pc_id', pc.id)
   const pcFactionRows = (rawPCFactions ?? []) as Array<{ faction_id: string; role: string | null }>
@@ -60,40 +68,60 @@ export default async function HomePage({ searchParams }: { searchParams: SearchP
     pc.party_faction_id
       ? supabase.from('factions').select('id, name').eq('id', pc.party_faction_id).single()
       : Promise.resolve({ data: null }),
+    // Plot threads linked to party faction
+    pc.party_faction_id
+      ? supabase
+          .from('plot_thread_factions')
+          .select('plot_thread_id')
+          .eq('faction_id', pc.party_faction_id)
+      : Promise.resolve({ data: [] }),
+    // Plot threads linked to current PC
+    supabase
+      .from('plot_thread_characters')
+      .select('plot_thread_id')
+      .eq('pc_id', pc.id),
   ])
 
   const factions     = (results2[0].data ?? []) as Pick<Faction, 'id' | 'name'>[]
   const partyMembers = (results2[1].data ?? []) as Array<{ id: string; name: string; player_name: string | null; species: string | null }>
   const partyFaction = results2[2].data as { id: string; name: string } | null
+  const factionThreadLinks  = (results2[3].data ?? []) as Array<{ plot_thread_id: string }>
+  const charThreadLinks     = (results2[4].data ?? []) as Array<{ plot_thread_id: string }>
 
   const pcFactions = pcFactionRows
     .map(r => ({ faction: factions.find(f => f.id === r.faction_id), role: r.role }))
     .filter(r => r.faction)
 
+  // Merge thread IDs from both sources (dedup)
+  const allThreadIds = [...new Set([
+    ...factionThreadLinks.map(l => l.plot_thread_id),
+    ...charThreadLinks.map(l => l.plot_thread_id),
+  ])]
+
+  let partyPlotThreads: PlotThreadRow[] = []
+  let pcPlotThreads: PlotThreadRow[] = []
+
+  if (allThreadIds.length > 0) {
+    const { data: rawThreads } = await supabase
+      .from('plot_threads')
+      .select('id, title, type, status')
+      .in('id', allThreadIds)
+      .eq('visible', true)
+      .order('status')
+      .order('title')
+    const allThreads = (rawThreads ?? []) as PlotThreadRow[]
+    const factionThreadSet = new Set(factionThreadLinks.map(l => l.plot_thread_id))
+    const charThreadSet    = new Set(charThreadLinks.map(l => l.plot_thread_id))
+    partyPlotThreads = allThreads.filter(t => factionThreadSet.has(t.id))
+    pcPlotThreads    = allThreads.filter(t => charThreadSet.has(t.id) && !factionThreadSet.has(t.id))
+  }
+
+  const hasPlotThreads = partyPlotThreads.length > 0 || pcPlotThreads.length > 0
+
   return (
     <div className="p-8 max-w-5xl">
-      <div className="flex items-center gap-4 mb-6">
-        <h1 className="text-2xl font-bold text-slate-100">{pc.name}</h1>
-        {allMyPCs.length > 1 && (
-          <div className="flex items-center gap-2">
-            <span className="text-xs text-slate-500">Character:</span>
-            <div className="flex gap-1">
-              {allMyPCs.map(c => (
-                <Link
-                  key={c.id}
-                  href={c.id === pc.id ? '/' : `/?pc=${c.id}`}
-                  className={`px-3 py-1 rounded-full text-xs font-medium border transition-colors ${
-                    c.id === pc.id
-                      ? 'bg-indigo-600 text-white border-indigo-600'
-                      : 'border-slate-600 text-slate-400 hover:bg-slate-700/50'
-                  }`}
-                >
-                  {c.name}
-                </Link>
-              ))}
-            </div>
-          </div>
-        )}
+      <div className="mb-6">
+        <PCSwitch pcs={allMyPCs.map(c => ({ id: c.id, name: c.name }))} currentId={pc.id} />
       </div>
 
       <div className="flex gap-6 items-start">
@@ -119,8 +147,10 @@ export default async function HomePage({ searchParams }: { searchParams: SearchP
           )}
         </div>
 
-        {/* ── Right: party sidebar ── */}
-        <div className="w-64 shrink-0">
+        {/* ── Right: party + plot threads ── */}
+        <div className="w-64 shrink-0 space-y-4">
+
+          {/* Party sidebar */}
           <div className="bg-slate-800 rounded-lg border border-slate-700 overflow-hidden">
             <div className="px-4 py-2.5 border-b border-slate-700/50 bg-slate-800">
               <h3 className="text-xs font-semibold text-slate-400 uppercase tracking-wide">
@@ -150,8 +180,51 @@ export default async function HomePage({ searchParams }: { searchParams: SearchP
               )}
             </div>
           </div>
-        </div>
 
+          {/* Plot threads */}
+          {hasPlotThreads && (
+            <div className="bg-slate-800 rounded-lg border border-slate-700 overflow-hidden">
+              <div className="px-4 py-2.5 border-b border-slate-700/50 bg-slate-800">
+                <h3 className="text-xs font-semibold text-slate-400 uppercase tracking-wide">Plot Threads</h3>
+              </div>
+              <div className="p-3 space-y-1">
+                {partyPlotThreads.length > 0 && (
+                  <>
+                    {partyFaction && (
+                      <p className="text-[10px] text-slate-600 uppercase tracking-wide px-1 pt-1 pb-0.5">{partyFaction.name}</p>
+                    )}
+                    {partyPlotThreads.map(t => (
+                      <Link
+                        key={t.id}
+                        href={`/plot-threads/${t.id}`}
+                        className="flex items-center justify-between rounded px-1 py-1.5 hover:bg-slate-700/50 transition-colors gap-2"
+                      >
+                        <span className="text-sm text-slate-100 hover:text-indigo-400 truncate">{t.title}</span>
+                        <span className={`shrink-0 text-xs font-medium ${threadStatusColor[t.status] ?? 'text-slate-400'}`}>{t.status}</span>
+                      </Link>
+                    ))}
+                  </>
+                )}
+                {pcPlotThreads.length > 0 && (
+                  <>
+                    <p className="text-[10px] text-slate-600 uppercase tracking-wide px-1 pt-2 pb-0.5">{pc.name}</p>
+                    {pcPlotThreads.map(t => (
+                      <Link
+                        key={t.id}
+                        href={`/plot-threads/${t.id}`}
+                        className="flex items-center justify-between rounded px-1 py-1.5 hover:bg-slate-700/50 transition-colors gap-2"
+                      >
+                        <span className="text-sm text-slate-100 hover:text-indigo-400 truncate">{t.title}</span>
+                        <span className={`shrink-0 text-xs font-medium ${threadStatusColor[t.status] ?? 'text-slate-400'}`}>{t.status}</span>
+                      </Link>
+                    ))}
+                  </>
+                )}
+              </div>
+            </div>
+          )}
+
+        </div>
       </div>
     </div>
   )

@@ -8,12 +8,8 @@ const label = 'block text-sm font-medium text-slate-300 mb-1'
 
 export default async function NewEncounterPage() {
   const supabase = db()
-  const results = await Promise.all([
-    supabase.from('locations').select('id, name').order('name'),
-    supabase.from('sessions').select('id, session_number, title').order('session_number', { ascending: false }),
-  ])
-  const locations = results[0].data as Array<{ id: string; name: string }> | null
-  const sessions = results[1].data as Array<{ id: string; session_number: number; title: string | null }> | null
+  const { data: raw } = await supabase.from('locations').select('id, name').order('name')
+  const locations = (raw ?? []) as Array<{ id: string; name: string }>
 
   return (
     <div className="p-8 max-w-2xl">
@@ -34,28 +30,19 @@ export default async function NewEncounterPage() {
             <label className={label}>Location</label>
             <select name="location_id" className={input}>
               <option value="">— None —</option>
-              {locations?.map((l) => (
+              {locations.map((l) => (
                 <option key={l.id} value={l.id}>{l.name}</option>
               ))}
             </select>
           </div>
           <div>
-            <label className={label}>Session</label>
-            <select name="session_id" className={input}>
-              <option value="">— None (prep) —</option>
-              {sessions?.map((s) => (
-                <option key={s.id} value={s.id}>#{s.session_number}{s.title ? ` — ${s.title}` : ''}</option>
-              ))}
+            <label className={label}>Status</label>
+            <select name="status" className={input} defaultValue="prep">
+              <option value="prep">Prep</option>
+              <option value="active">Active</option>
+              <option value="archived">Archived</option>
             </select>
           </div>
-        </div>
-        <div>
-          <label className={label}>Status</label>
-          <select name="status" className={input} defaultValue="prep">
-            <option value="prep">Prep</option>
-            <option value="active">Active</option>
-            <option value="archived">Archived</option>
-          </select>
         </div>
         <div>
           <label className={label}>Notes</label>
@@ -66,7 +53,7 @@ export default async function NewEncounterPage() {
           <button type="submit" className="rounded-md bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700">
             Create Encounter
           </button>
-          <Link href="/encounters" className="rounded-md border border-slate-600 bg-slate-800 px-4 py-2 text-sm font-medium text-slate-300 hover:bg-slate-800">
+          <Link href="/encounters" className="rounded-md border border-slate-600 bg-slate-800 px-4 py-2 text-sm font-medium text-slate-300 hover:bg-slate-700">
             Cancel
           </Link>
         </div>

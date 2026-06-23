@@ -8,35 +8,82 @@ interface EncounterRow {
   id: string
   title: string
   status: string
-  location: { id: string; name: string } | null
-  session: { id: string; session_number: number } | null
+  location: { id: string; name: string | null } | null
 }
+interface ParticipantDr { encounter_id: string; role: string | null; dr: number | null; count: number }
+interface SessionLink { encounter_id: string; session_id: string }
+interface SessionRow { id: string; session_number: number }
 
 const statusColor: Record<string, string> = {
-  prep: 'bg-yellow-900/40 text-yellow-300',
-  active: 'bg-blue-900/40 text-blue-300',
+  prep:     'bg-yellow-900/40 text-yellow-300',
+  active:   'bg-blue-900/40 text-blue-300',
   archived: 'bg-slate-700 text-slate-400',
 }
 
-type SearchParams = Promise<{ status?: string }>
+function formatDr(dr: number): string {
+  return Number.isInteger(dr) ? String(dr) : dr.toFixed(2).replace(/\.?0+$/, '')
+}
+
+type SearchParams = Promise<{ status?: string; sort?: string }>
 
 export default async function EncountersPage({ searchParams }: { searchParams: SearchParams }) {
   const params = await searchParams
   const supabase = db()
 
-  let q = supabase.from('encounters').select('*, location:location_id(id, name), session:session_id(id, session_number)').order('created_at', { ascending: false })
-  if (params.status) q = q.eq('status', params.status)
+  const results = await Promise.all([
+    supabase.from('encounters').select('*, location:location_id(id, name)').order('created_at', { ascending: false }),
+    supabase.from('encounter_participants').select('encounter_id, role, dr, count'),
+    supabase.from('session_encounters').select('encounter_id, session_id'),
+    supabase.from('sessions').select('id, session_number'),
+  ])
 
-  const { data: raw } = await q
-  const encounters = (raw ?? []) as unknown as EncounterRow[]
+  let encounters = (results[0].data ?? []) as unknown as EncounterRow[]
+  const participants = (results[1].data ?? []) as ParticipantDr[]
+  const sessionLinks = (results[2].data ?? []) as SessionLink[]
+  const sessions     = (results[3].data ?? []) as SessionRow[]
+
+  // Filter by status
+  if (params.status) encounters = encounters.filter(e => e.status === params.status)
+
+  // Compute net DR per encounter (enemies add, allies subtract)
+  const netDrMap = new Map<string, number>()
+  for (const p of participants) {
+    if (p.dr === null) continue
+    const prev = netDrMap.get(p.encounter_id) ?? 0
+    if (p.role === 'enemy')     netDrMap.set(p.encounter_id, prev + p.dr * p.count)
+    else if (p.role === 'ally') netDrMap.set(p.encounter_id, prev - p.dr * p.count)
+  }
+
+  // Build sorted session number list per encounter
+  const sessionById = new Map(sessions.map(s => [s.id, s.session_number]))
+  const sessionsForEncounter = new Map<string, number[]>()
+  for (const link of sessionLinks) {
+    const num = sessionById.get(link.session_id)
+    if (num === undefined) continue
+    const arr = sessionsForEncounter.get(link.encounter_id) ?? []
+    arr.push(num)
+    sessionsForEncounter.set(link.encounter_id, arr)
+  }
+
+  // Sort by DR if requested
+  const sortBy = params.sort ?? ''
+  if (sortBy === 'dr') {
+    encounters = [...encounters].sort((a, b) => (netDrMap.get(b.id) ?? 0) - (netDrMap.get(a.id) ?? 0))
+  } else if (sortBy === '-dr') {
+    encounters = [...encounters].sort((a, b) => (netDrMap.get(a.id) ?? 0) - (netDrMap.get(b.id) ?? 0))
+  }
 
   const filters = [
     { type: 'select' as const, name: 'status', label: 'Status', options: [
-      { value: 'prep', label: 'Prep' },
-      { value: 'active', label: 'Active' },
+      { value: 'prep',     label: 'Prep' },
+      { value: 'active',   label: 'Active' },
       { value: 'archived', label: 'Archived' },
     ]},
   ]
+
+  const nextDrSort = sortBy === 'dr' ? '-dr' : 'dr'
+  const drSortArrow = sortBy === 'dr' ? ' ▼' : sortBy === '-dr' ? ' ▲' : ''
+  const statusParam: Record<string, string> = params.status ? { status: params.status } : {}
 
   return (
     <div className="p-8">
@@ -67,36 +114,57 @@ export default async function EncountersPage({ searchParams }: { searchParams: S
             <thead>
               <tr className="border-b border-slate-700 bg-slate-800">
                 <th className="text-left px-4 py-3 font-medium text-slate-400">Title</th>
+                <th className="text-left px-4 py-3 font-medium text-slate-400">
+                  <Link
+                    href={`/encounters?${new URLSearchParams({ ...statusParam, sort: nextDrSort }).toString()}`}
+                    className="hover:text-slate-200 transition-colors"
+                  >
+                    Net DR{drSortArrow}
+                  </Link>
+                </th>
+                <th className="text-left px-4 py-3 font-medium text-slate-400">Sessions</th>
                 <th className="text-left px-4 py-3 font-medium text-slate-400">Location</th>
-                <th className="text-left px-4 py-3 font-medium text-slate-400">Session</th>
                 <th className="text-left px-4 py-3 font-medium text-slate-400">Status</th>
               </tr>
             </thead>
             <tbody>
-              {encounters.map((e) => (
-                <ClickableRow key={e.id} href={`/encounters/${e.id}`} className="border-b border-slate-700/50 last:border-0 hover:bg-slate-800">
-                  <td className="px-4 py-3">
-                    <SubLink href={`/encounters/${e.id}`} className="font-medium text-slate-100 hover:text-indigo-400">
-                      {e.title}
-                    </SubLink>
-                  </td>
-                  <td className="px-4 py-3">
-                    {e.location
-                      ? <SubLink href={`/locations/${e.location.id}`} className="text-slate-500 hover:text-indigo-400">{e.location.name}</SubLink>
-                      : <span className="text-slate-500">—</span>}
-                  </td>
-                  <td className="px-4 py-3">
-                    {e.session
-                      ? <SubLink href={`/sessions/${e.session.id}`} className="text-slate-500 hover:text-indigo-400">#{e.session.session_number}</SubLink>
-                      : <span className="text-slate-500">—</span>}
-                  </td>
-                  <td className="px-4 py-3">
-                    <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${statusColor[e.status] ?? 'bg-slate-700 text-slate-400'}`}>
-                      {e.status}
-                    </span>
-                  </td>
-                </ClickableRow>
-              ))}
+              {encounters.map((e) => {
+                const netDr = netDrMap.get(e.id)
+                const sessNums = (sessionsForEncounter.get(e.id) ?? []).sort((a, b) => a - b)
+                return (
+                  <ClickableRow key={e.id} href={`/encounters/${e.id}`} className="border-b border-slate-700/50 last:border-0 hover:bg-slate-800">
+                    <td className="px-4 py-3">
+                      <SubLink href={`/encounters/${e.id}`} className="font-medium text-slate-100 hover:text-indigo-400">
+                        {e.title}
+                      </SubLink>
+                    </td>
+                    <td className="px-4 py-3">
+                      {netDr !== undefined ? (
+                        <span className={`inline-flex rounded px-1.5 py-0.5 text-xs font-semibold ${
+                          netDr > 0 ? 'bg-red-900/30 text-red-400' :
+                          netDr < 0 ? 'bg-green-900/40 text-green-400' :
+                          'bg-slate-700 text-slate-400'
+                        }`}>
+                          {formatDr(netDr)}
+                        </span>
+                      ) : <span className="text-slate-500">—</span>}
+                    </td>
+                    <td className="px-4 py-3 text-slate-500">
+                      {sessNums.length > 0 ? sessNums.map(n => `#${n}`).join(', ') : '—'}
+                    </td>
+                    <td className="px-4 py-3">
+                      {e.location
+                        ? <SubLink href={`/locations/${e.location.id}`} className="text-slate-500 hover:text-indigo-400">{e.location.name}</SubLink>
+                        : <span className="text-slate-500">—</span>}
+                    </td>
+                    <td className="px-4 py-3">
+                      <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${statusColor[e.status] ?? 'bg-slate-700 text-slate-400'}`}>
+                        {e.status}
+                      </span>
+                    </td>
+                  </ClickableRow>
+                )
+              })}
             </tbody>
           </table>
         </div>

@@ -236,7 +236,6 @@ export interface Database {
           id: string
           title: string
           location_id: string | null
-          session_id: string | null
           status: string
           summary: string | null
           notes: string | null
@@ -244,6 +243,17 @@ export interface Database {
         }
         Insert: Partial<Omit<Database['public']['Tables']['encounters']['Row'], 'id' | 'created_at'>>
         Update: Partial<Database['public']['Tables']['encounters']['Insert']>
+        Relationships: []
+      }
+      session_encounters: {
+        Row: {
+          id: string
+          session_id: string
+          encounter_id: string
+          created_at: string
+        }
+        Insert: Partial<Omit<Database['public']['Tables']['session_encounters']['Row'], 'id' | 'created_at'>>
+        Update: Partial<Database['public']['Tables']['session_encounters']['Insert']>
         Relationships: []
       }
       encounter_participants: {
@@ -391,6 +401,29 @@ export interface Database {
         Update: Partial<Database['public']['Tables']['faction_locations']['Insert']>
         Relationships: []
       }
+      plot_thread_factions: {
+        Row: {
+          id: string
+          plot_thread_id: string
+          faction_id: string
+          created_at: string
+        }
+        Insert: Partial<Omit<Database['public']['Tables']['plot_thread_factions']['Row'], 'id' | 'created_at'>>
+        Update: Partial<Database['public']['Tables']['plot_thread_factions']['Insert']>
+        Relationships: []
+      }
+      plot_thread_characters: {
+        Row: {
+          id: string
+          plot_thread_id: string
+          pc_id: string | null
+          npc_id: string | null
+          created_at: string
+        }
+        Insert: Partial<Omit<Database['public']['Tables']['plot_thread_characters']['Row'], 'id' | 'created_at'>>
+        Update: Partial<Database['public']['Tables']['plot_thread_characters']['Insert']>
+        Relationships: []
+      }
       profiles: {
         Row: {
           id: string
@@ -448,5 +481,8 @@ export type FactionLocation      = Tables<'faction_locations'>
 export type CultureLocation      = Tables<'culture_locations'>
 export type SessionNote          = Tables<'session_notes'>
 export type SessionPlotThread    = Tables<'session_plot_threads'>
-export type Profile              = Tables<'profiles'>
-export type Setting              = Tables<'settings'>
+export type SessionEncounter      = Tables<'session_encounters'>
+export type PlotThreadFaction     = Tables<'plot_thread_factions'>
+export type PlotThreadCharacter   = Tables<'plot_thread_characters'>
+export type Profile               = Tables<'profiles'>
+export type Setting               = Tables<'settings'>

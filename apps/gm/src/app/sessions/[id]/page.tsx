@@ -40,30 +40,28 @@ export default async function SessionPage({ params }: { params: Promise<{ id: st
   const { id } = await params
   const supabase = db()
 
-  const [r0, r1, r2, r3, r4, r5, r6] = await Promise.all([
+  const [r0, r2, r3, r4, r5, r6, r7] = await Promise.all([
     supabase.from('sessions').select('*').eq('id', id).single(),
-    supabase.from('encounters').select('id, title, status').eq('session_id', id).order('created_at'),
     supabase.from('session_notes').select('*, pc:pc_id(name, player_name)').eq('session_id', id).order('created_at'),
     supabase.from('factions').select('id, name').order('name'),
     supabase.from('session_plot_threads').select('id, plot_thread_id').eq('session_id', id).order('created_at'),
-    supabase.from('encounters').select('id, title, status').neq('session_id', id).order('title'),
+    supabase.from('session_encounters').select('encounter_id').eq('session_id', id),
     supabase.from('plot_threads').select('id, title, status').order('title'),
+    supabase.from('encounters').select('id, title, status').order('title'),
   ])
 
   if (!r0.data) notFound()
   const session            = r0.data as Session
-  const encounters         = (r1.data ?? []) as EncounterRow[]
   const playerNotes        = (r2.data ?? []) as unknown as SessionNoteRow[]
   const factions           = (r3.data ?? []) as Array<{ id: string; name: string }>
   const sessionThreadLinks = (r4.data ?? []) as SessionPlotThreadRow[]
-  const otherEncounters    = (r5.data ?? []) as EncounterRow[]
+  const linkedEncounterLinks = (r5.data ?? []) as Array<{ encounter_id: string }>
   const allThreads         = (r6.data ?? []) as PlotThreadRow[]
+  const allEncounters      = (r7.data ?? []) as EncounterRow[]
 
-  // neq() excludes NULLs in postgres — fetch unassigned separately
-  const { data: unassignedRaw } = await supabase
-    .from('encounters').select('id, title, status').is('session_id', null).order('title')
-  const unassignedEncounters = (unassignedRaw ?? []) as EncounterRow[]
-  const availableEncounters  = [...unassignedEncounters, ...otherEncounters]
+  const linkedEncounterIds = new Set(linkedEncounterLinks.map(l => l.encounter_id))
+  const encounters         = allEncounters.filter(e => linkedEncounterIds.has(e.id))
+  const availableEncounters = allEncounters.filter(e => !linkedEncounterIds.has(e.id))
 
   // Fetch participant DR data for all encounters linked to this session
   const encounterIds = encounters.map(e => e.id)
@@ -83,7 +81,6 @@ export default async function SessionPage({ params }: { params: Promise<{ id: st
     }
   }
 
-  const linkedEncounterIds = new Set(encounters.map(e => e.id))
   const linkedThreadIds    = new Set(sessionThreadLinks.map(l => l.plot_thread_id))
   const threadById         = Object.fromEntries(allThreads.map(t => [t.id, t]))
   const availableThreads   = allThreads.filter(t => !linkedThreadIds.has(t.id))
@@ -200,9 +197,7 @@ export default async function SessionPage({ params }: { params: Promise<{ id: st
                 <input type="hidden" name="session_id" value={id} />
                 <select name="id" required className={`${smallInput} flex-1`}>
                   <option value="">Link existing…</option>
-                  {availableEncounters
-                    .filter(e => !linkedEncounterIds.has(e.id))
-                    .map(e => <option key={e.id} value={e.id}>{e.title}</option>)}
+                  {availableEncounters.map(e => <option key={e.id} value={e.id}>{e.title}</option>)}
                 </select>
                 <button type="submit" className="rounded bg-indigo-600 px-2.5 py-1.5 text-xs font-medium text-white hover:bg-indigo-700 whitespace-nowrap">
                   Add

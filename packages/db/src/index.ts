@@ -29,6 +29,9 @@ export type {
   CultureLocation,
   SessionNote,
   SessionPlotThread,
+  SessionEncounter,
+  PlotThreadFaction,
+  PlotThreadCharacter,
   Profile,
   Setting,
 } from './types'

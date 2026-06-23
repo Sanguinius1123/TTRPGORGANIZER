@@ -11,7 +11,6 @@ export async function createEncounter(formData: FormData) {
     .insert({
       title: formData.get('title') as string,
       location_id: (formData.get('location_id') as string) || null,
-      session_id: (formData.get('session_id') as string) || null,
       status: (formData.get('status') as string) || 'prep',
       notes: (formData.get('notes') as string) || null,
       summary: null,
@@ -31,7 +30,6 @@ export async function updateEncounter(formData: FormData) {
     .update({
       title: formData.get('title') as string,
       location_id: (formData.get('location_id') as string) || null,
-      session_id: (formData.get('session_id') as string) || null,
       status: formData.get('status') as string,
       notes: (formData.get('notes') as string) || null,
       summary: (formData.get('summary') as string) || null,
@@ -43,21 +41,100 @@ export async function updateEncounter(formData: FormData) {
   revalidatePath('/encounters')
 }
 
+export async function duplicateEncounter(formData: FormData) {
+  const supabase = db()
+  const id = formData.get('id') as string
+
+  const { data: orig } = await supabase.from('encounters').select('*').eq('id', id).single()
+  if (!orig) throw new Error('Encounter not found')
+  const o = orig as { title: string; location_id: string | null; status: string; notes: string | null }
+
+  const { data: newEnc, error: encErr } = await supabase
+    .from('encounters')
+    .insert({
+      title: `${o.title} (copy)`,
+      location_id: o.location_id,
+      status: 'prep',
+      notes: o.notes,
+      summary: null,
+    })
+    .select()
+    .single()
+  if (encErr || !newEnc) throw new Error(encErr?.message ?? 'Failed to duplicate')
+  const newId = (newEnc as { id: string }).id
+
+  const { data: parts } = await supabase
+    .from('encounter_participants')
+    .select('*')
+    .eq('encounter_id', id)
+
+  if (parts && parts.length > 0) {
+    const rows = (parts as Array<{ label: string; count: number; role: string | null; dr: number | null; notes: string | null; npc_id: string | null }>)
+      .map(p => ({
+        encounter_id: newId,
+        label: p.label,
+        count: p.count,
+        role: p.role,
+        dr: p.dr,
+        notes: p.notes,
+        npc_id: p.npc_id,
+      }))
+    await supabase.from('encounter_participants').insert(rows)
+  }
+
+  revalidatePath('/encounters')
+  redirect(`/encounters/${newId}`)
+}
+
+// Called from session sidebar — form fields: id=encounter_id, session_id
 export async function addEncounterToSession(formData: FormData) {
   const supabase = db()
-  const id         = formData.get('id') as string
-  const session_id = formData.get('session_id') as string
-  const { error } = await supabase.from('encounters').update({ session_id }).eq('id', id)
+  const encounter_id = formData.get('id') as string
+  const session_id   = formData.get('session_id') as string
+  const { error } = await supabase.from('session_encounters').insert({ session_id, encounter_id })
+  if (error && !error.message.includes('unique')) throw new Error(error.message)
+  revalidatePath(`/sessions/${session_id}`)
+  revalidatePath(`/encounters/${encounter_id}`)
+}
+
+// Called from session sidebar — form fields: id=encounter_id, session_id
+export async function removeEncounterFromSession(formData: FormData) {
+  const supabase = db()
+  const encounter_id = formData.get('id') as string
+  const session_id   = formData.get('session_id') as string
+  const { error } = await supabase
+    .from('session_encounters')
+    .delete()
+    .eq('session_id', session_id)
+    .eq('encounter_id', encounter_id)
   if (error) throw new Error(error.message)
+  revalidatePath(`/sessions/${session_id}`)
+  revalidatePath(`/encounters/${encounter_id}`)
+}
+
+// Called from encounter detail sidebar — form fields: encounter_id, session_id
+export async function linkEncounterSession(formData: FormData) {
+  const supabase = db()
+  const encounter_id = formData.get('encounter_id') as string
+  const session_id   = formData.get('session_id') as string
+  const { error } = await supabase.from('session_encounters').insert({ session_id, encounter_id })
+  if (error && !error.message.includes('unique')) throw new Error(error.message)
+  revalidatePath(`/encounters/${encounter_id}`)
   revalidatePath(`/sessions/${session_id}`)
 }
 
-export async function removeEncounterFromSession(formData: FormData) {
+// Called from encounter detail sidebar — form fields: encounter_id, session_id
+export async function unlinkEncounterSession(formData: FormData) {
   const supabase = db()
-  const id         = formData.get('id') as string
-  const session_id = formData.get('session_id') as string
-  const { error } = await supabase.from('encounters').update({ session_id: null }).eq('id', id)
+  const encounter_id = formData.get('encounter_id') as string
+  const session_id   = formData.get('session_id') as string
+  const { error } = await supabase
+    .from('session_encounters')
+    .delete()
+    .eq('session_id', session_id)
+    .eq('encounter_id', encounter_id)
   if (error) throw new Error(error.message)
+  revalidatePath(`/encounters/${encounter_id}`)
   revalidatePath(`/sessions/${session_id}`)
 }
 

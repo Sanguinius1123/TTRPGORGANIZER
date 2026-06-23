@@ -52,6 +52,43 @@ export async function deletePlotThread(formData: FormData) {
   redirect('/plot-threads')
 }
 
+export async function linkPlotThreadFaction(formData: FormData) {
+  const supabase = db()
+  const plot_thread_id = formData.get('plot_thread_id') as string
+  const faction_id     = formData.get('faction_id') as string
+  const { error } = await supabase.from('plot_thread_factions').insert({ plot_thread_id, faction_id })
+  if (error && !error.message.includes('unique')) throw new Error(error.message)
+  revalidatePath(`/plot-threads/${plot_thread_id}`)
+}
+
+export async function unlinkPlotThreadFaction(formData: FormData) {
+  const supabase = db()
+  const id = formData.get('id') as string
+  const plot_thread_id = formData.get('plot_thread_id') as string
+  const { error } = await supabase.from('plot_thread_factions').delete().eq('id', id)
+  if (error) throw new Error(error.message)
+  revalidatePath(`/plot-threads/${plot_thread_id}`)
+}
+
+export async function linkPlotThreadCharacter(formData: FormData) {
+  const supabase = db()
+  const plot_thread_id = formData.get('plot_thread_id') as string
+  const pc_id  = (formData.get('pc_id') as string) || null
+  const npc_id = (formData.get('npc_id') as string) || null
+  const { error } = await supabase.from('plot_thread_characters').insert({ plot_thread_id, pc_id, npc_id })
+  if (error && !error.message.includes('unique') && !error.message.includes('plot_thread_characters')) throw new Error(error.message)
+  revalidatePath(`/plot-threads/${plot_thread_id}`)
+}
+
+export async function unlinkPlotThreadCharacter(formData: FormData) {
+  const supabase = db()
+  const id = formData.get('id') as string
+  const plot_thread_id = formData.get('plot_thread_id') as string
+  const { error } = await supabase.from('plot_thread_characters').delete().eq('id', id)
+  if (error) throw new Error(error.message)
+  revalidatePath(`/plot-threads/${plot_thread_id}`)
+}
+
 export async function togglePlotThreadVisibility(formData: FormData) {
   const supabase = db()
   const id = formData.get('id') as string
