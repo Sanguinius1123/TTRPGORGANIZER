@@ -7,7 +7,7 @@ export default async function MapPage({ searchParams }: { searchParams: Promise<
   const supabase = db()
 
   const results = await Promise.all([
-    supabase.from('locations').select('*').order('name'),
+    supabase.from('locations').select('*').is('parent_location_id', null).order('name'),
     supabase.from('location_connections').select('*'),
     supabase.from('map_configs').select('*').is('location_id', null).maybeSingle(),
   ])
