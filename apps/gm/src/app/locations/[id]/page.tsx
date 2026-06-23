@@ -58,7 +58,17 @@ export default async function LocationPage({ params }: { params: Promise<{ id: s
       </div>
 
       <div className="flex items-start justify-between mb-6">
-        <h1 className="text-2xl font-bold text-slate-100">{loc.name ?? '(unnamed)'}</h1>
+        <div className="flex items-center gap-3">
+          <h1 className="text-2xl font-bold text-slate-100">{loc.name ?? '(unnamed)'}</h1>
+          {loc.map_x !== null && (
+            <Link
+              href={loc.parent_location_id ? `/map/${loc.parent_location_id}?focus=${loc.id}` : `/map?focus=${loc.id}`}
+              className="text-xs text-indigo-400 hover:text-indigo-300 border border-indigo-800 hover:border-indigo-600 px-2 py-1 rounded transition-colors"
+            >
+              Map ↗
+            </Link>
+          )}
+        </div>
         <form action={toggleLocationVisibility}>
           <input type="hidden" name="id" value={loc.id} />
           <input type="hidden" name="visible" value={String(loc.visible)} />

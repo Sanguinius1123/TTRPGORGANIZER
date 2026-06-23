@@ -86,6 +86,7 @@ type LocationData = {
   pathModifiers: string[]
   nodeColor: string
   waypoint: boolean
+  hasSubmap: boolean
 }
 
 function LocationNode({ data, positionAbsoluteX, positionAbsoluteY, selected }: NodeProps) {
@@ -237,6 +238,7 @@ function toNode(loc: Location, typeRules: MapTypeRule[]): Node {
       pathModifiers: loc.path_modifiers ?? [],
       nodeColor: ruleColor ?? TYPE_COLORS[loc.type ?? ''] ?? '#64748b',
       waypoint: loc.waypoint,
+      hasSubmap: loc.has_submap,
     } as LocationData,
   }
 }
@@ -364,7 +366,11 @@ function MapViewInner({ locations, connections, distanceScale, travelUnit, typeR
   const onNodeDoubleClick = useCallback<NodeMouseHandler<Node>>((_event, node) => {
     const d = node.data as LocationData
     if (d.waypoint || routePlanning) return
-    router.push(`/locations/${node.id}`)
+    if (d.hasSubmap) {
+      router.push(`/map/${node.id}`)
+    } else {
+      router.push(`/locations/${node.id}`)
+    }
   }, [routePlanning, router])
 
   // Use onPaneClick to detect double-click on empty canvas (go up to parent map)
