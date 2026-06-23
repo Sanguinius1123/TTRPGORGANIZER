@@ -1,5 +1,5 @@
 import { createClient } from '@/lib/supabase/server'
-import type { Location, LocationConnection, MapTypeRule } from '@ttrpg/db'
+import type { Location, LocationConnection, MapConfig } from '@ttrpg/db'
 import { MapView } from './MapView'
 
 export default async function MapPage({ searchParams }: { searchParams: Promise<{ focus?: string }> }) {
@@ -9,14 +9,12 @@ export default async function MapPage({ searchParams }: { searchParams: Promise<
   const results = await Promise.all([
     supabase.from('locations').select('*').or('visible.eq.true,waypoint.eq.true').is('parent_location_id', null).not('map_x', 'is', null).order('name'),
     supabase.from('location_connections').select('*'),
-    supabase.from('map_type_rules').select('*').is('parent_type', null).maybeSingle(),
-    supabase.from('map_type_rules').select('*'),
+    supabase.from('map_configs').select('*').is('location_id', null).maybeSingle(),
   ])
 
   const locations = (results[0].data ?? []) as Location[]
   const allConnections = (results[1].data ?? []) as LocationConnection[]
-  const rootRule = results[2].data as MapTypeRule | null
-  const typeRules = (results[3].data ?? []) as MapTypeRule[]
+  const mapConfig = results[2].data as MapConfig | null
 
   const visibleIds = new Set(locations.map(l => l.id))
   const connections = allConnections.filter(
@@ -28,9 +26,8 @@ export default async function MapPage({ searchParams }: { searchParams: Promise<
       <MapView
         locations={locations}
         connections={connections}
-        distanceScale={rootRule?.distance_scale ?? 100}
-        travelUnit={rootRule?.travel_unit ?? 'units'}
-        typeRules={typeRules}
+        distanceScale={mapConfig?.distance_scale ?? 100}
+        travelUnit={mapConfig?.travel_unit ?? 'units'}
         focusNodeId={focus ?? null}
       />
     </div>

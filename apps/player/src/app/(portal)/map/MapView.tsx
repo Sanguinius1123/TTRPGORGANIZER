@@ -20,7 +20,7 @@ import {
   type NodeMouseHandler,
 } from '@xyflow/react'
 import '@xyflow/react/dist/style.css'
-import type { Location, LocationConnection, MapTypeRule } from '@ttrpg/db'
+import type { Location, LocationConnection } from '@ttrpg/db'
 import { calcTravelCost, TERRAIN_COLORS } from '@/lib/mapUtils'
 import { FloatingCircleEdge } from './FloatingCircleEdge'
 
@@ -249,8 +249,7 @@ let _nodeDoubleClick: (id: string, hasSubmap: boolean) => void = () => {}
 let _lastClickTime = 0
 let _lastClickId = ''
 
-function toNode(loc: Location, typeRules: MapTypeRule[]): Node {
-  const ruleColor = typeRules.find(r => r.parent_type === loc.type)?.color
+function toNode(loc: Location): Node {
   return {
     id: loc.id,
     type: 'locationNode',
@@ -261,7 +260,7 @@ function toNode(loc: Location, typeRules: MapTypeRule[]): Node {
       descriptor: loc.descriptor ?? null,
       terrain: loc.terrain ?? null,
       pathModifiers: loc.path_modifiers ?? [],
-      nodeColor: ruleColor ?? TYPE_COLORS[loc.type ?? ''] ?? '#64748b',
+      nodeColor: TYPE_COLORS[loc.type ?? ''] ?? '#64748b',
       waypoint: loc.waypoint,
       hasSubmap: loc.has_submap,
     } as LocationData,
@@ -334,13 +333,12 @@ export interface MapViewProps {
   connections: LocationConnection[]
   distanceScale: number
   travelUnit: string
-  typeRules: MapTypeRule[]
   locationId?: string | null
   parentLocationId?: string | null
   focusNodeId?: string | null
 }
 
-function MapViewInner({ locations, connections, distanceScale, travelUnit, typeRules, locationId, parentLocationId, focusNodeId }: MapViewProps) {
+function MapViewInner({ locations, connections, distanceScale, travelUnit, locationId, parentLocationId, focusNodeId }: MapViewProps) {
   const router = useRouter()
   const { fitView } = useReactFlow()
   const [routePlanning, setRoutePlanning] = useState(false)
@@ -357,7 +355,7 @@ function MapViewInner({ locations, connections, distanceScale, travelUnit, typeR
 
   const locById = useMemo(() => new Map(locations.map(l => [l.id, l])), [locations])
 
-  const initialNodes = useMemo(() => locations.map(l => toNode(l, typeRules)), [locations, typeRules])
+  const initialNodes = useMemo(() => locations.map(toNode), [locations])
   const initialEdges = useMemo(
     () => connections.map(c => toEdge(c, locById, distanceScale, travelUnit)),
     [connections, locById, distanceScale, travelUnit]

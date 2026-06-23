@@ -1,6 +1,6 @@
 import { createClient } from '@/lib/supabase/server'
 import { notFound } from 'next/navigation'
-import type { Location, LocationConnection, MapTypeRule } from '@ttrpg/db'
+import type { Location, LocationConnection, MapConfig } from '@ttrpg/db'
 import { MapView } from '../MapView'
 import Link from 'next/link'
 
@@ -27,14 +27,12 @@ export default async function PlayerSubMapPage({ params, searchParams }: { param
       .not('map_x', 'is', null)
       .order('name'),
     supabase.from('location_connections').select('*'),
-    supabase.from('map_type_rules').select('*'),
+    supabase.from('map_configs').select('*').eq('location_id', id).maybeSingle(),
   ])
 
   const childLocations = (results[0].data ?? []) as Location[]
   const allConnections = (results[1].data ?? []) as LocationConnection[]
-  const typeRules = (results[2].data ?? []) as MapTypeRule[]
-
-  const myRule = typeRules.find(r => r.parent_type === location.type) ?? null
+  const mapConfig = results[2].data as MapConfig | null
 
   const visibleIds = new Set(childLocations.map(l => l.id))
   const connections = allConnections.filter(
@@ -52,9 +50,8 @@ export default async function PlayerSubMapPage({ params, searchParams }: { param
         <MapView
           locations={childLocations}
           connections={connections}
-          distanceScale={myRule?.distance_scale ?? 100}
-          travelUnit={myRule?.travel_unit ?? 'units'}
-          typeRules={typeRules}
+          distanceScale={mapConfig?.distance_scale ?? 100}
+          travelUnit={mapConfig?.travel_unit ?? 'units'}
           locationId={id}
           parentLocationId={location.parent_location_id}
           focusNodeId={focus ?? null}
