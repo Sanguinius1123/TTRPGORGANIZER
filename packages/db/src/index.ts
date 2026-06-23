@@ -5,7 +5,6 @@ export type {
   Faction,
   Location,
   LocationConnection,
-  MapTypeRule,
   MapConfig,
   PlayerCharacter,
   NPC,

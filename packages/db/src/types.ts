@@ -61,26 +61,6 @@ export interface Database {
         Update: Partial<Database['public']['Tables']['location_connections']['Insert']>
         Relationships: []
       }
-      map_type_rules: {
-        Row: {
-          id: string
-          parent_type: string | null
-          child_types: string[]
-          color: string
-          travel_unit: string
-          distance_scale: number
-          created_at: string
-        }
-        Insert: Partial<Omit<{
-          id: string; parent_type: string | null; child_types: string[];
-          color: string; travel_unit: string; distance_scale: number; created_at: string
-        }, 'id' | 'created_at'>>
-        Update: Partial<Omit<{
-          id: string; parent_type: string | null; child_types: string[];
-          color: string; travel_unit: string; distance_scale: number; created_at: string
-        }, 'id' | 'created_at'>>
-        Relationships: []
-      }
       map_configs: {
         Row: {
           id: string
@@ -444,7 +424,6 @@ export type Tables<T extends keyof Database['public']['Tables']> =
 export type Faction            = Tables<'factions'>
 export type Location           = Tables<'locations'>
 export type LocationConnection = Tables<'location_connections'>
-export type MapTypeRule        = Tables<'map_type_rules'>
 export type MapConfig          = Tables<'map_configs'>
 export type PlayerCharacter    = Tables<'player_characters'>
 export type NPC                = Tables<'npcs'>
