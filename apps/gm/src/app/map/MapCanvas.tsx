@@ -644,7 +644,7 @@ function MapCanvasInner({
       creationMenu.flowX,
       creationMenu.flowY,
       waypointTerrain || null,
-      parentId
+      mapLocationId
     )
     const newLoc: Location = {
       id: result.id,
@@ -654,7 +654,7 @@ function MapCanvasInner({
       status: null,
       area: null,
       description: null,
-      parent_location_id: parentId,
+      parent_location_id: mapLocationId,
       image_url: null,
       visible: false,
       map_x: creationMenu.flowX,
