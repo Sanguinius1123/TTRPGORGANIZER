@@ -27,7 +27,7 @@ export default async function LocationsPage({ searchParams }: { searchParams: Se
   const params = await searchParams
   const supabase = await createClient()
 
-  let q = supabase.from('locations').select('*, parent:parent_location_id(id, name)').eq('visible', true).order('name')
+  let q = supabase.from('locations').select('*, parent:parent_location_id(id, name)').eq('visible', true).neq('waypoint', true).order('name')
   if (params.type) q = q.ilike('type', `%${params.type}%`)
   if (params.status) q = q.ilike('status', `%${params.status}%`)
 
