@@ -487,6 +487,7 @@ function MapCanvasInner({
   const { screenToFlowPosition, fitView } = useReactFlow()
   const currentScale = mapConfig?.map_scale ?? 'galaxy'
   const scaleTypes = SCALE_TYPES[currentScale] ?? SCALE_TYPES.galaxy
+  const otherTypes = scaleTypes.filter(t => t !== 'POI')
   const [unplacedList, setUnplacedList] = useState(unplaced)
   const [showHidden, setShowHidden] = useState(true)
   const [creationMenu, setCreationMenu] = useState<{
@@ -507,6 +508,7 @@ function MapCanvasInner({
     () => new Map(placed.map(l => [l.id, l]))
   )
   const [configPanel, setConfigPanel] = useState<ConfigPanel | null>(null)
+  const [showSubMenu, setShowSubMenu] = useState(false)
   const [nodeMenu, setNodeMenu] = useState<NodeMenu | null>(null)
 
   // Local config state (pre-save)
@@ -886,7 +888,7 @@ function MapCanvasInner({
             <div style={{
               position: 'fixed',
               left: creationMenu.screenX,
-              top: creationMenu.screenY,
+              top: Math.min(creationMenu.screenY, window.innerHeight - 180),
               zIndex: 1000,
               background: '#1e293b',
               border: '1px solid #334155',
@@ -901,33 +903,82 @@ function MapCanvasInner({
                     Add location
                   </div>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-                    {scaleTypes.map(t => (
+
+                    {/* POI — always first */}
+                    <button
+                      onClick={() => { setShowSubMenu(false); setCreationMenu(m => m ? { ...m, step: 'enter-name', selectedType: 'POI' } : null) }}
+                      style={{ textAlign: 'left', padding: '5px 8px', borderRadius: 4, background: 'transparent', border: 'none', color: '#cbd5e1', fontSize: 13, cursor: 'pointer' }}
+                      onMouseEnter={e => (e.currentTarget.style.background = '#334155')}
+                      onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
+                    >
+                      POI
+                    </button>
+
+                    {/* Anonymous waypoint — second */}
+                    {currentScale !== 'local' && (
                       <button
-                        key={t}
-                        onClick={() => setCreationMenu(m => m ? { ...m, step: 'enter-name', selectedType: t } : null)}
-                        style={{ textAlign: 'left', padding: '5px 8px', borderRadius: 4, background: 'transparent', border: 'none', color: '#cbd5e1', fontSize: 13, cursor: 'pointer' }}
+                        onClick={() => { setShowSubMenu(false); setCreationMenu(m => m ? { ...m, step: 'pick-terrain' } : null) }}
+                        style={{ textAlign: 'left', padding: '5px 8px', borderRadius: 4, background: 'transparent', border: 'none', color: '#64748b', fontSize: 13, cursor: 'pointer' }}
                         onMouseEnter={e => (e.currentTarget.style.background = '#334155')}
                         onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
                       >
-                        {t}
+                        Anonymous waypoint
                       </button>
-                    ))}
-                    {currentScale !== 'local' && (
-                      <>
-                        <div style={{ height: 1, background: '#334155', margin: '4px 0' }} />
-                        <button
-                          onClick={() => setCreationMenu(m => m ? { ...m, step: 'pick-terrain' } : null)}
-                          style={{ textAlign: 'left', padding: '5px 8px', borderRadius: 4, background: 'transparent', border: 'none', color: '#64748b', fontSize: 13, cursor: 'pointer' }}
-                          onMouseEnter={e => (e.currentTarget.style.background = '#334155')}
-                          onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
-                        >
-                          Anonymous waypoint
-                        </button>
-                      </>
                     )}
+
+                    {/* More types — hover submenu */}
+                    {otherTypes.length > 0 && (
+                      <div
+                        style={{ position: 'relative' }}
+                        onMouseEnter={() => setShowSubMenu(true)}
+                        onMouseLeave={() => setShowSubMenu(false)}
+                      >
+                        <button
+                          style={{
+                            width: '100%', textAlign: 'left', padding: '5px 8px', borderRadius: 4,
+                            background: showSubMenu ? '#334155' : 'transparent',
+                            border: 'none', color: '#94a3b8', fontSize: 13, cursor: 'pointer',
+                            display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+                          }}
+                        >
+                          <span>More types</span>
+                          <span style={{ fontSize: 10 }}>▶</span>
+                        </button>
+                        {showSubMenu && (
+                          <div style={{
+                            position: 'absolute',
+                            left: creationMenu.screenX > window.innerWidth - 420 ? 'auto' : '100%',
+                            right: creationMenu.screenX > window.innerWidth - 420 ? '100%' : 'auto',
+                            top: 0,
+                            background: '#1e293b',
+                            border: '1px solid #334155',
+                            borderRadius: 8,
+                            padding: 8,
+                            minWidth: 180,
+                            boxShadow: '0 4px 24px rgba(0,0,0,0.5)',
+                            zIndex: 1001,
+                            maxHeight: 'calc(100vh - 40px)',
+                            overflowY: 'auto',
+                          }}>
+                            {otherTypes.map(t => (
+                              <button
+                                key={t}
+                                onClick={() => { setShowSubMenu(false); setCreationMenu(m => m ? { ...m, step: 'enter-name', selectedType: t } : null) }}
+                                style={{ display: 'block', width: '100%', textAlign: 'left', padding: '5px 8px', borderRadius: 4, background: 'transparent', border: 'none', color: '#cbd5e1', fontSize: 13, cursor: 'pointer' }}
+                                onMouseEnter={e => (e.currentTarget.style.background = '#334155')}
+                                onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
+                              >
+                                {t}
+                              </button>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    )}
+
                     <div style={{ height: 1, background: '#334155', margin: '4px 0' }} />
                     <button
-                      onClick={() => { setCreationMenu(null); setConfigPanel({ screenX: creationMenu.screenX, screenY: creationMenu.screenY }) }}
+                      onClick={() => { setShowSubMenu(false); setCreationMenu(null); setConfigPanel({ screenX: creationMenu.screenX, screenY: creationMenu.screenY }) }}
                       style={{ textAlign: 'left', padding: '5px 8px', borderRadius: 4, background: 'transparent', border: 'none', color: '#64748b', fontSize: 13, cursor: 'pointer' }}
                       onMouseEnter={e => (e.currentTarget.style.background = '#334155')}
                       onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
