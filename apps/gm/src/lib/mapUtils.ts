@@ -69,7 +69,7 @@ export function calcTravelCost(
   const dx = bx - ax
   const dy = by - ay
   const rawDist = Math.sqrt(dx * dx + dy * dy)
-  const scaled = rawDist / distanceScale
+  const scaled = rawDist / (distanceScale || 100)
 
   const multA = TERRAIN_MULT[aterrain ?? ''] ?? 1.0
   const multB = TERRAIN_MULT[bterrain ?? ''] ?? 1.0

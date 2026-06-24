@@ -17,18 +17,20 @@ export async function upsertMapConfig(
   ).maybeSingle()
 
   if (existing) {
-    await supabase.from('map_configs').update({
+    const { error } = await supabase.from('map_configs').update({
       map_scale: mapScale || null,
       travel_unit: travelUnit || null,
       distance_scale: distanceScale,
     }).eq('id', (existing as { id: string }).id)
+    if (error) throw new Error(error.message)
   } else {
-    await supabase.from('map_configs').insert({
+    const { error } = await supabase.from('map_configs').insert({
       location_id: locationId,
       map_scale: mapScale || null,
       travel_unit: travelUnit || null,
       distance_scale: distanceScale,
     })
+    if (error) throw new Error(error.message)
   }
 
   revalidatePath('/map')

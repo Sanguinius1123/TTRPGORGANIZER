@@ -79,7 +79,8 @@ export async function duplicateEncounter(formData: FormData) {
         notes: p.notes,
         npc_id: p.npc_id,
       }))
-    await supabase.from('encounter_participants').insert(rows)
+    const { error: pErr } = await supabase.from('encounter_participants').insert(rows)
+    if (pErr) throw new Error(pErr.message)
   }
 
   revalidatePath('/encounters')

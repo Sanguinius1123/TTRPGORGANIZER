@@ -6,20 +6,19 @@ export default async function MapPage({ searchParams }: { searchParams: Promise<
   const { focus } = await searchParams
   const supabase = await createClient()
 
-  const results = await Promise.all([
+  const [locsRes, configRes] = await Promise.all([
     supabase.from('locations').select('*').or('visible.eq.true,waypoint.eq.true').is('parent_location_id', null).not('map_x', 'is', null).order('name'),
-    supabase.from('location_connections').select('*'),
     supabase.from('map_configs').select('*').is('location_id', null).maybeSingle(),
   ])
 
-  const locations = (results[0].data ?? []) as Location[]
-  const allConnections = (results[1].data ?? []) as LocationConnection[]
-  const mapConfig = results[2].data as MapConfig | null
-
+  const locations = (locsRes.data ?? []) as Location[]
+  const mapConfig = configRes.data as MapConfig | null
   const visibleIds = new Set(locations.map(l => l.id))
-  const connections = allConnections.filter(
-    c => visibleIds.has(c.from_location_id) && visibleIds.has(c.to_location_id)
-  ) as LocationConnection[]
+
+  const idList = locations.map(l => l.id)
+  const connections: LocationConnection[] = idList.length > 0
+    ? ((await supabase.from('location_connections').select('*').or(`from_location_id.in.(${idList.join(',')}),to_location_id.in.(${idList.join(',')})`)).data ?? []) as LocationConnection[]
+    : []
 
   return (
     <div className="h-full">

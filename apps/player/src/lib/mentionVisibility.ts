@@ -41,7 +41,7 @@ export async function buildVisibleMentionSet(
   // Batch-query each gated table (RLS returns only visible rows)
   const queries = Array.from(byType.entries()).map(async ([type, ids]) => {
     const table = GATED_TABLE[type]
-    if (!table) { ids.forEach(id => visibleIds.add(id)); return }
+    if (!table) return // unknown type — default to hidden, not visible
     const { data } = await supabase.from(table).select('id').in('id', ids)
     for (const row of (data ?? [])) visibleIds.add(row.id)
   })
