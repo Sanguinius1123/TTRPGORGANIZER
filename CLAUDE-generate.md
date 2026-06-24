@@ -2,47 +2,67 @@
 
 Rules and conventions for generating campaign content via Claude. Each section defines naming, structure, tone, and entity archetypes for a given setting type or specific universe. Always read CLAUDE.md first for the data model — this file only covers *what* to create, not *how*.
 
+For active campaigns, a companion file `CLAUDE-campaign-[name].md` holds the campaign-specific bible: tone, factions, central conflict, TTRPG system rules and mechanics. Only load that file when generating content for that campaign. This keeps general rules separate from system-specific details.
+
 ---
 
 ## Generation Workflow
 
 ### Campaign Bible (pre-generation, conversation only — nothing inserted)
 
-Before generating any content, establish in conversation:
+Before generating any content for a new campaign, establish in conversation:
 - Tone and genre
 - Central conflict / campaign question
-- 2-3 major factions and their goals
+- 2–3 major factions and their goals
 - The player hook (why does the party care?)
-- Any setting-specific mechanical notes (system, travel units, scale label preferences)
+- TTRPG system being used and any mechanical conventions that affect content (encounter budget, faction stance labels, rest rules, etc.)
+- Map scale preferences and travel unit labels
 
-This context is carried into all subsequent generation sessions.
+The output of this conversation is a `CLAUDE-campaign-[name].md` file committed to the repo. All subsequent generation sessions for that campaign read that file alongside CLAUDE-generate.md. General rules always apply; the campaign file adds or overrides where the setting or system requires it.
 
 ### Generation Tiers
 
 **Tier 1 — Broad Strokes** (campaign kickoff or entering a new major area)
 
-Fill a map level so it feels real and gives the party direction. No NPCs yet — too vague at this stage.
+Fill a map level so it feels real and gives the party direction. Keep it vague enough that details can change later. No NPCs yet — too early to commit.
 - 6–10 locations: names, types, one-line descriptors, placed on the map
 - 2–4 factions: name, goal, disposition
 - 3–5 plot threads: title and hook only
-- Key lore entries if the setting history is relevant
+- Key lore entries if the setting history needs grounding
+- Encounter seeds: note 1–2 locations where encounters feel natural (a dangerous crossing, an unstable ruin, contested territory) — no stats, just flagged as likely conflict sites
 
 **Tier 2 — Location Flesh-Out** (standard prep unit, party heading somewhere specific)
 
 One parent location + sub-locations, fully playable for next session.
 - Parent location + 2–5 sub-locations
 - 3–5 key NPCs with facts, location, faction membership
-- 1–2 encounters (combat sites only — not every location needs one)
 - Settlement stop content: 2 simple leads, 1 major lead, 2 exposition threads, 1 relationship thread
 - 1–2 lore entries linked to the location
 - Faction links
+- Encounter suggestions: flag sub-locations or travel segments that feel like natural encounter sites, and note the type (combat, social, environmental hazard). Include a full encounter only if explicitly requested or if the location is clearly a conflict site (hostile outpost, active dungeon, contested zone).
 
 **Tier 3 — Quick Fill** (party arrived unexpectedly, need something now)
 
-Minimum viable content to run a scene.
+Minimum viable content to run a scene. Skip or fast-track review.
 - 1 location + brief description
 - 2–3 NPCs, revealed facts only
-- 1 encounter if the location warrants it
+- Flag if an encounter is likely; build it only if requested
+
+### Encounters
+
+Encounters can occur at any scale and any tier — a derelict vessel drifting between systems, a hidden cave system on a planet surface, a contested bridge on a trade road. They are not locked to a specific location type.
+
+**During generation:** Flag natural encounter sites in the review brief. Note the type (combat ambush, environmental hazard, social confrontation, mystery/investigation) and where it fits in the location. Don't build full stat blocks in the brief — just the seed.
+
+**When explicitly requested:** If the user asks for an encounter at a specific location or beat, include it fully in the brief with participant types, rough threat level, and the encounter's dramatic purpose. Ask if the user has a specific idea in mind before building it out — they often do.
+
+**Encounter types to flag:**
+- Hostile territory / contested zones (combat likely)
+- Unknown/mysterious locations (investigation, may escalate to combat)
+- Travel segments through dangerous regions (ambush, environmental)
+- Social confrontations at high-tension locations (negotiation, may escalate)
+
+The campaign file (`CLAUDE-campaign-[name].md`) holds system-specific encounter budget rules, stat block conventions, and difficulty guidance for that TTRPG.
 
 ### Review Format
 
