@@ -4,6 +4,198 @@ Rules and conventions for generating campaign content via Claude. Each section d
 
 ---
 
+## Generation Workflow
+
+### Campaign Bible (pre-generation, conversation only — nothing inserted)
+
+Before generating any content, establish in conversation:
+- Tone and genre
+- Central conflict / campaign question
+- 2-3 major factions and their goals
+- The player hook (why does the party care?)
+- Any setting-specific mechanical notes (system, travel units, scale label preferences)
+
+This context is carried into all subsequent generation sessions.
+
+### Generation Tiers
+
+**Tier 1 — Broad Strokes** (campaign kickoff or entering a new major area)
+
+Fill a map level so it feels real and gives the party direction. No NPCs yet — too vague at this stage.
+- 6–10 locations: names, types, one-line descriptors, placed on the map
+- 2–4 factions: name, goal, disposition
+- 3–5 plot threads: title and hook only
+- Key lore entries if the setting history is relevant
+
+**Tier 2 — Location Flesh-Out** (standard prep unit, party heading somewhere specific)
+
+One parent location + sub-locations, fully playable for next session.
+- Parent location + 2–5 sub-locations
+- 3–5 key NPCs with facts, location, faction membership
+- 1–2 encounters (combat sites only — not every location needs one)
+- Settlement stop content: 2 simple leads, 1 major lead, 2 exposition threads, 1 relationship thread
+- 1–2 lore entries linked to the location
+- Faction links
+
+**Tier 3 — Quick Fill** (party arrived unexpectedly, need something now)
+
+Minimum viable content to run a scene.
+- 1 location + brief description
+- 2–3 NPCs, revealed facts only
+- 1 encounter if the location warrants it
+
+### Review Format
+
+For Tier 1 and Tier 2, Claude produces a structured brief before inserting anything. The user reviews, adjusts, and approves. Only then does the agent insert.
+
+The brief covers:
+- **Locations** — name, type, parent, one-line descriptor
+- **Key NPCs** — name, role/profession, disposition, 2 revealed facts, 1 hidden hook
+- **Factions** — name, goal, disposition, key members listed
+- **Encounters** — title, location, rough participant description, threat signal
+- **Plot threads** — title, type (simple/major/relationship), one-line hook
+- **Lore entries** — title, category, major or minor
+
+Not in the brief (agent fills in): map coordinates, exact travel times, minor walk-on NPCs, waypoints.
+
+### Agent Insertion
+
+Once the user approves the review, spawn a sub-agent (`isolation: "worktree"`) with:
+- The full approved content brief
+- The CLAUDE.md schema reference
+- Any parent location IDs or faction IDs it needs to look up first
+
+The agent:
+1. Queries existing data to resolve parent IDs and map configs
+2. Writes a temporary Node.js script using the Supabase service-role client (`NEXT_PUBLIC_SUPABASE_URL` + `SUPABASE_SERVICE_ROLE_KEY` from `apps/gm/.env.local`)
+3. Inserts in dependency order: locations → factions → NPCs → encounters → plot threads → lore
+4. Places locations with rough coordinates on the appropriate map (user adjusts on canvas afterward)
+5. Reports what was created with a summary, then deletes the script
+
+---
+
+## Story Structure
+
+### Narrative Hierarchy
+
+Campaign content is organized into four levels:
+
+**Campaign Arc** — The overarching story question spanning the whole campaign. One sentence: what is the central conflict or mystery the party is moving toward?
+
+**Story Arc** — A major narrative thread running across multiple sessions or locations. A campaign typically has 2–4 active story arcs at once. Each arc has a faction, a mystery, or a force driving it forward. Example: a hostile faction expanding its territory; an ancient secret surfacing across multiple sites.
+
+**Sub-Arc** — A focused narrative unit playing out across one or two locations. Story arcs surface through their sub-arcs. The party encounters the arc indirectly at first (a clue, a rumor, a consequence) before they understand what they're dealing with.
+
+**Story Thread** — The smallest unit. A single hook, clue, encounter, relationship beat, or piece of world texture. Sub-arcs are built from 2–4 story threads.
+
+---
+
+### Story Thread Types
+
+**Exposition Thread**
+Pure world texture. No mechanics, no reward, no pressure. Rewards curious players who engage with the setting. Can hint at larger arcs without requiring action. Never frame these as leads — they should feel ambient.
+
+**Simple Lead**
+A contained problem solvable at one location. 2–3 discovery tiers. Some have time pressure, some persist indefinitely. Resolves within the stop. Connects to sub-arcs only loosely, if at all.
+
+**Major Lead**
+A sub-arc footprint at a specific location. Full 3 discovery tiers. Higher stakes and reward. Directly connects to a story arc — completing it advances the arc. May fully resolve here or trail into a future location.
+
+**Relationship Thread**
+NPC-driven. Develops through attention and engagement rather than formal mechanics. Three-beat structure (see below). Reward is relational: trust, loyalty, a shift in how the NPC behaves toward the party.
+
+---
+
+### Lead Discovery Tiers
+
+Every lead (simple or major) has 2–3 tiers of information that unlock progressively.
+
+**Tier 1 — Surface**
+What surfaces through general exploration or ambient rumor. Always includes:
+- A **danger signal** embedded in fiction, not mechanical language: "easy coin," "risky job," "nobody's come back from there"
+- Enough intrigue to be interesting, not enough to fully commit without more information
+
+**Tier 2 — Deeper Intel**
+Unlocked by targeting this lead specifically: a focused exploration day, buying information, or clever engagement. Adds:
+- What's actually there (still in-world language)
+- A scale signal: "three of them" vs "just the one, but it's big"
+- A reward hint
+- A time pressure flag if applicable: "she's leaving in two days"
+
+**Tier 3 — Full Picture** (optional)
+The complete situation. Available only through a second targeted day, a specific purchase, or very clever play. Removes most uncertainty before committing. Not every lead needs this tier.
+
+**Director Notes** (never shown to players):
+- Actual mechanical content: encounter stats, challenge structure
+- What happens if time expires (closes, escalates, transforms, or persists)
+- Whether it's soloable and at what risk
+- Which story arc this connects to
+
+---
+
+### Relationship Thread Structure (Three-Beat)
+
+**Beat 1 — Surface** (free, woven into narration)
+A small observable detail about a specific NPC. Delivered without framing it as a lead — it should feel like ambient world texture. Players who notice and engage move toward Beat 2.
+
+Delivery points: camp descriptions, travel narration, arrival at a meaningful location, how an NPC reacts after an encounter.
+
+**Beat 2 — Thread** (requires engagement)
+Surfaces when a player talks to the NPC, asks questions, or follows up on Beat 1. The actual situation emerges: what the NPC needs, fears, is hiding, or is dealing with. Delivered through roleplay, not a formal investigation mechanic.
+
+**Beat 3 — Lead** (player-driven)
+Only becomes a full lead if players choose to pursue it. Connects to mechanical content if appropriate. Reward is relational rather than material.
+
+**Short threads** (1–2 stops): Beat 1 during travel, Beat 2 at the next stop, Beat 3 resolves there or the stop after.
+
+**Long threads** (many stops): Beat 1 surfaces early in the campaign. Beat 2 takes several stops of small interactions. Beat 3 arrives only when a specific location, event, or player push triggers it. Good for named recurring NPCs.
+
+---
+
+### Settlement Stop Content Formula
+
+Each settlement stop contains a consistent set of content. Scale and detail change per location; the skeleton is the same.
+
+| Content | Quantity | Time Pressure | Surfaces Via |
+|---|---|---|---|
+| Simple leads | 2 | Some yes, some no | Exploration / rumor |
+| Major lead | 1 | Usually yes | Exploration / caravan NPC |
+| Exposition threads | 2 | No | Ambient, exploration |
+| Relationship thread | 1 per journey leg | Varies | NPC interaction, narration |
+
+**Days available:** Variable per stop (roll or set on arrival). Players allocate days to: Rest (full downtime), Explore/Carouse (general investigation → surfaces leads), or Follow a Lead (pursue a specific thread, 1–2 days depending on scope).
+
+**Targeting a known lead:** If a player spends their Explore day on a specific lead rather than exploring broadly, they get the next discovery tier for that lead instead of a fresh rumor.
+
+---
+
+### Prep Questions per Location
+
+Answer these in order to generate a stop's content from scratch.
+
+**Location character:**
+1. What is this place's single most distinctive physical feature?
+2. What does this place need from the outside world (import)?
+3. What does this place produce or offer (export)?
+4. Who holds power here, and what do they want?
+5. What is this place afraid of?
+
+**Lead generation:**
+1. What local problem exists that outsiders could solve but locals can't or won't?
+2. What does someone here desperately want that they can't get through normal means?
+3. Which active story arc has a visible footprint here — and what does it look like from the ground?
+
+**Exposition thread generation:**
+1. What does a typical day look like for a resident here?
+2. What is one small human moment that captures this settlement's character?
+
+**Relationship thread generation:**
+1. Which NPC is due for a beat in their arc?
+2. Does anything about this location connect to that NPC's history or situation?
+3. What is the smallest observable detail that could open Beat 1 naturally?
+
+---
+
 ## General Rules (all settings)
 
 ### Map hierarchy
@@ -166,10 +358,14 @@ Every faction should have:
 ## How to invoke generation
 
 When asking Claude to generate content for a specific setting, reference this file and specify:
-1. Which universe/section applies
-2. Map level to generate (e.g. "generate a body-scale map for a hive city")
-3. How many NPCs / factions / lore entries
-4. Any specific plot hooks or tone notes
+1. Which universe/section applies (or describe the tone if original)
+2. Which generation tier (Broad Strokes / Flesh-Out / Quick Fill)
+3. The parent location or map level to generate into
+4. Any specific NPCs, factions, or plot hooks that must appear
+5. Any tone notes or constraints for this specific session
 
-Example prompt:
-> "Generate a body-scale settlement using the 40k section of CLAUDE-generate.md. It should be a hive city underhive with 6 local locations, 4 NPCs, 2 factions, and 3 lore entries. The party just arrived as refugees."
+Example — flesh-out:
+> "Flesh out Karath Station using the sci-fi section. Body scale. Parent is the Velos System. The Sutured faction has a presence here. Party is arriving to trade and resupply."
+
+Example — broad strokes:
+> "Generate a broad strokes pass for a new fantasy region. Galaxy scale. Tone: dark, post-collapse. Central conflict: the old empire collapsed a generation ago and three factions are filling the void."
