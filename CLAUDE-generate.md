@@ -44,6 +44,9 @@ Every named NPC should sound like themselves and no one else. Generic dialogue �
 
 **Keep it short.** One line that feels true to the character beats three lines of naturalistic back-and-forth. Aim for the line they'd be remembered for, not the full exchange.
 
+**Player characters are off-limits.**
+Never generate PC dialogue, actions, or decisions. Never tell a player what their character does or says — not even as a suggestion during generation. It is sometimes useful to note what a PC *might* do when planning an encounter or a social scene ("the party may try to negotiate rather than fight"), but treat this as loose planning context, not prediction. Players surprise you. Leave room for it.
+
 **Personality notes and the character agent:**
 
 Major NPCs store a `personality_notes` field in the GM app — a private GM-only document defining how the character thinks, speaks, and behaves. It's not lore. It's a behavioral profile: speech patterns, emotional triggers, contradictions, what they lie about, how they act under pressure.
