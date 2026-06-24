@@ -12,6 +12,7 @@ const navItems = [
   { label: 'NPCs',         href: '/npcs' },
   { label: 'Factions',     href: '/factions' },
   { label: 'Lore',         href: '/lore' },
+  { label: 'Timeline',     href: '/lore/timeline' },
 ]
 
 export function Nav({ displayName }: { displayName: string }) {
