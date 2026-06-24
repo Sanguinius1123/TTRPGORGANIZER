@@ -1,6 +1,8 @@
 import { createClient } from '@/lib/supabase/server'
 import type { LoreEntry } from '@ttrpg/db'
 import Link from 'next/link'
+import { renderMentions } from '@/lib/mentions'
+import { buildVisibleMentionSet } from '@/lib/mentionVisibility'
 
 export default async function TimelinePage() {
   const supabase = await createClient()
@@ -13,6 +15,9 @@ export default async function TimelinePage() {
 
   const entries = (raw ?? []) as LoreEntry[]
   const major = entries.filter(e => e.major_event)
+
+  const descriptions = entries.map(e => e.description ?? '')
+  const visibleIds = await buildVisibleMentionSet(supabase, descriptions)
 
   return (
     <div className="p-8 max-w-3xl">
@@ -54,7 +59,7 @@ export default async function TimelinePage() {
                         <span className="ml-2 text-xs text-slate-500">{entry.descriptor}</span>
                       )}
                       {entry.description && (
-                        <p className="text-sm text-slate-400 mt-1.5 line-clamp-2">{entry.description}</p>
+                        <p className="text-sm text-slate-400 mt-1.5 line-clamp-2">{renderMentions(entry.description, visibleIds)}</p>
                       )}
                     </div>
                   ) : (

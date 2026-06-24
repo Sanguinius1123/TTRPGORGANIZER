@@ -17,7 +17,9 @@ const nav = [
       { label: 'Map', href: '/map' },
       { label: 'Locations', href: '/locations' },
       { label: 'Lore & Knowledge', href: '/lore' },
-      { label: 'Timeline', href: '/lore/timeline' },
+      { label: 'Timeline', href: '/lore/timeline', sub: true },
+      { label: 'Species', href: '/species', sub: true },
+      { label: 'Cultures', href: '/cultures', sub: true },
     ],
   },
   {
@@ -63,16 +65,21 @@ export function Sidebar() {
             <p className="px-3 mb-1 text-xs font-semibold text-slate-500 uppercase tracking-wider">
               {group}
             </p>
-            {items.map(({ label, href }) => (
+            {items.map(({ label, href, sub }) => (
               <Link
                 key={href}
                 href={href}
-                className={`flex items-center px-3 py-2 rounded-md text-sm transition-colors ${
+                className={`flex items-center rounded-md text-sm transition-colors ${
+                  sub ? 'pl-6 pr-3 py-1.5' : 'px-3 py-2'
+                } ${
                   isActive(href)
                     ? 'bg-slate-700 text-white font-medium'
+                    : sub
+                    ? 'text-slate-500 hover:text-slate-300 hover:bg-slate-800'
                     : 'text-slate-400 hover:text-slate-100 hover:bg-slate-800'
                 }`}
               >
+                {sub && <span className="mr-1.5 text-slate-600">·</span>}
                 {label}
               </Link>
             ))}

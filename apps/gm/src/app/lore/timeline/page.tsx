@@ -1,6 +1,7 @@
 import { db } from '@/lib/db'
 import { LoreEntry } from '@ttrpg/db'
 import Link from 'next/link'
+import { renderMentions } from '@/lib/mentions'
 
 export default async function TimelinePage() {
   const supabase = db()
@@ -71,7 +72,7 @@ export default async function TimelinePage() {
                             <span className="ml-2 text-xs text-slate-500">{entry.descriptor}</span>
                           )}
                           {entry.description && (
-                            <p className="text-sm text-slate-400 mt-1.5 line-clamp-2">{entry.description}</p>
+                            <p className="text-sm text-slate-400 mt-1.5 line-clamp-2">{renderMentions(entry.description)}</p>
                           )}
                         </div>
                         <div className="flex items-center gap-2 shrink-0">
