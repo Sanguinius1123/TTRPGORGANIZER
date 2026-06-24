@@ -1,5 +1,5 @@
 import { db } from '@/lib/db'
-import { updateLocation, deleteLocation, toggleLocationVisibility } from '@/lib/actions/locations'
+import { updateLocation, deleteLocation, toggleLocationVisibility, toggleLocationMystery } from '@/lib/actions/locations'
 import { Location } from '@ttrpg/db'
 import MentionTextarea from '@/components/MentionTextarea'
 import Link from 'next/link'
@@ -69,17 +69,28 @@ export default async function LocationPage({ params }: { params: Promise<{ id: s
             </Link>
           )}
         </div>
-        <form action={toggleLocationVisibility}>
-          <input type="hidden" name="id" value={loc.id} />
-          <input type="hidden" name="visible" value={String(loc.visible)} />
-          <button type="submit" className={`rounded-full px-3 py-1 text-xs font-medium border transition-colors ${
-            loc.visible
-              ? 'bg-green-900/40 text-green-400 border-green-700 hover:bg-green-900/60'
-              : 'bg-slate-700 text-slate-400 border-slate-600 hover:bg-slate-600'
-          }`}>
-            {loc.visible ? 'Visible to players' : 'Hidden from players'}
-          </button>
-        </form>
+        <div className="flex items-center gap-2">
+          <form action={toggleLocationVisibility}>
+            <input type="hidden" name="id" value={loc.id} />
+            <input type="hidden" name="visible" value={String(loc.visible)} />
+            <button type="submit" className={`rounded-full px-3 py-1 text-xs font-medium border transition-colors ${
+              loc.visible
+                ? 'bg-green-900/40 text-green-400 border-green-700 hover:bg-green-900/60'
+                : 'bg-slate-700 text-slate-400 border-slate-600 hover:bg-slate-600'
+            }`}>
+              {loc.visible ? 'Visible to players' : 'Hidden from players'}
+            </button>
+          </form>
+          <form action={async () => { 'use server'; await toggleLocationMystery(loc.id, !loc.mystery) }}>
+            <button type="submit" className={`rounded-full px-3 py-1 text-xs font-medium border transition-colors ${
+              loc.mystery
+                ? 'bg-purple-900/40 text-purple-400 border-purple-700 hover:bg-purple-900/60'
+                : 'bg-slate-700 text-slate-400 border-slate-600 hover:bg-slate-600'
+            }`}>
+              {loc.mystery ? 'Mystery' : 'Not mystery'}
+            </button>
+          </form>
+        </div>
       </div>
 
       <form action={updateLocation} className="bg-slate-800 rounded-lg border border-slate-700 p-6 space-y-5 mb-8">

@@ -87,6 +87,7 @@ type LocationData = {
   nodeColor: string
   waypoint: boolean
   hasSubmap: boolean
+  mystery: boolean
 }
 
 const hiddenHandle: React.CSSProperties = { opacity: 0, width: 0, height: 0, minWidth: 0, minHeight: 0 }
@@ -138,8 +139,9 @@ function LocationNode({ id, data, positionAbsoluteX, positionAbsoluteY, selected
     )
   }
 
-  const color = d.nodeColor || TYPE_COLORS[d.locType ?? ''] || '#64748b'
-  const symbol = TYPE_SYMBOLS[d.locType ?? ''] || '●'
+  const color = d.mystery ? '#64748b' : (d.nodeColor || TYPE_COLORS[d.locType ?? ''] || '#64748b')
+  const symbol = d.mystery ? '?' : (TYPE_SYMBOLS[d.locType ?? ''] || '●')
+  const displayName = d.mystery ? '???' : (d.name ?? '(unnamed)')
 
   return (
     <div
@@ -158,14 +160,14 @@ function LocationNode({ id, data, positionAbsoluteX, positionAbsoluteY, selected
         transform: 'translateX(-50%)',
         whiteSpace: 'nowrap',
         fontSize: '11px',
-        color: '#e2e8f0',
+        color: d.mystery ? '#64748b' : '#e2e8f0',
         pointerEvents: 'none',
         fontWeight: 500,
       }}>
-        {d.name ?? '(unnamed)'}
+        {displayName}
       </div>
 
-      {d.locType === 'POI' && d.descriptor && (
+      {!d.mystery && d.locType === 'POI' && d.descriptor && (
         <div style={{
           position: 'absolute',
           top: '100%',
@@ -184,6 +186,7 @@ function LocationNode({ id, data, positionAbsoluteX, positionAbsoluteY, selected
 
       <div
         onClick={(e) => {
+          if (d.mystery) return
           const now = Date.now()
           if (_lastClickId === id && now - _lastClickTime < 350) {
             e.stopPropagation()
@@ -199,20 +202,21 @@ function LocationNode({ id, data, positionAbsoluteX, positionAbsoluteY, selected
           width: 48,
           height: 48,
           borderRadius: '50%',
-          border: `2px solid ${color}`,
+          border: `2px ${d.mystery ? 'dashed' : 'solid'} ${color}`,
           backgroundColor: `${color}22`,
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          fontSize: '18px',
-          cursor: 'pointer',
+          fontSize: d.mystery ? '16px' : '18px',
+          cursor: d.mystery ? 'default' : 'pointer',
+          opacity: d.mystery ? 0.6 : 1,
           outline: selected ? '2px solid #818cf8' : undefined,
           outlineOffset: selected ? '3px' : undefined,
         }}>
         {symbol}
       </div>
 
-      {hovered && (
+      {hovered && !d.mystery && (
         <div style={{
           position: 'absolute',
           bottom: '110%',
@@ -263,6 +267,7 @@ function toNode(loc: Location): Node {
       nodeColor: TYPE_COLORS[loc.type ?? ''] ?? '#64748b',
       waypoint: loc.waypoint,
       hasSubmap: loc.has_submap,
+      mystery: loc.mystery,
     } as LocationData,
   }
 }
@@ -375,7 +380,7 @@ function MapViewInner({ locations, connections, distanceScale, travelUnit, locat
   // Single click: route planning only
   const onNodeClick = useCallback<NodeMouseHandler<Node>>((_event, node) => {
     const d = node.data as LocationData
-    if (d.waypoint || !routePlanning) return
+    if (d.waypoint || d.mystery || !routePlanning) return
     if (route.length === 0) {
       setRoute([node.id])
       return
