@@ -10,15 +10,16 @@ export async function createLocationConnection(
   travel_time_manual: boolean = false
 ) {
   const supabase = db()
-  const { error } = await supabase.from('location_connections').insert({
+  const { data, error } = await supabase.from('location_connections').insert({
     from_location_id,
     to_location_id,
     bidirectional,
     travel_time,
     travel_time_manual,
-  })
+  }).select().single()
   if (error) throw new Error(error.message)
   revalidatePath('/map')
+  return data as import('@ttrpg/db').LocationConnection
 }
 
 export async function updateConnectionTravelTime(

@@ -604,8 +604,9 @@ function MapCanvasInner({
 
   const onConnect = useCallback(async (params: Connection) => {
     if (!params.source || !params.target) return
+    const tempId = `temp-${Date.now()}`
     const tempConn: LocationConnection = {
-      id: `temp-${Date.now()}`,
+      id: tempId,
       from_location_id: params.source,
       to_location_id: params.target,
       bidirectional: true,
@@ -615,11 +616,13 @@ function MapCanvasInner({
       notes: null,
       created_at: new Date().toISOString(),
     }
-    const nextConns = [...localConnections, tempConn]
-    setLocalConnections(nextConns)
-    setEdges(recomputeEdges(locationsState, nextConns))
-    await createLocationConnection(params.source, params.target, true)
-  }, [localConnections, locationsState, recomputeEdges, setEdges])
+    setLocalConnections(prev => [...prev, tempConn])
+    setEdges(prev => [...prev, toEdge(tempConn, locationsState, effectiveDistanceScale, effectiveTravelUnit)])
+
+    const realConn = await createLocationConnection(params.source, params.target, true)
+    setLocalConnections(prev => prev.map(c => c.id === tempId ? realConn : c))
+    setEdges(prev => prev.map(e => e.id === tempId ? toEdge(realConn, locationsState, effectiveDistanceScale, effectiveTravelUnit) : e))
+  }, [locationsState, effectiveDistanceScale, effectiveTravelUnit, setEdges])
 
   const onPaneContextMenu = useCallback((e: React.MouseEvent | MouseEvent) => {
     e.preventDefault()
