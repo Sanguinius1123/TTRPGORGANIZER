@@ -6,6 +6,57 @@ For active campaigns, a companion file `CLAUDE-campaign-[name].md` holds the cam
 
 ---
 
+## Narration
+
+### Principles
+
+**Short beats long.** A single well-chosen detail does more work than a paragraph of description. When in doubt, cut the last sentence — it's usually summary.
+
+**Lead with the striking thing.** Don't build to the image; open with it. "The gates groan open" before "the caravan rolls out." The world hits first, context follows.
+
+**Sensory over adjectival.** One physical sensation beats three descriptors. "The air tastes of smoke and iron" is better than "the dark, smoky, industrial atmosphere." What does it smell like, sound like, feel underfoot?
+
+**Imply, don't explain.** If the implication is clear, cut the explanation. "Varn raises a hand and the column stops. For once, there's something almost like relief in her voice." — no need to add "showing that even she felt the tension of the journey."
+
+**End on action or weight, not summary.** The last line of a narration beat should land, not wrap up. Avoid sentences that restate what just happened.
+
+**Never recap player actions back to them.** They know what they did. Start from the consequence or reaction.
+
+**Patterns to avoid:**
+- "As you look around, you see..."
+- "You can't help but notice..."
+- Stacking three adjectives where one would do
+- Explaining the emotional significance of a moment
+- Describing what a character is thinking rather than what they do
+
+---
+
+### Dialogue
+
+Every named NPC should sound like themselves and no one else. Generic dialogue — competent but interchangeable — is the failure mode.
+
+**What makes dialogue feel like a character:**
+- Sentence length. Torne speaks in short, deliberate sentences. A nervous bureaucrat rambles.
+- What they don't say. A guarded character deflects, changes subject, answers a different question.
+- Vocabulary. A dockworker and a diplomat don't share a register.
+- Emotional tells. One character goes quiet when angry. Another gets precise. Another cracks a joke.
+- What they never do. Some characters never ask for help. Some never apologize. Hold the line.
+
+**Keep it short.** One line that feels true to the character beats three lines of naturalistic back-and-forth. Aim for the line they'd be remembered for, not the full exchange.
+
+**Personality notes and the character agent:**
+
+Major NPCs store a `personality_notes` field in the GM app — a private GM-only document defining how the character thinks, speaks, and behaves. It's not lore. It's a behavioral profile: speech patterns, emotional triggers, contradictions, what they lie about, how they act under pressure.
+
+To get in-character dialogue or reactions, spawn an agent with:
+- The NPC's personality notes
+- The current situation (what just happened, who else is present, what's at stake for them)
+- The specific ask (how do they react? what do they say? how do they deflect?)
+
+The agent responds in character without the main conversation context cluttering its output. Use this for: reaction to a major player choice, a difficult conversation, a negotiation beat, or any moment where the character needs to feel fully present.
+
+---
+
 ## Generation Workflow
 
 ### Campaign Bible (pre-generation, conversation only — nothing inserted)

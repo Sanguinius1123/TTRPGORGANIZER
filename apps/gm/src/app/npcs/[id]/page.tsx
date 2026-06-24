@@ -115,6 +115,19 @@ export default async function NpcPage({ params }: { params: Promise<{ id: string
               <label className={label}>GM Notes <span className="text-xs text-slate-500">(private)</span></label>
               <MentionTextarea name="notes" defaultValue={npc.notes ?? ''} rows={3} className={`${input} resize-none`} />
             </div>
+            <div>
+              <label className="block text-sm font-medium text-purple-400 mb-1">
+                Personality Notes <span className="text-xs text-slate-500">(voice, behaviour, triggers — for character agent)</span>
+              </label>
+              <textarea
+                name="personality_notes"
+                defaultValue={npc.personality_notes ?? ''}
+                rows={5}
+                spellCheck
+                placeholder={"Speech patterns, sentence length, what they never say, emotional tells, how they act under pressure, lies they tell themselves…"}
+                className="block w-full rounded-md border border-purple-900/60 bg-purple-950/20 px-3 py-2 text-sm text-slate-100 placeholder:text-slate-600 focus:border-purple-500 focus:ring-1 focus:ring-purple-500 outline-none resize-none"
+              />
+            </div>
             <div className="flex gap-3 pt-2">
               <button type="submit" className="rounded-md bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700">
                 Save Changes

@@ -37,6 +37,7 @@ export async function updateNpc(formData: FormData) {
       culture: (formData.get('culture') as string) || null,
       background: (formData.get('background') as string) || null,
       notes: (formData.get('notes') as string) || null,
+      personality_notes: (formData.get('personality_notes') as string) || null,
     })
     .eq('id', id)
 

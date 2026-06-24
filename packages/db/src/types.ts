@@ -85,6 +85,7 @@ export interface Database {
           background: string | null
           notes: string | null
           private_notes: string | null
+          personality_notes: string | null
           image_url: string | null
           visible: boolean
           current_location_id: string | null
@@ -106,6 +107,7 @@ export interface Database {
           background: string | null
           disposition: string | null
           notes: string | null
+          personality_notes: string | null
           image_url: string | null
           visible: boolean
           current_location_id: string | null
