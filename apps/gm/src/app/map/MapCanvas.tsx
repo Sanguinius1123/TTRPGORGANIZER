@@ -883,10 +883,7 @@ function MapCanvasInner({
   }, [locationsState, setNodes, setEdges, recomputeEdges, localConnections])
 
   const visibleNodes = useMemo(() =>
-    showHidden ? nodes : nodes.filter(n => {
-      const d = n.data as LocationData
-      return d.waypoint || d.visible
-    }),
+    showHidden ? nodes : nodes.filter(n => (n.data as LocationData).visible),
     [nodes, showHidden]
   )
 
