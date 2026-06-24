@@ -36,6 +36,7 @@ export async function updatePlayerCharacter(formData: FormData) {
       culture: (formData.get('culture') as string) || null,
       background: (formData.get('background') as string) || null,
       notes: (formData.get('notes') as string) || null,
+      private_notes: (formData.get('private_notes') as string) || null,
     })
     .eq('id', id)
 

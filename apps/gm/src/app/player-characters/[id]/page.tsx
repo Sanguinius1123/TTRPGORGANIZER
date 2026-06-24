@@ -154,8 +154,12 @@ export default async function PlayerCharacterPage({ params }: { params: Promise<
               <MentionTextarea name="background" defaultValue={pc.background ?? ''} rows={4} className={`${input} resize-none`} />
             </div>
             <div>
-              <label className={label}>Notes <span className="text-xs text-slate-500">(private)</span></label>
+              <label className={label}>Notes <span className="text-xs text-slate-500">(visible to players)</span></label>
               <MentionTextarea name="notes" defaultValue={pc.notes ?? ''} rows={3} className={`${input} resize-none`} />
+            </div>
+            <div>
+              <label className={label}>Private notes <span className="text-xs text-slate-500">(GM + player only, hidden from other players)</span></label>
+              <MentionTextarea name="private_notes" defaultValue={pc.private_notes ?? ''} rows={3} className={`${input} resize-none`} />
             </div>
             <div className="flex gap-3 pt-2">
               <button type="submit" className="rounded-md bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700">
