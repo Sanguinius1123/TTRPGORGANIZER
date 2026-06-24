@@ -80,5 +80,7 @@ export function calcTravelCost(
     ? Math.min(...allPaths.map(p => PATH_MULT[p] ?? 1.0))
     : 1.0
 
-  return Math.round(scaled * avgTerrain * pathMult)
+  const raw = scaled * avgTerrain * pathMult
+  // One decimal for small values (<10), integer for larger ones
+  return raw < 10 ? Math.round(raw * 10) / 10 : Math.round(raw)
 }

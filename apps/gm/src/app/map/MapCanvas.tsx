@@ -1183,7 +1183,22 @@ function MapCanvasInner({
                 <label className="text-xs text-slate-400 block mb-1">Map Scale</label>
                 <select
                   value={localConfig.mapScale}
-                  onChange={e => setLocalConfig(prev => ({ ...prev, mapScale: e.target.value }))}
+                  onChange={e => {
+                    const scale = e.target.value
+                    const unitDefaults: Record<string, { travelUnit: string; distanceScale: number }> = {
+                      galaxy: { travelUnit: 'LY',  distanceScale: 50 },
+                      system: { travelUnit: 'AU',  distanceScale: 20 },
+                      body:   { travelUnit: 'km',  distanceScale: 10 },
+                      local:  { travelUnit: 'min', distanceScale: 5  },
+                    }
+                    const defaults = unitDefaults[scale]
+                    setLocalConfig(prev => ({
+                      ...prev,
+                      mapScale: scale,
+                      travelUnit:    prev.travelUnit    || (defaults?.travelUnit    ?? prev.travelUnit),
+                      distanceScale: prev.distanceScale || (defaults?.distanceScale ?? prev.distanceScale),
+                    }))
+                  }}
                   className="w-full rounded bg-slate-700 border border-slate-600 px-2 py-1 text-xs text-slate-100 outline-none"
                 >
                   <option value="">— none —</option>
