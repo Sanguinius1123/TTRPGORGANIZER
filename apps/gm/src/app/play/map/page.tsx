@@ -7,7 +7,7 @@ export default async function MapPage({ searchParams }: { searchParams: Promise<
   const supabase = await createAnonClient()
 
   const [locsRes, configRes] = await Promise.all([
-    supabase.from('locations').select('*').eq('visible', true).neq('waypoint', true).is('parent_location_id', null).not('map_x', 'is', null).order('name'),
+    supabase.from('locations').select('*').or('visible.eq.true,waypoint.eq.true').is('parent_location_id', null).not('map_x', 'is', null).order('name'),
     supabase.from('map_configs').select('*').is('location_id', null).maybeSingle(),
   ])
 

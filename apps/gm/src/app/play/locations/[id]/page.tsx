@@ -11,7 +11,7 @@ export default async function LocationDetailPage({ params }: { params: Promise<{
 
   const results = await Promise.all([
     supabase.from('locations').select('*').eq('id', id).eq('visible', true).eq('mystery', false).single(),
-    supabase.from('locations').select('id, name').eq('parent_location_id', id).eq('visible', true).eq('mystery', false).order('name'),
+    supabase.from('locations').select('id, name').eq('parent_location_id', id).eq('visible', true).eq('mystery', false).neq('waypoint', true).order('name'),
     supabase.from('shops').select('*').eq('location_id', id),
   ])
 
