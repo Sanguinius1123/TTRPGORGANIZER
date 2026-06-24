@@ -17,21 +17,53 @@ A **setting-agnostic** TTRPG campaign management tool. The GM needs structured, 
 ```
 TTRPGorganizer/
   apps/
-    gm/          # Next.js — private GM app, full read/write (BUILT)
-    player/      # Next.js — player portal, runs on port 3001 (BUILT)
+    gm/          # Next.js — single combined app (GM + player portal), deployed to Vercel
+    player/      # RETIRED — do not edit or deploy; kept for reference only
   packages/
     db/          # Supabase client + TypeScript types
       src/
         types.ts    # Hand-written Database interface + named type exports
         server.ts   # createServerClient() — service role, for Server Components/Actions
-        browser.ts  # createBrowserClient() — anon key, for player portal
+        browser.ts  # createBrowserClient() — anon key (legacy, not used in gm app)
         index.ts    # re-exports all of the above
   CLAUDE.md
   package.json   # pnpm workspace root
   pnpm-workspace.yaml
 ```
 
-Package manager: **pnpm** with workspaces. Run `pnpm --filter gm dev` to start the GM app (port 3000). Run `pnpm --filter player dev` to start the player portal (port 3001).
+Package manager: **pnpm** with workspaces. Run `pnpm --filter gm dev` to start the app (port 3000).
+
+## Combined app architecture (apps/gm)
+
+GM and player portal are merged into a single Next.js app. Role determines what users see.
+
+### Auth roles (`profiles` table)
+- `is_admin = true` — sees Settings page, can toggle GM on other accounts. Auto-set for `macarthur1123@gmail.com` via DB trigger on registration.
+- `is_gm = true` — full GM portal access
+- Neither flag — player portal only (`/play/*`)
+
+### Route structure
+```
+apps/gm/src/app/
+  proxy.ts            ← Next.js 16 proxy (function must be named `proxy`, not `middleware`)
+  login/              ← shared login; redirects GM→/ player→/play
+  register/           ← player registration (access code required)
+  (gm)/               ← GM route group, transparent URLs (/locations, /npcs, etc.)
+    layout.tsx        ← checks is_gm via anonClient, renders Sidebar(isAdmin)
+    page.tsx, locations/, npcs/, map/, lore/, ...
+  play/               ← player portal; URLs are /play, /play/locations, etc.
+    layout.tsx        ← checks auth via anonClient, renders PlayerNav(isGm)
+    page.tsx, locations/, sessions/, map/, ...
+```
+
+### Supabase clients in apps/gm
+- `src/lib/db.ts` → service role client — used by ALL GM page queries and server actions
+- `src/lib/supabase/server.ts` → `createAnonClient()` — cookie-based SSR client, used ONLY for auth checks in layouts and proxy.ts
+- `src/lib/supabase/client.ts` → browser client for client components (login page, player NoteForm, etc.)
+
+### Key components
+- `Sidebar` — GM nav; `isAdmin: boolean` prop; Settings only shown when isAdmin; "View as Player →" always shown
+- `PlayerNav` — player nav; `isGm: boolean` prop; "← GM Portal" shown when isGm
 
 ## Supabase CLI access
 
@@ -51,20 +83,19 @@ Do not ask the user to run migrations manually — run them directly.
 | Styling | Tailwind CSS v4 | `@import "tailwindcss"` syntax, no config file |
 | Language | TypeScript | Strict |
 | Database | Supabase (Postgres) | Live project connected |
-| Auth | Supabase Auth | Single GM account — login page at `/login` |
-| Deployment | Vercel | Player portal; GM app runs locally |
+| Auth | Supabase Auth + `@supabase/ssr` | Role-based: is_gm / is_admin on profiles table |
+| Deployment | Vercel | Single project from apps/gm |
 | Package manager | pnpm | Workspaces |
-| Node map | `@xyflow/react` v12 | Installed in both apps |
-| PNG export | `html-to-image` | GM app only |
+| Node map | `@xyflow/react` v12 | GM map + player map |
+| PNG export | `html-to-image` | GM map only |
 
-## Player portal (@supabase/ssr type gotcha)
+## @supabase/ssr type gotcha
 
-`apps/player` uses `@supabase/ssr` for cookie-based session management. The `createServerClient` and `createBrowserClient` functions from `@supabase/ssr` have a third `Schema` generic that doesn't satisfy `GenericSchema` with hand-written Database types, causing all query `.data` to resolve as `never`.
+`apps/gm/src/lib/supabase/server.ts` (`createAnonClient`) and `client.ts` use `@supabase/ssr`. The `createServerClient` / `createBrowserClient` functions have a third `Schema` generic that doesn't satisfy `GenericSchema` with hand-written Database types, causing all query `.data` to resolve as `never`.
 
-**Fix:** Do NOT pass `<Database>` generic to `@supabase/ssr` functions in the player portal. All clients are created without the generic (defaults to `any`). Cast all query results explicitly — the same pattern as the GM app.
+**Fix:** Do NOT pass `<Database>` generic to `@supabase/ssr` functions. All clients are created without the generic (defaults to `any`). Cast all query results explicitly.
 
 ```typescript
-// apps/player/src/lib/supabase/server.ts and client.ts
 // ✓ correct — no generic
 return createServerClient(url, key, { cookies: ... })
 
@@ -81,18 +112,20 @@ All migrations applied. All tables exist.
 factions            (id, name, parent_faction_id FK self, disposition, goal, description, image_url, visible, species text, culture text, created_at)
 locations           (id, name text|null, type, descriptor, status, area, description, parent_location_id FK self,
                      image_url, visible, map_x float, map_y float, waypoint bool, terrain text,
-                     path_modifiers text[], has_submap bool DEFAULT false, created_at)
+                     path_modifiers text[], has_submap bool DEFAULT false, mystery bool DEFAULT false, created_at)
                     -- name is nullable (waypoints have no name)
                     -- map_x/map_y: NULL = not placed on canvas
-                    -- waypoint: true = anonymous routing dot, no name, not visible to players
+                    -- waypoint: true = anonymous routing dot, no name; shown on player map but excluded from player locations list
                     -- has_submap: true = clicking this node on the map drills into /map/[id]
+                    -- mystery: true = visible on player map as "???" but excluded from player locations list and detail page
 location_connections(id, from_location_id FK, to_location_id FK, travel_time, travel_cost, bidirectional,
                      notes, travel_time_manual bool DEFAULT false, created_at)
                     -- travel_time_manual: false = auto-calculated from pixel distance + terrain
 species             (id, name, description, origin_location_id FK nullable, created_at)
 cultures            (id, name, description, created_at)
 player_characters   (id, name, player_name, species text, culture text, background, notes, image_url, visible, current_location_id FK nullable, created_at)
-npcs                (id, name, species text, profession, culture text, background, disposition, notes, image_url, visible, current_location_id FK nullable, created_at)
+npcs                (id, name, species text, profession, culture text, background, disposition, notes, personality_notes text, image_url, visible, current_location_id FK nullable, created_at)
+                    -- personality_notes: voice, behaviour, triggers — for character agent use
 items               (id, name, description, base_price, item_type, location_id FK locations(id) nullable, created_at)
 shops               (id, name, location_id FK, created_at)
 shop_inventory      (id, shop_id FK, item_id FK, price_override, available, created_at)
@@ -127,13 +160,20 @@ map_configs         (id, location_id FK nullable UNIQUE, map_scale text, travel_
   -- unique partial indexes: one root config, one per location
 ```
 
-**Visibility model:** `visible` boolean on most tables (GM toggles to expose to players). `revealed` boolean on `npc_facts` (per-fact granularity). `has_submap` on `locations` (per-location map drill-down).
+**Auth/role tables:**
+```
+profiles  (id FK auth.users, display_name, is_gm bool DEFAULT false, is_admin bool DEFAULT false, created_at)
+settings  (key, value)  -- registration_code stored here
+```
+Trigger `handle_new_user()` fires on `auth.users` INSERT — creates profile, auto-sets is_gm + is_admin for `macarthur1123@gmail.com`.
+
+**Visibility model:** `visible` boolean on most tables (GM toggles to expose to players). `revealed` boolean on `npc_facts` (per-fact granularity). `has_submap` on `locations` (per-location map drill-down). `mystery` on `locations` (shows as `???` on player map, excluded from list/detail).
 
 **"Unknown" convention:** `NULL` means unknown/nowhere for all location FKs. Never create a fake "Unknown" location row. UI displays `NULL` as "Unknown" or "Nomadic" depending on context.
 
-## What has been built — GM app
+## What has been built
 
-Both apps build clean (`pnpm --filter gm build` and `pnpm --filter player build` pass with zero type errors).
+`pnpm --filter gm build` passes with zero type errors. `apps/player` is retired.
 
 ### Pages — GM app
 
@@ -173,18 +213,18 @@ Both apps build clean (`pnpm --filter gm build` and `pnpm --filter player build`
 - All other entities: `create*`, `update*`, `delete*`, `toggle*Visibility` (where applicable)
 
 ### Auth
-Login page at `/login` with Supabase email/password. Middleware at `src/middleware.ts` redirects unauthenticated users to `/login`.
+Login at `/login`. `src/proxy.ts` (Next.js 16 proxy — function named `proxy`) redirects unauthenticated → `/login`, GM → `/`, player → `/play`. GM layout double-checks `is_gm`; player layout double-checks auth. Settings page requires `is_admin`.
 
 ## Node map — what's built
 
 The map is fully implemented as a hierarchical node graph using `@xyflow/react` v12.
 
 ### Map files
-- `apps/gm/src/app/map/MapCanvas.tsx` — main canvas component (client)
-- `apps/gm/src/app/map/FloatingCircleEdge.tsx` — custom edge: straight line touching circle boundary
-- `apps/gm/src/app/map/Breadcrumb.tsx` — breadcrumb nav for sub-maps
-- `apps/gm/src/app/map/page.tsx` — root map server page
-- `apps/gm/src/app/map/[id]/page.tsx` — sub-map server page
+- `apps/gm/src/app/(gm)/map/MapCanvas.tsx` — main canvas component (client)
+- `apps/gm/src/app/(gm)/map/FloatingCircleEdge.tsx` — custom edge: straight line touching circle boundary
+- `apps/gm/src/app/(gm)/map/Breadcrumb.tsx` — breadcrumb nav for sub-maps
+- `apps/gm/src/app/(gm)/map/page.tsx` — root map server page
+- `apps/gm/src/app/(gm)/map/[id]/page.tsx` — sub-map server page
 - `apps/gm/src/lib/mapUtils.ts` — TERRAIN_MULT, PATH_MULT, TERRAIN_COLORS, TERRAIN_LIST, PATH_MODIFIER_LIST, SCALE_TYPES, calcTravelCost
 
 ### Node types
@@ -212,7 +252,7 @@ POI nodes show `descriptor` as a small subtitle below the circle.
 ### GM map interactions
 - **Drag node** → saves position via `updateLocationPosition`
 - **Right-click canvas** → creation menu: scale-appropriate type list → name input → Create. "Anonymous waypoint" option (non-local scales). "Config…" to open config panel.
-- **Right-click node** → context menu: "Details" button, "Has sub-map" checkbox (calls `toggleLocationSubmap`), "Open Sub-map" button (disabled if unchecked). Hidden on local scale.
+- **Right-click node** → context menu: "Details" button, "Visible to Players" checkbox, "Mystery" checkbox (calls `toggleLocationMystery` — shows as `???` on player map), "Has sub-map" checkbox (calls `toggleLocationSubmap`), "Open Sub-map" button (disabled if unchecked). Hidden on local scale.
 - **Left-click node** → navigates to sub-map (`/map/[id]`) if `has_submap = true`, else to `/locations/[id]`. Always `/locations/[id]` on local scale.
 - **Double-click background** → navigate up one map level (or to `/map` from root)
 - **Click edge** → edge panel: travel time input (auto/manual), bidirectional toggle, delete
@@ -223,8 +263,9 @@ POI nodes show `descriptor` as a small subtitle below the circle.
 - **New Location** button on sub-maps — links to `/locations/new?parent=[id]`
 
 ### Player portal map
-- `/map` and `/map/[id]` — same visual style, read-only
-- Only visible locations (`visible = true`) and connections where both endpoints are visible
+- `/play/map` and `/play/map/[id]` — same visual style, read-only
+- Visible locations + waypoints shown; mystery locations shown as `???` (no click-through)
+- Waypoints shown on map but excluded from the player locations list and sub-locations list
 - **Route planner** — "Plan Route" toggle; click nodes to build a route step by step; shows per-leg travel cost and running total; only directly connected visible nodes selectable
 - Node click: same has_submap logic as GM
 
@@ -253,44 +294,45 @@ POI nodes show `descriptor` as a small subtitle below the circle.
 
 ## Player portal — what's built
 
-`apps/player` is a full Next.js 16 app running on port 3001.
+Lives in `apps/gm/src/app/play/`. All URLs prefixed `/play/`.
 
 ### Auth flow
 - Players self-register at `/register` with email + password + **access code** (validated against `settings.registration_code`)
-- On registration, a `profiles` row is created linking `auth.users.id` → `profiles.id`
+- On registration, a `profiles` row is created (`is_gm = false`, `is_admin = false`)
 - GM assigns a `player_characters` row to a player by setting `player_characters.profile_id` from the GM Settings page
-- Session managed via `@supabase/ssr` cookies; middleware at `src/middleware.ts` enforces auth on all routes except `/login` and `/register`
+- Session managed via `@supabase/ssr` cookies; `proxy.ts` enforces auth on all routes
 
 ### Pages
 | Page | Route | Notes |
 |------|-------|-------|
-| My Character | `/` | Character sheet + editable fields + party sidebar; multi-PC switcher via `?pc=` param |
-| PC detail (other) | `/player-characters/[id]` | Read-only sheet for another player's PC |
-| Sessions list | `/sessions` | Summary preview strips mention tokens |
-| Session detail | `/sessions/[id]` | GM summary + loose threads + player notes; one note per PC per session (upsert) |
-| Locations list | `/locations` | visible only, filter bar |
-| Location detail | `/locations/[id]` | sub-locations + shop inventory |
-| NPCs list | `/npcs` | visible only, filter bar |
-| NPC detail | `/npcs/[id]` | revealed facts only; mentions rendered |
-| Factions list | `/factions` | visible only, filter bar |
-| Faction detail | `/factions/[id]` | visible NPC members; mentions rendered |
-| Lore | `/lore` | tabbed: Lore / Species / Cultures, category chip filters |
-| Lore detail | `/lore/[id]`, `/species/[id]`, `/cultures/[id]` | mentions rendered |
-| Map | `/map`, `/map/[id]` | read-only node map with route planner |
-| (redirect) | `/character` | → `/` |
+| My Character | `/play` | Character sheet + editable fields + party sidebar; multi-PC switcher via `?pc=` param |
+| PC detail (other) | `/play/player-characters/[id]` | Read-only sheet for another player's PC |
+| Sessions list | `/play/sessions` | Summary preview strips mention tokens |
+| Session detail | `/play/sessions/[id]` | GM summary + loose threads + player notes; one note per PC per session (upsert) |
+| Locations list | `/play/locations` | visible + non-mystery only, filter bar |
+| Location detail | `/play/locations/[id]` | sub-locations (no waypoints) + shop inventory |
+| NPCs list | `/play/npcs` | visible only, filter bar |
+| NPC detail | `/play/npcs/[id]` | revealed facts only; mentions rendered |
+| Factions list | `/play/factions` | visible only, filter bar |
+| Faction detail | `/play/factions/[id]` | visible NPC members; mentions rendered |
+| Lore | `/play/lore` | tabbed: Lore / Species / Cultures, category chip filters |
+| Lore detail | `/play/lore/[id]`, `/play/species/[id]`, `/play/cultures/[id]` | mentions rendered |
+| Map | `/play/map`, `/play/map/[id]` | read-only node map with route planner; mystery nodes as `???` |
+| (redirect) | `/play/character` | → `/play` |
 
 ### Key design decisions
-- Home page (`/`) is the character sheet, not a dashboard
+- Home page (`/play`) is the character sheet, not a dashboard
 - Multi-PC support: one profile can be assigned to multiple `player_characters`; `?pc=<id>` param switches between them
 - `party_faction_id` FK on `player_characters` → `factions(id)` — GM sets per PC on the PC detail page; player portal uses it to populate the party sidebar
 - Session notes: one note per PC per session (upsert); GM can edit/delete any note; players can edit their own
-- `private_notes` on `player_characters` only shown on `/` (your own sheet)
+- `private_notes` on `player_characters` only shown on `/play` (your own sheet)
 - RLS enforces all visibility and write permissions at the database level
+- GMs can access `/play/*` routes using "View as Player" link in Sidebar
 
 ### @mention rendering (player portal)
 Mentions in the format `[[type:id|name]]` are rendered in all detail pages using:
-- `apps/player/src/lib/mentions.tsx` — `renderMentions(text, visibleIds)`, `stripMentions(text)`, `extractMentions(texts)`
-- `apps/player/src/lib/mentionVisibility.ts` — `buildVisibleMentionSet(supabase, texts)` — batch-queries visibility via RLS
+- `apps/gm/src/lib/mentions.tsx` — `renderMentions(text, visibleIds?)`, `stripMentions(text)`, `extractMentions(texts)`
+- `apps/gm/src/lib/mentionVisibility.ts` — `buildVisibleMentionSet(supabase, texts)` — batch-queries visibility via RLS
 
 **Visible mentions** render as colored clickable links. **Hidden mentions** render as glitch effects (block chars, noise, `REDACTED`, symbol noise) with corruption bleed into surrounding characters.
 
@@ -358,11 +400,11 @@ const sessions  = (results[1].data ?? []) as Array<{ id: string; session_number:
 
 ## Next steps (priority order)
 
-1. **"Unknown" visibility toggle on map** — ability to mark locations as visible to players but show as "???" / unknown type. Design TBD: per-location toggle or per-map setting. Remind user when ready.
-2. **Item category + descriptor** — add category dropdown (weapon, armour, consumable, tool, currency, relic, document, vehicle, misc) and Descriptor field to Items. Confirm list before implementing.
-3. **Shop inventory management UI** — schema exists (`shop_inventory`), no GM UI yet for adding/editing items in a shop. Discuss design before building.
-4. **Map background image** — `map_background_url` column on `map_configs` (or settings). React Flow renders it behind nodes. Workflow: place nodes → Export PNG → trace in Wonderdraft → upload art URL → nodes sit on real map.
-5. **@mention Tiptap upgrade** — replace MentionTextarea with Tiptap rich-text editor; `@` triggers autocomplete across all entity types.
-6. **NPC portrait / image upload** — needs Supabase Storage setup.
-7. **Live spellcheck** — add `spellCheck` attribute to all textarea/input fields (browser-native).
-8. **POI-scale type list expansion** — currently uses existing location types. May want room/corridor/chamber/etc. types for dungeon/interior maps.
+1. **Item category + descriptor** — add category dropdown (weapon, armour, consumable, tool, currency, relic, document, vehicle, misc) and Descriptor field to Items. Confirm list before implementing.
+2. **Shop inventory management UI** — schema exists (`shop_inventory`), no GM UI yet for adding/editing items in a shop. Discuss design before building.
+3. **Map background image** — `map_background_url` column on `map_configs` (or settings). React Flow renders it behind nodes. Workflow: place nodes → Export PNG → trace in Wonderdraft → upload art URL → nodes sit on real map.
+4. **@mention Tiptap upgrade** — replace MentionTextarea with Tiptap rich-text editor; `@` triggers autocomplete across all entity types.
+5. **NPC portrait / image upload** — needs Supabase Storage setup.
+6. **Live spellcheck** — add `spellCheck` attribute to all textarea/input fields (browser-native).
+7. **POI-scale type list expansion** — currently uses existing location types. May want room/corridor/chamber/etc. types for dungeon/interior maps.
+8. **Multi-campaign support** — add `campaigns` table + `campaign_id` FK on all root entities; GM dashboard campaign selector (cookie-based); player portal derives campaign from PC's `campaign_id`. Do this when starting a second campaign, not before.
