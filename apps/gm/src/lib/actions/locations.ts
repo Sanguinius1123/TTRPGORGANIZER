@@ -137,6 +137,14 @@ export async function toggleLocationSubmap(id: string, hasSubmap: boolean) {
   revalidatePath(`/map/${id}`)
 }
 
+export async function toggleLocationMystery(id: string, mystery: boolean) {
+  const supabase = db()
+  const { error } = await supabase.from('locations').update({ mystery }).eq('id', id)
+  if (error) throw new Error(error.message)
+  revalidatePath(`/locations/${id}`)
+  revalidatePath('/map')
+}
+
 export async function createMapLocation(
   name: string,
   locType: string,

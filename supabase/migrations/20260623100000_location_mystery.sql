@@ -1,0 +1,1 @@
+ALTER TABLE locations ADD COLUMN IF NOT EXISTS mystery boolean NOT NULL DEFAULT false;

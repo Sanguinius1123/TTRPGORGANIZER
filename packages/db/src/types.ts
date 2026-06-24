@@ -39,6 +39,7 @@ export interface Database {
           terrain: string | null
           path_modifiers: string[]
           has_submap: boolean
+          mystery: boolean
           created_at: string
         }
         Insert: Partial<Omit<Database['public']['Tables']['locations']['Row'], 'id' | 'created_at'>>

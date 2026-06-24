@@ -39,6 +39,7 @@ import {
   placeLocationOnMap,
   createWaypoint,
   toggleLocationSubmap,
+  toggleLocationMystery,
   setLocationVisibility,
   createMapLocation,
   updateLocationWaypoint,
@@ -205,6 +206,30 @@ function LocationNode({ id, data, positionAbsoluteX, positionAbsoluteY, selected
         }}
       >
         {symbol}
+        {d.rawLoc.mystery && (
+          <div
+            style={{
+              position: 'absolute',
+              top: -5,
+              right: -5,
+              width: 14,
+              height: 14,
+              borderRadius: '50%',
+              background: '#7c3aed',
+              border: '1px solid #a78bfa',
+              fontSize: 9,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              color: '#fff',
+              fontWeight: 700,
+              pointerEvents: 'none',
+              zIndex: 1,
+            }}
+          >
+            ?
+          </div>
+        )}
         <button
           onClick={(e) => { e.stopPropagation(); removeNode(id, d.rawLoc) }}
           onDoubleClick={(e) => e.stopPropagation()}
@@ -666,6 +691,7 @@ function MapCanvasInner({
       terrain: waypointTerrain || null,
       path_modifiers: waypointPaths,
       has_submap: false,
+      mystery: false,
       created_at: new Date().toISOString(),
     }
     setNodes(prev => [...prev, toNode(newLoc)])
@@ -796,6 +822,25 @@ function MapCanvasInner({
     }
     await toggleLocationSubmap(nodeId, newValue)
   }, [nodeMenu, setNodes])
+
+  const handleToggleMystery = useCallback(async (nodeId: string, newValue: boolean) => {
+    setLocationsState(prev => {
+      const next = new Map(prev)
+      const existing = next.get(nodeId)
+      if (existing) next.set(nodeId, { ...existing, mystery: newValue })
+      return next
+    })
+    setNodes(prev => prev.map(n => {
+      if (n.id !== nodeId) return n
+      const d = n.data as LocationData
+      return { ...n, data: { ...d, rawLoc: { ...d.rawLoc, mystery: newValue } } }
+    }))
+    setNodeMenu(prev => prev ? {
+      ...prev,
+      nodeData: { ...prev.nodeData, rawLoc: { ...prev.nodeData.rawLoc, mystery: newValue } },
+    } : null)
+    await toggleLocationMystery(nodeId, newValue)
+  }, [setNodes])
 
   const handleToggleVisibility = useCallback(async (nodeId: string, newValue: boolean) => {
     setLocationsState(prev => {
@@ -1235,6 +1280,15 @@ function MapCanvasInner({
                         >
                           Open Sub-map
                         </button>
+                        <label className="flex items-center gap-2 text-xs text-slate-300 cursor-pointer hover:bg-slate-700 rounded px-2 py-1.5">
+                          <input
+                            type="checkbox"
+                            checked={nodeMenu.nodeData.rawLoc.mystery}
+                            onChange={() => handleToggleMystery(nodeMenu.nodeId, !nodeMenu.nodeData.rawLoc.mystery)}
+                            className="accent-purple-500"
+                          />
+                          Mystery
+                        </label>
                       </>
                     )}
                   </>
