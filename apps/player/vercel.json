@@ -1,0 +1,5 @@
+{
+  "buildCommand": "cd ../.. && pnpm --filter player build",
+  "outputDirectory": ".next",
+  "framework": "nextjs"
+}
