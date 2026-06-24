@@ -21,22 +21,37 @@ interface LocationRow {
   parent: { id: string; name: string } | null
 }
 
-type SearchParams = Promise<{ type?: string; status?: string }>
+type SearchParams = Promise<{ type?: string; status?: string; parent?: string }>
 
 export default async function LocationsPage({ searchParams }: { searchParams: SearchParams }) {
   const params = await searchParams
   const supabase = await createClient()
 
-  let q = supabase.from('locations').select('*, parent:parent_location_id(id, name)').eq('visible', true).eq('mystery', false).neq('waypoint', true).order('name')
-  if (params.type) q = q.ilike('type', `%${params.type}%`)
-  if (params.status) q = q.ilike('status', `%${params.status}%`)
+  const [locResult, parentResult] = await Promise.all([
+    (() => {
+      let q = supabase.from('locations').select('*, parent:parent_location_id(id, name)').eq('visible', true).eq('mystery', false).neq('waypoint', true).order('name')
+      if (params.type) q = q.ilike('type', `%${params.type}%`)
+      if (params.status) q = q.ilike('status', `%${params.status}%`)
+      if (params.parent === '__root__') q = q.is('parent_location_id', null)
+      else if (params.parent) q = q.eq('parent_location_id', params.parent)
+      return q
+    })(),
+    supabase.from('locations').select('id, name, type').eq('visible', true).eq('mystery', false).neq('waypoint', true).not('name', 'is', null).order('name'),
+  ])
 
-  const { data: raw } = await q
-  const locations = (raw ?? []) as unknown as LocationRow[]
+  const locations = (locResult.data ?? []) as unknown as LocationRow[]
+  const parentOptions = (parentResult.data ?? []) as Array<{ id: string; name: string; type: string | null }>
 
   const filters = [
     { type: 'select' as const, name: 'type', label: 'Type', options: LOCATION_TYPES.map(t => ({ value: t, label: t })) },
     { type: 'text' as const, name: 'status', label: 'Status', placeholder: 'active, ruins…' },
+    {
+      type: 'select' as const, name: 'parent', label: 'Inside',
+      options: [
+        { value: '__root__', label: '— Root level —' },
+        ...parentOptions.map(p => ({ value: p.id, label: p.type ? `${p.name} (${p.type})` : p.name })),
+      ],
+    },
   ]
 
   return (
