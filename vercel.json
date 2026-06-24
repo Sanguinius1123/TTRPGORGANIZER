@@ -1,6 +1,0 @@
-{
-  "buildCommand": "pnpm --filter player build",
-  "outputDirectory": "apps/player/.next",
-  "installCommand": "pnpm install",
-  "framework": "nextjs"
-}
