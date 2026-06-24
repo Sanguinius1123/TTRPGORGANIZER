@@ -9,6 +9,7 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@supabase/ssr": "^0.6.1",
     "@ttrpg/db": "workspace:*",
     "@xyflow/react": "^12.11.0",
     "html-to-image": "^1.11.13",

@@ -1,9 +1,18 @@
 import { db } from '@/lib/db'
+import { createAnonClient } from '@/lib/supabase/server'
 import { Profile } from '@ttrpg/db'
-import { updateRegistrationCode } from '@/lib/actions/settings'
+import { redirect } from 'next/navigation'
+import { updateRegistrationCode, toggleGmStatus } from '@/lib/actions/settings'
 
 export default async function SettingsPage() {
+  // Verify admin access
+  const anonClient = await createAnonClient()
+  const { data: { user } } = await anonClient.auth.getUser()
+  if (!user) redirect('/login')
+
   const supabase = db()
+  const { data: currentProfile } = await supabase.from('profiles').select('is_admin').eq('id', user.id).single()
+  if (!currentProfile?.is_admin) redirect('/')
 
   const results = await Promise.all([
     supabase.from('settings').select('*').eq('key', 'registration_code').single(),
@@ -41,11 +50,11 @@ export default async function SettingsPage() {
         </form>
       </section>
 
-      {/* Registered Players — read-only list; assign characters per PC on each PC's detail page */}
+      {/* Registered Players */}
       <section className="space-y-3">
         <h2 className="text-lg font-semibold text-slate-100">Registered Players</h2>
         <p className="text-sm text-slate-400">
-          To assign a character to a player, open that character's detail page and use the Player account selector.
+          Toggle GM access per account. GMs see the full GM interface. To assign a character to a player, open that character&apos;s detail page and use the Player account selector.
         </p>
         {profiles.length === 0 ? (
           <p className="text-sm text-slate-500">No players have registered yet.</p>
@@ -56,6 +65,7 @@ export default async function SettingsPage() {
                 <tr className="border-b border-slate-700 bg-slate-800">
                   <th className="text-left px-4 py-2.5 font-medium text-slate-400">Display name</th>
                   <th className="text-left px-4 py-2.5 font-medium text-slate-400">Account ID</th>
+                  <th className="text-left px-4 py-2.5 font-medium text-slate-400">GM</th>
                 </tr>
               </thead>
               <tbody>
@@ -63,6 +73,22 @@ export default async function SettingsPage() {
                   <tr key={p.id} className="border-b border-slate-700 last:border-0">
                     <td className="px-4 py-2.5 text-slate-100">{p.display_name ?? '—'}</td>
                     <td className="px-4 py-2.5 text-slate-500 font-mono text-xs">{p.id}</td>
+                    <td className="px-4 py-2.5">
+                      <form action={toggleGmStatus}>
+                        <input type="hidden" name="profile_id" value={p.id} />
+                        <input type="hidden" name="is_gm" value={p.is_gm ? 'false' : 'true'} />
+                        <button
+                          type="submit"
+                          className={`px-2.5 py-1 rounded text-xs font-medium border transition-colors ${
+                            p.is_gm
+                              ? 'bg-indigo-900/50 border-indigo-700 text-indigo-300 hover:bg-indigo-900/70'
+                              : 'bg-slate-700 border-slate-600 text-slate-400 hover:bg-slate-600 hover:text-slate-100'
+                          }`}
+                        >
+                          {p.is_gm ? 'GM ✓' : 'Player'}
+                        </button>
+                      </form>
+                    </td>
                   </tr>
                 ))}
               </tbody>

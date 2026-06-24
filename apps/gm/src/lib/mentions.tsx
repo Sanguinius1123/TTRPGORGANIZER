@@ -1,6 +1,25 @@
 import Link from 'next/link'
 import React from 'react'
 
+export const MENTION_PATTERN = /\[\[([\w-]+):([a-f0-9-]+)\|([^\]]+)\]\]/g
+
+/** Strip mention tokens to plain name text — for list-page previews where links aren't needed. */
+export function stripMentions(text: string | null | undefined): string {
+  if (!text) return ''
+  return text.replace(/\[\[[\w-]+:[a-f0-9-]+\|([^\]]+)\]\]/g, '$1')
+}
+
+export function extractMentions(texts: (string | null | undefined)[]): Array<{ type: string; id: string }> {
+  const out: Array<{ type: string; id: string }> = []
+  const re = new RegExp(MENTION_PATTERN.source, 'g')
+  for (const text of texts) {
+    if (!text) continue
+    let m: RegExpExecArray | null
+    while ((m = re.exec(text)) !== null) out.push({ type: m[1], id: m[2] })
+  }
+  return out
+}
+
 const ROUTE: Record<string, string> = {
   location:     'locations',
   npc:          'npcs',
@@ -29,7 +48,8 @@ const COLOR: Record<string, string> = {
 
 const PATTERN = /\[\[([\w-]+):([a-f0-9-]+)\|([^\]]+)\]\]/g
 
-export function renderMentions(text: string | null | undefined): React.ReactNode {
+// visibleIds is accepted for compatibility with player portal callers (ignored here — GM sees all)
+export function renderMentions(text: string | null | undefined, visibleIds?: Set<string> | null): React.ReactNode {
   if (!text) return null
 
   const parts: React.ReactNode[] = []

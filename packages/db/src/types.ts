@@ -431,6 +431,8 @@ export interface Database {
         Row: {
           id: string
           display_name: string | null
+          is_gm: boolean
+          is_admin: boolean
           created_at: string
         }
         Insert: Partial<Omit<Database['public']['Tables']['profiles']['Row'], 'created_at'>>

@@ -10,6 +10,9 @@ importers:
 
   apps/gm:
     dependencies:
+      '@supabase/ssr':
+        specifier: ^0.6.1
+        version: 0.6.1(@supabase/supabase-js@2.108.2)
       '@ttrpg/db':
         specifier: workspace:*
         version: link:../../packages/db
