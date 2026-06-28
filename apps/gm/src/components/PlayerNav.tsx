@@ -12,26 +12,25 @@ type NavItem = {
 }
 
 const navItems: NavItem[] = [
-  { label: 'My Character', href: '/play', exact: true },
-  { label: 'Sessions',     href: '/play/sessions' },
-  { label: 'Map',          href: '/play/map' },
-  { label: 'Locations',    href: '/play/locations' },
-  { label: 'NPCs',         href: '/play/npcs' },
-  { label: 'Factions',     href: '/play/factions' },
-  {
-    label: 'Lore', href: '/play/lore',
-    children: [
-      { label: 'Timeline', href: '/play/lore/timeline' },
-    ],
-  },
+  { label: 'My Character',    href: '/play', exact: true },
+  { label: 'Sessions',        href: '/play/sessions' },
+  { label: 'Map',             href: '/play/map' },
+  { label: 'Locations',       href: '/play/locations' },
+  { label: 'NPCs',            href: '/play/npcs' },
+  { label: 'Factions',        href: '/play/factions' },
+  { label: 'Lore & Knowledge', href: '/play/lore' },
+  { label: 'Timeline',        href: '/play/lore/timeline' },
 ]
 
 export function PlayerNav({ displayName, isGm }: { displayName: string; isGm: boolean }) {
   const pathname = usePathname()
   const router = useRouter()
 
-  const isActive = (href: string, exact?: boolean) =>
-    exact ? pathname === href : pathname === href || (pathname.startsWith(href + '/') && href !== '/play/lore/timeline')
+  const isActive = (href: string, exact?: boolean) => {
+    if (exact) return pathname === href
+    if (href === '/play/lore') return pathname === '/play/lore' || (pathname.startsWith('/play/lore/') && pathname !== '/play/lore/timeline')
+    return pathname === href || pathname.startsWith(href + '/')
+  }
 
   async function signOut() {
     const supabase = createClient()

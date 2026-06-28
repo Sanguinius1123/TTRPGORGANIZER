@@ -11,35 +11,35 @@ const nav = [
     ],
   },
   {
-    group: 'Setting',
-    items: [
-      { label: 'Map', href: '/map' },
-      { label: 'Locations', href: '/locations' },
-      { label: 'Lore & Knowledge', href: '/lore' },
-      { label: 'Timeline', href: '/lore/timeline', sub: true },
-      { label: 'Species', href: '/species', sub: true },
-      { label: 'Cultures', href: '/cultures', sub: true },
-    ],
-  },
-  {
     group: 'People',
     items: [
-      { label: 'NPCs', href: '/npcs' },
       { label: 'Player Characters', href: '/player-characters' },
+      { label: 'NPCs', href: '/npcs' },
       { label: 'Factions', href: '/factions' },
     ],
-  },
-  {
-    group: 'Commerce',
-    items: [{ label: 'Items', href: '/items' }],
   },
   {
     group: 'Story',
     items: [
       { label: 'Sessions', href: '/sessions' },
-      { label: 'Encounters', href: '/encounters' },
       { label: 'Plot Threads', href: '/plot-threads' },
+      { label: 'Encounters', href: '/encounters' },
     ],
+  },
+  {
+    group: 'Setting',
+    items: [
+      { label: 'Map', href: '/map' },
+      { label: 'Locations', href: '/locations' },
+      { label: 'Lore & Knowledge', href: '/lore' },
+      { label: 'Species', href: '/species', sub: true },
+      { label: 'Cultures', href: '/cultures', sub: true },
+      { label: 'Timeline', href: '/lore/timeline' },
+    ],
+  },
+  {
+    group: 'Commerce',
+    items: [{ label: 'Items', href: '/items' }],
   },
 ]
 
