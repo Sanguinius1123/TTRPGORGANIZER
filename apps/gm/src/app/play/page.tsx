@@ -4,6 +4,7 @@ import { redirect } from 'next/navigation'
 import { CharacterForm } from './character/CharacterForm'
 import { PCSwitch } from './character/PCSwitch'
 import Link from 'next/link'
+import { getActivePcId } from '@/lib/activePC'
 
 interface PlotThreadRow { id: string; title: string; type: string; status: string }
 
@@ -38,7 +39,12 @@ export default async function HomePage({ searchParams }: { searchParams: SearchP
     )
   }
 
-  const pc = (params.pc ? allMyPCs.find(c => c.id === params.pc) : null) ?? allMyPCs[0]
+  const activePcId = await getActivePcId()
+  const pc = (
+    params.pc ? allMyPCs.find(c => c.id === params.pc)
+    : activePcId ? allMyPCs.find(c => c.id === activePcId)
+    : null
+  ) ?? allMyPCs[0]
   const cid = pc.campaign_id
 
   // Load species, cultures, and other data in parallel

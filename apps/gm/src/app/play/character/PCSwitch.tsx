@@ -1,12 +1,11 @@
 'use client'
 
-import { useRouter } from 'next/navigation'
 import { useState, useRef, useEffect } from 'react'
+import { switchPC } from '@/lib/actions/play'
 
 interface PC { id: string; name: string }
 
 export function PCSwitch({ pcs, currentId }: { pcs: PC[]; currentId: string }) {
-  const router = useRouter()
   const [open, setOpen] = useState(false)
   const ref = useRef<HTMLDivElement>(null)
   const current = pcs.find(c => c.id === currentId) ?? pcs[0]
@@ -39,17 +38,15 @@ export function PCSwitch({ pcs, currentId }: { pcs: PC[]; currentId: string }) {
       {open && (
         <div className="absolute top-full left-0 mt-1 z-50 min-w-[12rem] bg-slate-800 border border-slate-700 rounded-lg shadow-xl overflow-hidden">
           {others.map(c => (
-            <button
-              key={c.id}
-              type="button"
-              onClick={() => {
-                setOpen(false)
-                router.push(c.id === pcs[0].id ? '/play' : `/play?pc=${c.id}`)
-              }}
-              className="w-full text-left px-4 py-2.5 text-sm font-medium text-slate-300 hover:bg-slate-700 hover:text-slate-100 transition-colors"
-            >
-              {c.name}
-            </button>
+            <form key={c.id} action={switchPC} onSubmit={() => setOpen(false)}>
+              <input type="hidden" name="pc_id" value={c.id} />
+              <button
+                type="submit"
+                className="w-full text-left px-4 py-2.5 text-sm font-medium text-slate-300 hover:bg-slate-700 hover:text-slate-100 transition-colors"
+              >
+                {c.name}
+              </button>
+            </form>
           ))}
         </div>
       )}
