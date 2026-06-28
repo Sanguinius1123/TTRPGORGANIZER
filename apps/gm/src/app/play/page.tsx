@@ -131,7 +131,7 @@ export default async function HomePage({ searchParams }: { searchParams: SearchP
         {/* ── Left: character form + factions ── */}
         <div className="flex-1 min-w-0 space-y-6">
           <div className="bg-slate-800 rounded-lg border border-slate-700 p-6">
-            <CharacterForm pc={pc} speciesList={speciesList} culturesList={culturesList} />
+            <CharacterForm key={pc.id} pc={pc} speciesList={speciesList} culturesList={culturesList} />
           </div>
 
           {pcFactions.length > 0 && (
