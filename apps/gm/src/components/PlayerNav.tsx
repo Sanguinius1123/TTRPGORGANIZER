@@ -18,8 +18,14 @@ const navItems: NavItem[] = [
   { label: 'Locations',       href: '/play/locations' },
   { label: 'NPCs',            href: '/play/npcs' },
   { label: 'Factions',        href: '/play/factions' },
-  { label: 'Lore & Knowledge', href: '/play/lore' },
-  { label: 'Timeline',        href: '/play/lore/timeline' },
+  {
+    label: 'Lore & Knowledge', href: '/play/lore',
+    children: [
+      { label: 'Species',  href: '/play/species' },
+      { label: 'Cultures', href: '/play/cultures' },
+    ],
+  },
+  { label: 'Timeline', href: '/play/lore/timeline' },
 ]
 
 export function PlayerNav({ displayName, isGm }: { displayName: string; isGm: boolean }) {
@@ -28,7 +34,7 @@ export function PlayerNav({ displayName, isGm }: { displayName: string; isGm: bo
 
   const isActive = (href: string, exact?: boolean) => {
     if (exact) return pathname === href
-    if (href === '/play/lore') return pathname === '/play/lore' || (pathname.startsWith('/play/lore/') && pathname !== '/play/lore/timeline')
+    if (href === '/play/lore') return pathname === '/play/lore' || (pathname.startsWith('/play/lore/') && pathname !== '/play/lore/timeline' && !pathname.startsWith('/play/species') && !pathname.startsWith('/play/cultures'))
     return pathname === href || pathname.startsWith(href + '/')
   }
 
