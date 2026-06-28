@@ -488,6 +488,7 @@ export interface MapCanvasProps {
   mapConfig: MapConfig | null
   mapLocationId: string | null
   focusNodeId?: string | null
+  campaignId: string
 }
 
 type EdgePanel = {
@@ -508,7 +509,7 @@ type ConfigPanel = {
 
 function MapCanvasInner({
   placed, unplaced, connections, distanceScale, travelUnit, parentId,
-  mapConfig, mapLocationId, focusNodeId,
+  mapConfig, mapLocationId, focusNodeId, campaignId,
 }: MapCanvasProps) {
   const router = useRouter()
   const { screenToFlowPosition, fitView } = useReactFlow()
@@ -672,7 +673,8 @@ function MapCanvasInner({
       creationMenu.flowX,
       creationMenu.flowY,
       waypointTerrain || null,
-      mapLocationId
+      mapLocationId,
+      campaignId
     )
     const newLoc: Location = {
       id: result.id,
@@ -692,6 +694,7 @@ function MapCanvasInner({
       path_modifiers: waypointPaths,
       has_submap: false,
       mystery: false,
+      campaign_id: campaignId,
       created_at: new Date().toISOString(),
     }
     setNodes(prev => [...prev, toNode(newLoc)])
@@ -1084,7 +1087,7 @@ function MapCanvasInner({
                     e.preventDefault()
                     const nameVal = (e.currentTarget.elements.namedItem('locName') as HTMLInputElement).value.trim()
                     if (!nameVal) return
-                    const loc = await createMapLocation(nameVal, creationMenu!.selectedType!, creationMenu!.flowX, creationMenu!.flowY, mapLocationId)
+                    const loc = await createMapLocation(nameVal, creationMenu!.selectedType!, creationMenu!.flowX, creationMenu!.flowY, mapLocationId, campaignId)
                     const newLoc = loc as Location
                     setNodes(prev => [...prev, toNode(newLoc)])
                     setLocationsState(prev => new Map(prev).set(newLoc.id, newLoc))

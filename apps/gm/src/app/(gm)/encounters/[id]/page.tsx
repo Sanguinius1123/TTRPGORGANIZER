@@ -7,6 +7,7 @@ import { Encounter } from '@ttrpg/db'
 import MentionTextarea from '@/components/MentionTextarea'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
+import { getActiveCampaignId } from '@/lib/activeCampaign'
 
 const input = 'block w-full rounded-md border border-slate-600 bg-slate-700 px-3 py-2 text-sm text-slate-100 focus:border-indigo-400 focus:ring-1 focus:ring-indigo-400 outline-none'
 const label = 'block text-sm font-medium text-slate-300 mb-1'
@@ -36,18 +37,20 @@ function formatDr(dr: number): string {
 
 export default async function EncounterPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
+  const campaignId = await getActiveCampaignId()
   const supabase = db()
 
   const { data: raw } = await supabase.from('encounters').select('*').eq('id', id).single()
   if (!raw) notFound()
   const enc = raw as Encounter
 
+  const cid = campaignId ?? enc.campaign_id
   const [r1, r2, r3, r4, r5] = await Promise.all([
     supabase.from('encounter_participants').select('id, label, count, role, dr, npc_id').eq('encounter_id', id).order('created_at'),
-    supabase.from('locations').select('id, name').order('name'),
-    supabase.from('npcs').select('id, name').order('name'),
+    supabase.from('locations').select('id, name').eq('campaign_id', cid).order('name'),
+    supabase.from('npcs').select('id, name').eq('campaign_id', cid).order('name'),
     supabase.from('session_encounters').select('session_id').eq('encounter_id', id),
-    supabase.from('sessions').select('id, session_number, title').order('session_number', { ascending: false }),
+    supabase.from('sessions').select('id, session_number, title').eq('campaign_id', cid).order('session_number', { ascending: false }),
   ])
 
   const parts     = (r1.data ?? []) as EncParticipant[]

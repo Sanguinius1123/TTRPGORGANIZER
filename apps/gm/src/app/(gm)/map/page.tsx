@@ -1,13 +1,17 @@
 import { db } from '@/lib/db'
 import type { Location, LocationConnection, MapConfig } from '@ttrpg/db'
 import { MapCanvas } from './MapCanvas'
+import { getActiveCampaignId } from '@/lib/activeCampaign'
+import { redirect } from 'next/navigation'
 
 export default async function MapPage({ searchParams }: { searchParams: Promise<{ focus?: string }> }) {
   const { focus } = await searchParams
+  const campaignId = await getActiveCampaignId()
+  if (!campaignId) redirect('/')
   const supabase = db()
 
   const results = await Promise.all([
-    supabase.from('locations').select('*').is('parent_location_id', null).order('name'),
+    supabase.from('locations').select('*').eq('campaign_id', campaignId).is('parent_location_id', null).order('name'),
     supabase.from('location_connections').select('*'),
     supabase.from('map_configs').select('*').is('location_id', null).maybeSingle(),
   ])
@@ -36,6 +40,7 @@ export default async function MapPage({ searchParams }: { searchParams: Promise<
         mapConfig={mapConfig}
         mapLocationId={null}
         focusNodeId={focus ?? null}
+        campaignId={campaignId}
       />
     </div>
   )

@@ -13,6 +13,7 @@ export async function createEncounter(formData: FormData) {
       location_id: (formData.get('location_id') as string) || null,
       status: (formData.get('status') as string) || 'prep',
       notes: (formData.get('notes') as string) || null,
+      campaign_id: formData.get('campaign_id') as string,
       summary: null,
     })
     .select()
@@ -47,7 +48,7 @@ export async function duplicateEncounter(formData: FormData) {
 
   const { data: orig } = await supabase.from('encounters').select('*').eq('id', id).single()
   if (!orig) throw new Error('Encounter not found')
-  const o = orig as { title: string; location_id: string | null; status: string; notes: string | null }
+  const o = orig as { title: string; location_id: string | null; status: string; notes: string | null; campaign_id: string }
 
   const { data: newEnc, error: encErr } = await supabase
     .from('encounters')
@@ -56,6 +57,7 @@ export async function duplicateEncounter(formData: FormData) {
       location_id: o.location_id,
       status: 'prep',
       notes: o.notes,
+      campaign_id: o.campaign_id,
       summary: null,
     })
     .select()

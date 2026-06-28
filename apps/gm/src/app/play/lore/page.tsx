@@ -2,6 +2,7 @@ import { createAnonClient } from '@/lib/supabase/server'
 import { LoreEntry, Species, Culture } from '@ttrpg/db'
 import { ClickableRow, SubLink } from '@/components/TableRow'
 import Link from 'next/link'
+import { getPlayCampaignId } from '@/lib/playCampaign'
 
 const LORE_CATEGORIES = [
   'History', 'Myth & Legend', 'Religion & Faith', 'Magic / Technology',
@@ -13,13 +14,20 @@ type SearchParams = Promise<{ tab?: string; category?: string }>
 
 export default async function LorePage({ searchParams }: { searchParams: SearchParams }) {
   const params = await searchParams
+  const campaignId = await getPlayCampaignId()
   const tab = params.tab ?? 'lore'
   const supabase = await createAnonClient()
 
   const results = await Promise.all([
-    supabase.from('lore_entries').select('*').eq('visible', true).order('category').order('title'),
-    supabase.from('species').select('*').order('name'),
-    supabase.from('cultures').select('*').order('name'),
+    campaignId
+      ? supabase.from('lore_entries').select('*').eq('visible', true).eq('campaign_id', campaignId).order('category').order('title')
+      : supabase.from('lore_entries').select('*').eq('visible', true).order('category').order('title'),
+    campaignId
+      ? supabase.from('species').select('*').eq('campaign_id', campaignId).order('name')
+      : supabase.from('species').select('*').order('name'),
+    campaignId
+      ? supabase.from('cultures').select('*').eq('campaign_id', campaignId).order('name')
+      : supabase.from('cultures').select('*').order('name'),
   ])
 
   const allEntries = (results[0].data ?? []) as LoreEntry[]

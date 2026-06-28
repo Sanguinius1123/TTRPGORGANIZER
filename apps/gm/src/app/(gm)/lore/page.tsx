@@ -3,6 +3,8 @@ import { LoreEntry, Species, Culture } from '@ttrpg/db'
 import { toggleLoreVisibility } from '@/lib/actions/lore'
 import { ClickableRow, SubLink, StopPropCell } from '@/components/TableRow'
 import Link from 'next/link'
+import { getActiveCampaignId } from '@/lib/activeCampaign'
+import { redirect } from 'next/navigation'
 
 const LORE_CATEGORIES = [
   'History', 'Myth & Legend', 'Religion & Faith', 'Magic / Technology',
@@ -14,13 +16,15 @@ type SearchParams = Promise<{ tab?: string; category?: string }>
 
 export default async function LorePage({ searchParams }: { searchParams: SearchParams }) {
   const params = await searchParams
+  const campaignId = await getActiveCampaignId()
+  if (!campaignId) redirect('/')
   const tab = params.tab ?? 'lore'
   const supabase = db()
 
   const results = await Promise.all([
-    supabase.from('lore_entries').select('*').order('category').order('title'),
-    supabase.from('species').select('*').order('name'),
-    supabase.from('cultures').select('*').order('name'),
+    supabase.from('lore_entries').select('*').eq('campaign_id', campaignId).order('category').order('title'),
+    supabase.from('species').select('*').eq('campaign_id', campaignId).order('name'),
+    supabase.from('cultures').select('*').eq('campaign_id', campaignId).order('name'),
   ])
 
   const allEntries = (results[0].data ?? []) as LoreEntry[]

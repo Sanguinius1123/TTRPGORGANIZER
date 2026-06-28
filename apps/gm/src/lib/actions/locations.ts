@@ -17,6 +17,7 @@ export async function createLocation(formData: FormData) {
       area: (formData.get('area') as string) || null,
       description: (formData.get('description') as string) || null,
       parent_location_id: (formData.get('parent_location_id') as string) || null,
+      campaign_id: formData.get('campaign_id') as string,
       visible: false,
     })
     .select()
@@ -105,12 +106,13 @@ export async function createWaypoint(
   map_x: number,
   map_y: number,
   terrain: string | null,
-  parent_location_id: string | null
+  parent_location_id: string | null,
+  campaign_id: string
 ) {
   const supabase = db()
   const { data, error } = await supabase
     .from('locations')
-    .insert({ name: null, waypoint: true, map_x, map_y, terrain, path_modifiers: [], parent_location_id, visible: false })
+    .insert({ name: null, waypoint: true, map_x, map_y, terrain, path_modifiers: [], parent_location_id, campaign_id, visible: false })
     .select('id')
     .single()
   if (error) throw new Error(error.message)
@@ -150,7 +152,8 @@ export async function createMapLocation(
   locType: string,
   map_x: number,
   map_y: number,
-  parent_location_id: string | null
+  parent_location_id: string | null,
+  campaign_id: string
 ) {
   const supabase = db()
   const { data, error } = await supabase
@@ -163,6 +166,7 @@ export async function createMapLocation(
       map_x,
       map_y,
       parent_location_id: parent_location_id ?? null,
+      campaign_id,
     })
     .select()
     .single()

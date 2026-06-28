@@ -3,6 +3,12 @@ export type Json = string | number | boolean | null | { [key: string]: Json } | 
 export interface Database {
   public: {
     Tables: {
+      campaigns: {
+        Row: { id: string; name: string; description: string | null; created_at: string }
+        Insert: Partial<Omit<{ id: string; name: string; description: string | null; created_at: string }, 'id' | 'created_at'>> & { name: string }
+        Update: Partial<{ name: string; description: string | null }>
+        Relationships: []
+      }
       factions: {
         Row: {
           id: string
@@ -15,6 +21,7 @@ export interface Database {
           visible: boolean
           species: string | null
           culture: string | null
+          campaign_id: string
           created_at: string
         }
         Insert: Partial<Omit<Database['public']['Tables']['factions']['Row'], 'id' | 'created_at'>>
@@ -40,6 +47,7 @@ export interface Database {
           path_modifiers: string[]
           has_submap: boolean
           mystery: boolean
+          campaign_id: string
           created_at: string
         }
         Insert: Partial<Omit<Database['public']['Tables']['locations']['Row'], 'id' | 'created_at'>>
@@ -91,6 +99,7 @@ export interface Database {
           current_location_id: string | null
           profile_id: string | null
           party_faction_id: string | null
+          campaign_id: string
           created_at: string
         }
         Insert: Partial<Omit<Database['public']['Tables']['player_characters']['Row'], 'id' | 'created_at'>>
@@ -111,6 +120,7 @@ export interface Database {
           image_url: string | null
           visible: boolean
           current_location_id: string | null
+          campaign_id: string
           created_at: string
         }
         Insert: Partial<Omit<Database['public']['Tables']['npcs']['Row'], 'id' | 'created_at'>>
@@ -190,6 +200,7 @@ export interface Database {
           item_type: string | null
           descriptor: string | null
           location_id: string | null
+          campaign_id: string
           created_at: string
         }
         Insert: Partial<Omit<Database['public']['Tables']['items']['Row'], 'id' | 'created_at'>>
@@ -201,6 +212,7 @@ export interface Database {
           id: string
           name: string
           location_id: string
+          campaign_id: string
           created_at: string
         }
         Insert: Partial<Omit<Database['public']['Tables']['shops']['Row'], 'id' | 'created_at'>>
@@ -228,6 +240,7 @@ export interface Database {
           summary: string | null
           loose_threads: string | null
           faction_id: string | null
+          campaign_id: string
           created_at: string
         }
         Insert: Partial<Omit<Database['public']['Tables']['sessions']['Row'], 'id' | 'created_at'>>
@@ -242,6 +255,7 @@ export interface Database {
           status: string
           summary: string | null
           notes: string | null
+          campaign_id: string
           created_at: string
         }
         Insert: Partial<Omit<Database['public']['Tables']['encounters']['Row'], 'id' | 'created_at'>>
@@ -285,6 +299,7 @@ export interface Database {
           visible: boolean
           major_event: boolean
           event_timestamp: string | null
+          campaign_id: string
           created_at: string
         }
         Insert: Partial<Omit<Database['public']['Tables']['lore_entries']['Row'], 'id' | 'created_at'>>
@@ -313,6 +328,7 @@ export interface Database {
           notes: string | null
           parent_id: string | null
           visible: boolean
+          campaign_id: string
           created_at: string
         }
         Insert: Partial<Omit<Database['public']['Tables']['plot_threads']['Row'], 'id' | 'created_at'>>
@@ -325,6 +341,7 @@ export interface Database {
           name: string
           description: string | null
           origin_location_id: string | null
+          campaign_id: string
           created_at: string
         }
         Insert: Partial<Omit<Database['public']['Tables']['species']['Row'], 'id' | 'created_at'>>
@@ -336,6 +353,7 @@ export interface Database {
           id: string
           name: string
           description: string | null
+          campaign_id: string
           created_at: string
         }
         Insert: Partial<Omit<Database['public']['Tables']['cultures']['Row'], 'id' | 'created_at'>>
@@ -459,6 +477,7 @@ export interface Database {
 export type Tables<T extends keyof Database['public']['Tables']> =
   Database['public']['Tables'][T]['Row']
 
+export type Campaign             = Tables<'campaigns'>
 export type Faction            = Tables<'factions'>
 export type Location           = Tables<'locations'>
 export type LocationConnection = Tables<'location_connections'>

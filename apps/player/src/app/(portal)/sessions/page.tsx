@@ -2,13 +2,13 @@ import { createClient } from '@/lib/supabase/server'
 import { Session } from '@ttrpg/db'
 import Link from 'next/link'
 import { stripMentions } from '@/lib/mentions'
+import { getPlayerCampaignId } from '@/lib/playerCampaign'
 
 export default async function SessionsPage() {
+  const campaignId = await getPlayerCampaignId()
   const supabase = await createClient()
-  const { data: rawSessions } = await supabase
-    .from('sessions')
-    .select('*')
-    .order('session_number', { ascending: false })
+  const query = supabase.from('sessions').select('*').order('session_number', { ascending: false })
+  const { data: rawSessions } = campaignId ? await query.eq('campaign_id', campaignId) : await query
   const sessions = (rawSessions ?? []) as Session[]
 
   return (

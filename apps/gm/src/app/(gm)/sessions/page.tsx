@@ -1,17 +1,21 @@
 import { db } from '@/lib/db'
 import { Session } from '@ttrpg/db'
 import Link from 'next/link'
+import { getActiveCampaignId } from '@/lib/activeCampaign'
+import { redirect } from 'next/navigation'
 
 function stripMentions(text: string): string {
   return text.replace(/\[\[[^\]]+\|([^\]]+)\]\]/g, '$1')
 }
 
 export default async function SessionsPage() {
+  const campaignId = await getActiveCampaignId()
+  if (!campaignId) redirect('/')
   const supabase = db()
 
   const results = await Promise.all([
-    supabase.from('sessions').select('*').order('session_number', { ascending: false }),
-    supabase.from('factions').select('id, name').order('name'),
+    supabase.from('sessions').select('*').eq('campaign_id', campaignId).order('session_number', { ascending: false }),
+    supabase.from('factions').select('id, name').eq('campaign_id', campaignId).order('name'),
   ])
 
   const sessions = (results[0].data ?? []) as Session[]

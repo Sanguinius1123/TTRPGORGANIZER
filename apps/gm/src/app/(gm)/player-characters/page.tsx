@@ -5,16 +5,20 @@ import { FilterBar } from '@/components/FilterBar'
 import { ClickableRow, SubLink, StopPropCell } from '@/components/TableRow'
 import Link from 'next/link'
 import { Suspense } from 'react'
+import { getActiveCampaignId } from '@/lib/activeCampaign'
+import { redirect } from 'next/navigation'
 
 type SearchParams = Promise<{ species?: string; visible?: string }>
 
 export default async function PlayerCharactersPage({ searchParams }: { searchParams: SearchParams }) {
   const params = await searchParams
+  const campaignId = await getActiveCampaignId()
+  if (!campaignId) redirect('/')
   const supabase = db()
 
   const results = await Promise.all([
     (() => {
-      let q = supabase.from('player_characters').select('*').order('name')
+      let q = supabase.from('player_characters').select('*').eq('campaign_id', campaignId).order('name')
       if (params.species) q = q.eq('species', params.species)
       if (params.visible === 'true') q = q.eq('visible', true)
       else if (params.visible === 'false') q = q.eq('visible', false)

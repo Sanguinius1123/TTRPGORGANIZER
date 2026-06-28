@@ -4,6 +4,8 @@ import { FilterBar } from '@/components/FilterBar'
 import { ClickableRow, SubLink } from '@/components/TableRow'
 import Link from 'next/link'
 import { Suspense } from 'react'
+import { getActiveCampaignId } from '@/lib/activeCampaign'
+import { redirect } from 'next/navigation'
 
 const ITEM_TYPES = [
   'Weapon', 'Armour', 'Consumable', 'Tool', 'Currency', 'Relic', 'Document', 'Vehicle', 'Misc',
@@ -13,9 +15,11 @@ type SearchParams = Promise<{ item_type?: string }>
 
 export default async function ItemsPage({ searchParams }: { searchParams: SearchParams }) {
   const params = await searchParams
+  const campaignId = await getActiveCampaignId()
+  if (!campaignId) redirect('/')
   const supabase = db()
 
-  let q = supabase.from('items').select('*').order('name')
+  let q = supabase.from('items').select('*').eq('campaign_id', campaignId).order('name')
   if (params.item_type) q = q.eq('item_type', params.item_type)
 
   const { data: rawItems } = await q

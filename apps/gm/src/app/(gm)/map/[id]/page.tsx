@@ -4,6 +4,7 @@ import type { Location, LocationConnection, MapConfig } from '@ttrpg/db'
 import { MapCanvas } from '../MapCanvas'
 import { Breadcrumb } from '../Breadcrumb'
 import Link from 'next/link'
+import { getActiveCampaignId } from '@/lib/activeCampaign'
 
 async function getAncestors(
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -28,6 +29,7 @@ async function getAncestors(
 export default async function SubMapPage({ params, searchParams }: { params: Promise<{ id: string }>; searchParams: Promise<{ focus?: string }> }) {
   const { id } = await params
   const { focus } = await searchParams
+  const campaignId = await getActiveCampaignId()
   const supabase = db()
 
   const { data: rawLoc } = await supabase.from('locations').select('*').eq('id', id).single()
@@ -79,6 +81,7 @@ export default async function SubMapPage({ params, searchParams }: { params: Pro
           mapConfig={mapConfig}
           mapLocationId={id}
           focusNodeId={focus ?? null}
+          campaignId={campaignId ?? location.campaign_id}
         />
       </div>
     </div>

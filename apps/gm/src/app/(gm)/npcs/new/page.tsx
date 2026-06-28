@@ -2,15 +2,19 @@ import { db } from '@/lib/db'
 import { createNpc } from '@/lib/actions/npcs'
 import MentionTextarea from '@/components/MentionTextarea'
 import Link from 'next/link'
+import { getActiveCampaignId } from '@/lib/activeCampaign'
+import { redirect } from 'next/navigation'
 
 const input = 'block w-full rounded-md border border-slate-600 bg-slate-700 px-3 py-2 text-sm text-slate-100 focus:border-indigo-400 focus:ring-1 focus:ring-indigo-400 outline-none'
 const label = 'block text-sm font-medium text-slate-300 mb-1'
 
 export default async function NewNpcPage() {
+  const campaignId = await getActiveCampaignId()
+  if (!campaignId) redirect('/')
   const supabase = db()
   const results = await Promise.all([
-    supabase.from('species').select('id, name').order('name'),
-    supabase.from('cultures').select('id, name').order('name'),
+    supabase.from('species').select('id, name').eq('campaign_id', campaignId).order('name'),
+    supabase.from('cultures').select('id, name').eq('campaign_id', campaignId).order('name'),
   ])
   const speciesList = (results[0].data ?? []) as Array<{ id: string; name: string }>
   const culturesList = (results[1].data ?? []) as Array<{ id: string; name: string }>
@@ -25,6 +29,7 @@ export default async function NewNpcPage() {
       <h1 className="text-2xl font-bold text-slate-100 mb-6">New NPC</h1>
 
       <form action={createNpc} className="space-y-5">
+        <input type="hidden" name="campaign_id" value={campaignId} />
         <div>
           <label className={label}>Name <span className="text-red-500">*</span></label>
           <input spellCheck name="name" required className={input} autoFocus />

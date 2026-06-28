@@ -2,13 +2,13 @@ import { createAnonClient } from '@/lib/supabase/server'
 import { Session } from '@ttrpg/db'
 import Link from 'next/link'
 import { stripMentions } from '@/lib/mentions'
+import { getPlayCampaignId } from '@/lib/playCampaign'
 
 export default async function SessionsPage() {
+  const campaignId = await getPlayCampaignId()
   const supabase = await createAnonClient()
-  const { data: rawSessions } = await supabase
-    .from('sessions')
-    .select('*')
-    .order('session_number', { ascending: false })
+  const q = supabase.from('sessions').select('*').order('session_number', { ascending: false })
+  const { data: rawSessions } = campaignId ? await q.eq('campaign_id', campaignId) : await q
   const sessions = (rawSessions ?? []) as Session[]
 
   return (

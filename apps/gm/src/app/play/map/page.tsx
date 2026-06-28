@@ -1,13 +1,16 @@
 import { createAnonClient } from '@/lib/supabase/server'
 import type { Location, LocationConnection, MapConfig } from '@ttrpg/db'
 import { MapView } from './MapView'
+import { getPlayCampaignId } from '@/lib/playCampaign'
 
 export default async function MapPage({ searchParams }: { searchParams: Promise<{ focus?: string }> }) {
   const { focus } = await searchParams
+  const campaignId = await getPlayCampaignId()
   const supabase = await createAnonClient()
 
+  const locsQ = supabase.from('locations').select('*').or('visible.eq.true,waypoint.eq.true').is('parent_location_id', null).not('map_x', 'is', null)
   const [locsRes, configRes] = await Promise.all([
-    supabase.from('locations').select('*').or('visible.eq.true,waypoint.eq.true').is('parent_location_id', null).not('map_x', 'is', null).order('name'),
+    campaignId ? locsQ.eq('campaign_id', campaignId).order('name') : locsQ.order('name'),
     supabase.from('map_configs').select('*').is('location_id', null).maybeSingle(),
   ])
 

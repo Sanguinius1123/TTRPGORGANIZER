@@ -1,11 +1,15 @@
 import { createCulture } from '@/lib/actions/cultures'
 import MentionTextarea from '@/components/MentionTextarea'
 import Link from 'next/link'
+import { getActiveCampaignId } from '@/lib/activeCampaign'
+import { redirect } from 'next/navigation'
 
 const input = 'block w-full rounded-md border border-slate-600 bg-slate-700 px-3 py-2 text-sm text-slate-100 focus:border-indigo-400 focus:ring-1 focus:ring-indigo-400 outline-none'
 const label = 'block text-sm font-medium text-slate-300 mb-1'
 
-export default function NewCulturePage() {
+export default async function NewCulturePage() {
+  const campaignId = await getActiveCampaignId()
+  if (!campaignId) redirect('/')
   return (
     <div className="p-8 max-w-2xl">
       <div className="flex items-center gap-3 mb-6">
@@ -16,6 +20,7 @@ export default function NewCulturePage() {
       <h1 className="text-2xl font-bold text-slate-100 mb-6">New Culture</h1>
 
       <form action={createCulture} className="space-y-5">
+        <input type="hidden" name="campaign_id" value={campaignId} />
         <div>
           <label className={label}>Name <span className="text-red-500">*</span></label>
           <input spellCheck name="name" required className={input} autoFocus />

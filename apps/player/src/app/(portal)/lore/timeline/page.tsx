@@ -3,15 +3,14 @@ import type { LoreEntry } from '@ttrpg/db'
 import Link from 'next/link'
 import { renderMentions } from '@/lib/mentions'
 import { buildVisibleMentionSet } from '@/lib/mentionVisibility'
+import { getPlayerCampaignId } from '@/lib/playerCampaign'
 
 export default async function TimelinePage() {
+  const campaignId = await getPlayerCampaignId()
   const supabase = await createClient()
-  const { data: raw } = await supabase
-    .from('lore_entries')
-    .select('*')
-    .eq('category', 'History')
-    .eq('visible', true)
-    .order('created_at', { ascending: true })
+  let q = supabase.from('lore_entries').select('*').eq('category', 'History').eq('visible', true)
+  if (campaignId) q = q.eq('campaign_id', campaignId)
+  const { data: raw } = await q.order('created_at', { ascending: true })
 
   const entries = (raw ?? []) as LoreEntry[]
   const major = entries.filter(e => e.major_event)

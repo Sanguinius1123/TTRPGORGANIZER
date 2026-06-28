@@ -5,16 +5,20 @@ import { FilterBar } from '@/components/FilterBar'
 import { ClickableRow, SubLink, StopPropCell } from '@/components/TableRow'
 import Link from 'next/link'
 import { Suspense } from 'react'
+import { getActiveCampaignId } from '@/lib/activeCampaign'
+import { redirect } from 'next/navigation'
 
 type SearchParams = Promise<{ species?: string; culture?: string; profession?: string; visible?: string }>
 
 export default async function NpcsPage({ searchParams }: { searchParams: SearchParams }) {
   const params = await searchParams
+  const campaignId = await getActiveCampaignId()
+  if (!campaignId) redirect('/')
   const supabase = db()
 
   const results = await Promise.all([
     (() => {
-      let q = supabase.from('npcs').select('*').order('name')
+      let q = supabase.from('npcs').select('*').eq('campaign_id', campaignId).order('name')
       if (params.species) q = q.eq('species', params.species)
       if (params.culture) q = q.eq('culture', params.culture)
       if (params.profession) q = q.ilike('profession', `%${params.profession}%`)
