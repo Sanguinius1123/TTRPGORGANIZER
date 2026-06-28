@@ -15,6 +15,7 @@ export async function createFaction(formData: FormData) {
       species: (formData.get('species') as string) || null,
       culture: (formData.get('culture') as string) || null,
       parent_faction_id: (formData.get('parent_faction_id') as string) || null,
+      campaign_id: formData.get('campaign_id') as string,
       visible: false,
     })
     .select()

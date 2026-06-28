@@ -5,6 +5,7 @@ import { Session } from '@ttrpg/db'
 import MentionTextarea from '@/components/MentionTextarea'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
+import { getActiveCampaignId } from '@/lib/activeCampaign'
 
 const input = 'block w-full rounded-md border border-slate-600 bg-slate-700 px-3 py-2 text-sm text-slate-100 focus:border-indigo-400 focus:ring-1 focus:ring-indigo-400 outline-none'
 const label = 'block text-sm font-medium text-slate-300 mb-1'
@@ -38,16 +39,23 @@ function formatDr(dr: number): string {
 
 export default async function SessionPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
+  const campaignId = await getActiveCampaignId()
   const supabase = db()
 
   const [r0, r2, r3, r4, r5, r6, r7] = await Promise.all([
     supabase.from('sessions').select('*').eq('id', id).single(),
     supabase.from('session_notes').select('*, pc:pc_id(name, player_name)').eq('session_id', id).order('created_at'),
-    supabase.from('factions').select('id, name').order('name'),
+    campaignId
+      ? supabase.from('factions').select('id, name').eq('campaign_id', campaignId).order('name')
+      : supabase.from('factions').select('id, name').order('name'),
     supabase.from('session_plot_threads').select('id, plot_thread_id').eq('session_id', id).order('created_at'),
     supabase.from('session_encounters').select('encounter_id').eq('session_id', id),
-    supabase.from('plot_threads').select('id, title, status').order('title'),
-    supabase.from('encounters').select('id, title, status').order('title'),
+    campaignId
+      ? supabase.from('plot_threads').select('id, title, status').eq('campaign_id', campaignId).order('title')
+      : supabase.from('plot_threads').select('id, title, status').order('title'),
+    campaignId
+      ? supabase.from('encounters').select('id, title, status').eq('campaign_id', campaignId).order('title')
+      : supabase.from('encounters').select('id, title, status').order('title'),
   ])
 
   if (!r0.data) notFound()

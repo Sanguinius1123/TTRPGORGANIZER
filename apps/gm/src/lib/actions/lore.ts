@@ -13,6 +13,7 @@ export async function createLoreEntry(formData: FormData) {
       category: (formData.get('category') as string) || null,
       descriptor: (formData.get('descriptor') as string) || null,
       description: (formData.get('description') as string) || null,
+      campaign_id: formData.get('campaign_id') as string,
       visible: false,
     })
     .select()

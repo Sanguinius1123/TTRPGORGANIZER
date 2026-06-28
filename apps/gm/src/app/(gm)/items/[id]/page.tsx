@@ -4,6 +4,7 @@ import { Item } from '@ttrpg/db'
 import MentionTextarea from '@/components/MentionTextarea'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
+import { getActiveCampaignId } from '@/lib/activeCampaign'
 
 const input = 'block w-full rounded-md border border-slate-600 bg-slate-700 px-3 py-2 text-sm text-slate-100 focus:border-indigo-400 focus:ring-1 focus:ring-indigo-400 outline-none'
 const label = 'block text-sm font-medium text-slate-300 mb-1'
@@ -14,10 +15,13 @@ const ITEM_TYPES = [
 
 export default async function ItemPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
+  const campaignId = await getActiveCampaignId()
   const supabase = db()
   const [itemRes, locsRes] = await Promise.all([
     supabase.from('items').select('*').eq('id', id).single(),
-    supabase.from('locations').select('id, name').order('name'),
+    campaignId
+      ? supabase.from('locations').select('id, name').eq('campaign_id', campaignId).order('name')
+      : supabase.from('locations').select('id, name').order('name'),
   ])
   if (!itemRes.data) notFound()
   const item = itemRes.data as Item

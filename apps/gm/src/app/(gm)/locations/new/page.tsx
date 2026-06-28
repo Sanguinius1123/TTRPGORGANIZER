@@ -2,6 +2,8 @@ import { db } from '@/lib/db'
 import { createLocation } from '@/lib/actions/locations'
 import MentionTextarea from '@/components/MentionTextarea'
 import Link from 'next/link'
+import { getActiveCampaignId } from '@/lib/activeCampaign'
+import { redirect } from 'next/navigation'
 
 const input = 'block w-full rounded-md border border-slate-600 bg-slate-700 px-3 py-2 text-sm text-slate-100 focus:border-indigo-400 focus:ring-1 focus:ring-indigo-400 outline-none'
 const label = 'block text-sm font-medium text-slate-300 mb-1'
@@ -21,8 +23,10 @@ export default async function NewLocationPage({
   searchParams: Promise<{ parent?: string }>
 }) {
   const { parent } = await searchParams
+  const campaignId = await getActiveCampaignId()
+  if (!campaignId) redirect('/')
   const supabase = db()
-  const { data: rawLocations } = await supabase.from('locations').select('id, name').order('name')
+  const { data: rawLocations } = await supabase.from('locations').select('id, name').eq('campaign_id', campaignId).order('name')
   const locations = (rawLocations ?? []) as Array<{ id: string; name: string | null }>
 
   return (
@@ -35,6 +39,7 @@ export default async function NewLocationPage({
       <h1 className="text-2xl font-bold text-slate-100 mb-6">New Location</h1>
 
       <form action={createLocation} className="space-y-5">
+        <input type="hidden" name="campaign_id" value={campaignId} />
         <div>
           <label className={label}>Name <span className="text-red-500">*</span></label>
           <input name="name" required className={input} autoFocus />

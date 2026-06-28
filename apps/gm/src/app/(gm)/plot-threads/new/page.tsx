@@ -2,15 +2,20 @@ import { db } from '@/lib/db'
 import { createPlotThread } from '@/lib/actions/plot-threads'
 import MentionTextarea from '@/components/MentionTextarea'
 import Link from 'next/link'
+import { getActiveCampaignId } from '@/lib/activeCampaign'
+import { redirect } from 'next/navigation'
 
 const input = 'block w-full rounded-md border border-slate-600 bg-slate-700 px-3 py-2 text-sm text-slate-100 focus:border-indigo-400 focus:ring-1 focus:ring-indigo-400 outline-none'
 const label = 'block text-sm font-medium text-slate-300 mb-1'
 
 export default async function NewPlotThreadPage() {
+  const campaignId = await getActiveCampaignId()
+  if (!campaignId) redirect('/')
   const supabase = db()
   const { data: rawThreads } = await supabase
     .from('plot_threads')
     .select('id, title')
+    .eq('campaign_id', campaignId)
     .eq('type', 'objective')
     .order('title')
   const threads = (rawThreads ?? []) as Array<{ id: string; title: string }>
@@ -25,6 +30,7 @@ export default async function NewPlotThreadPage() {
       <h1 className="text-2xl font-bold text-slate-100 mb-6">New Plot Thread</h1>
 
       <form action={createPlotThread} className="space-y-5">
+        <input type="hidden" name="campaign_id" value={campaignId} />
         <div>
           <label className={label}>Title <span className="text-red-500">*</span></label>
           <input spellCheck name="title" required className={input} autoFocus />

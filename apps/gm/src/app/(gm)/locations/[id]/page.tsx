@@ -4,6 +4,7 @@ import { Location } from '@ttrpg/db'
 import MentionTextarea from '@/components/MentionTextarea'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
+import { getActiveCampaignId } from '@/lib/activeCampaign'
 
 const input = 'block w-full rounded-md border border-slate-600 bg-slate-700 px-3 py-2 text-sm text-slate-100 focus:border-indigo-400 focus:ring-1 focus:ring-indigo-400 outline-none'
 const label = 'block text-sm font-medium text-slate-300 mb-1'
@@ -21,6 +22,7 @@ interface SubLocation { id: string; name: string; type: string | null; visible: 
 
 export default async function LocationPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
+  const campaignId = await getActiveCampaignId()
   const supabase = db()
 
   const { data: raw } = await supabase.from('locations').select('*').eq('id', id).single()
@@ -28,7 +30,7 @@ export default async function LocationPage({ params }: { params: Promise<{ id: s
   const loc = raw as Location
 
   const [r1, r2, r3] = await Promise.all([
-    supabase.from('locations').select('id, name').neq('id', id).order('name'),
+    supabase.from('locations').select('id, name').eq('campaign_id', campaignId ?? loc.campaign_id).neq('id', id).order('name'),
     supabase.from('locations').select('id, name, type, visible').eq('parent_location_id', id).neq('waypoint', true).order('name'),
     supabase.from('shops').select('id, name').eq('location_id', id).order('name'),
   ])

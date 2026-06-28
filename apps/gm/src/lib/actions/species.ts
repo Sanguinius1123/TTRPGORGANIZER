@@ -11,6 +11,7 @@ export async function createSpecies(formData: FormData) {
     .insert({
       name: formData.get('name') as string,
       description: (formData.get('description') as string) || null,
+      campaign_id: formData.get('campaign_id') as string,
     })
     .select()
     .single()

@@ -3,6 +3,8 @@ import { FilterBar } from '@/components/FilterBar'
 import { ClickableRow, SubLink } from '@/components/TableRow'
 import Link from 'next/link'
 import { Suspense } from 'react'
+import { getActiveCampaignId } from '@/lib/activeCampaign'
+import { redirect } from 'next/navigation'
 
 interface EncounterRow {
   id: string
@@ -28,10 +30,12 @@ type SearchParams = Promise<{ status?: string; sort?: string }>
 
 export default async function EncountersPage({ searchParams }: { searchParams: SearchParams }) {
   const params = await searchParams
+  const campaignId = await getActiveCampaignId()
+  if (!campaignId) redirect('/')
   const supabase = db()
 
   const results = await Promise.all([
-    supabase.from('encounters').select('*, location:location_id(id, name)').order('created_at', { ascending: false }),
+    supabase.from('encounters').select('*, location:location_id(id, name)').eq('campaign_id', campaignId).order('created_at', { ascending: false }),
     supabase.from('encounter_participants').select('encounter_id, role, dr, count'),
     supabase.from('session_encounters').select('encounter_id, session_id'),
     supabase.from('sessions').select('id, session_number'),

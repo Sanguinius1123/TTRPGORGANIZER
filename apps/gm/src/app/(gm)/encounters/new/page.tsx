@@ -2,13 +2,17 @@ import { db } from '@/lib/db'
 import { createEncounter } from '@/lib/actions/encounters'
 import MentionTextarea from '@/components/MentionTextarea'
 import Link from 'next/link'
+import { getActiveCampaignId } from '@/lib/activeCampaign'
+import { redirect } from 'next/navigation'
 
 const input = 'block w-full rounded-md border border-slate-600 bg-slate-700 px-3 py-2 text-sm text-slate-100 focus:border-indigo-400 focus:ring-1 focus:ring-indigo-400 outline-none'
 const label = 'block text-sm font-medium text-slate-300 mb-1'
 
 export default async function NewEncounterPage() {
+  const campaignId = await getActiveCampaignId()
+  if (!campaignId) redirect('/')
   const supabase = db()
-  const { data: raw } = await supabase.from('locations').select('id, name').order('name')
+  const { data: raw } = await supabase.from('locations').select('id, name').eq('campaign_id', campaignId).order('name')
   const locations = (raw ?? []) as Array<{ id: string; name: string }>
 
   return (
@@ -21,6 +25,7 @@ export default async function NewEncounterPage() {
       <h1 className="text-2xl font-bold text-slate-100 mb-6">New Encounter</h1>
 
       <form action={createEncounter} className="space-y-5">
+        <input type="hidden" name="campaign_id" value={campaignId} />
         <div>
           <label className={label}>Title <span className="text-red-500">*</span></label>
           <input spellCheck name="title" required className={input} autoFocus />

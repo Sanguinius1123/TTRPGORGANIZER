@@ -43,7 +43,7 @@ const nav = [
   },
 ]
 
-export function Sidebar({ isAdmin }: { isAdmin: boolean }) {
+export function Sidebar({ isAdmin, activeCampaignName }: { isAdmin: boolean; activeCampaignName?: string }) {
   const pathname = usePathname()
 
   const isActive = (href: string) => {
@@ -58,6 +58,13 @@ export function Sidebar({ isAdmin }: { isAdmin: boolean }) {
       <div className="px-4 py-5 border-b border-slate-700">
         <span className="text-white font-semibold text-sm tracking-wide">TTRPG Organizer</span>
       </div>
+      {activeCampaignName && (
+        <div className="px-4 py-2 border-b border-slate-700/50 bg-slate-900/50">
+          <Link href="/" className="text-xs text-indigo-400 hover:text-indigo-300 font-medium truncate block">
+            {activeCampaignName}
+          </Link>
+        </div>
+      )}
       <nav className="flex-1 px-2 py-4 space-y-6">
         {nav.map(({ group, items }) => (
           <div key={group}>

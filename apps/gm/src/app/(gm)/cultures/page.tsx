@@ -2,14 +2,18 @@ import { db } from '@/lib/db'
 import { Culture } from '@ttrpg/db'
 import { ClickableRow, SubLink } from '@/components/TableRow'
 import Link from 'next/link'
+import { getActiveCampaignId } from '@/lib/activeCampaign'
+import { redirect } from 'next/navigation'
 
 function stripMentions(text: string): string {
   return text.replace(/\[\[[^\]]+\|([^\]]+)\]\]/g, '$1')
 }
 
 export default async function CulturesPage() {
+  const campaignId = await getActiveCampaignId()
+  if (!campaignId) redirect('/')
   const supabase = db()
-  const { data: raw } = await supabase.from('cultures').select('*').order('name')
+  const { data: raw } = await supabase.from('cultures').select('*').eq('campaign_id', campaignId).order('name')
   const cultures = (raw ?? []) as Culture[]
 
   return (

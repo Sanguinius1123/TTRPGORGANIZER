@@ -8,6 +8,7 @@ import { PlotThread } from '@ttrpg/db'
 import MentionTextarea from '@/components/MentionTextarea'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
+import { getActiveCampaignId } from '@/lib/activeCampaign'
 
 const input = 'block w-full rounded-md border border-slate-600 bg-slate-700 px-3 py-2 text-sm text-slate-100 focus:border-indigo-400 focus:ring-1 focus:ring-indigo-400 outline-none'
 const label = 'block text-sm font-medium text-slate-300 mb-1'
@@ -19,20 +20,22 @@ interface LinkedCharacter { id: string; pc_id: string | null; npc_id: string | n
 
 export default async function PlotThreadPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
+  const campaignId = await getActiveCampaignId()
   const supabase = db()
 
   const { data: raw } = await supabase.from('plot_threads').select('*').eq('id', id).single()
   if (!raw) notFound()
   const thread = raw as PlotThread
 
+  const cid = campaignId ?? thread.campaign_id
   const [r1, r2, r3, r4, r5, r6, r7] = await Promise.all([
-    supabase.from('plot_threads').select('id, title').eq('type', 'objective').neq('id', id).order('title'),
+    supabase.from('plot_threads').select('id, title').eq('campaign_id', cid).eq('type', 'objective').neq('id', id).order('title'),
     supabase.from('plot_threads').select('id, title, type, status').eq('parent_id', id).order('type').order('title'),
     supabase.from('plot_thread_factions').select('id, faction_id').eq('plot_thread_id', id),
     supabase.from('plot_thread_characters').select('id, pc_id, npc_id').eq('plot_thread_id', id),
-    supabase.from('factions').select('id, name').order('name'),
-    supabase.from('player_characters').select('id, name, player_name').order('name'),
-    supabase.from('npcs').select('id, name').order('name'),
+    supabase.from('factions').select('id, name').eq('campaign_id', cid).order('name'),
+    supabase.from('player_characters').select('id, name, player_name').eq('campaign_id', cid).order('name'),
+    supabase.from('npcs').select('id, name').eq('campaign_id', cid).order('name'),
   ])
 
   const allObjectives  = (r1.data ?? []) as Array<{ id: string; title: string }>

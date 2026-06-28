@@ -8,6 +8,7 @@ import { Faction } from '@ttrpg/db'
 import MentionTextarea from '@/components/MentionTextarea'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
+import { getActiveCampaignId } from '@/lib/activeCampaign'
 
 const input = 'block w-full rounded-md border border-slate-600 bg-slate-700 px-3 py-2 text-sm text-slate-100 focus:border-indigo-400 focus:ring-1 focus:ring-indigo-400 outline-none'
 const label = 'block text-sm font-medium text-slate-300 mb-1'
@@ -32,6 +33,7 @@ const REL_STYLE: Record<string, string> = {
 
 export default async function FactionPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
+  const campaignId = await getActiveCampaignId()
   const supabase = db()
 
   const { data: raw } = await supabase.from('factions').select('*').eq('id', id).single()
@@ -39,15 +41,15 @@ export default async function FactionPage({ params }: { params: Promise<{ id: st
   const faction = raw as Faction
 
   const [r1, r2, r3, r4, r5, r6, r7, r8, r9, r10] = await Promise.all([
-    supabase.from('factions').select('id, name').neq('id', id).order('name'),
+    supabase.from('factions').select('id, name').neq('id', id).eq('campaign_id', campaignId ?? faction.campaign_id).order('name'),
     supabase.from('factions').select('id, name, visible').eq('parent_faction_id', id).order('name'),
     supabase.from('npc_factions').select('id, role, npc_id').eq('faction_id', id),
-    supabase.from('npcs').select('id, name').order('name'),
-    supabase.from('species').select('id, name').order('name'),
-    supabase.from('cultures').select('id, name').order('name'),
+    supabase.from('npcs').select('id, name').eq('campaign_id', campaignId ?? faction.campaign_id).order('name'),
+    supabase.from('species').select('id, name').eq('campaign_id', campaignId ?? faction.campaign_id).order('name'),
+    supabase.from('cultures').select('id, name').eq('campaign_id', campaignId ?? faction.campaign_id).order('name'),
     supabase.from('faction_relationships').select('id, to_faction_id, relationship_type').eq('from_faction_id', id).order('created_at'),
     supabase.from('faction_locations').select('id, location_id').eq('faction_id', id).order('created_at'),
-    supabase.from('locations').select('id, name').order('name'),
+    supabase.from('locations').select('id, name').eq('campaign_id', campaignId ?? faction.campaign_id).order('name'),
     supabase.from('pc_factions').select('id, role, pc_id').eq('faction_id', id),
   ])
 

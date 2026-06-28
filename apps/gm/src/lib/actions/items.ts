@@ -16,6 +16,7 @@ export async function createItem(formData: FormData) {
       item_type: (formData.get('item_type') as string) || null,
       descriptor: (formData.get('descriptor') as string) || null,
       location_id: (formData.get('location_id') as string) || null,
+      campaign_id: formData.get('campaign_id') as string,
     })
     .select()
     .single()

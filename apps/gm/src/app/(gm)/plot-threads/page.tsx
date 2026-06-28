@@ -3,6 +3,8 @@ import { togglePlotThreadVisibility } from '@/lib/actions/plot-threads'
 import { FilterBar } from '@/components/FilterBar'
 import { ClickableRow, SubLink, StopPropCell } from '@/components/TableRow'
 import Link from 'next/link'
+import { getActiveCampaignId } from '@/lib/activeCampaign'
+import { redirect } from 'next/navigation'
 import { Suspense } from 'react'
 
 interface ThreadRow {
@@ -30,9 +32,11 @@ type SearchParams = Promise<{ type?: string; status?: string; visible?: string }
 
 export default async function PlotThreadsPage({ searchParams }: { searchParams: SearchParams }) {
   const params = await searchParams
+  const campaignId = await getActiveCampaignId()
+  if (!campaignId) redirect('/')
   const supabase = db()
 
-  let q = supabase.from('plot_threads').select('*, parent:parent_id(id, title)').order('status').order('type').order('title')
+  let q = supabase.from('plot_threads').select('*, parent:parent_id(id, title)').eq('campaign_id', campaignId).order('status').order('type').order('title')
   if (params.type) q = q.eq('type', params.type)
   if (params.status) q = q.eq('status', params.status)
   if (params.visible === 'true') q = q.eq('visible', true)

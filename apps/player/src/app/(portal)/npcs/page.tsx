@@ -3,16 +3,20 @@ import { NPC } from '@ttrpg/db'
 import { FilterBar } from '@/components/FilterBar'
 import { ClickableRow, SubLink } from '@/components/TableRow'
 import { Suspense } from 'react'
+import { getPlayerCampaignId } from '@/lib/playerCampaign'
 
 type SearchParams = Promise<{ species?: string; culture?: string; disposition?: string }>
 
 export default async function NPCsPage({ searchParams }: { searchParams: SearchParams }) {
   const params = await searchParams
+  const campaignId = await getPlayerCampaignId()
   const supabase = await createClient()
 
   const results = await Promise.all([
     (() => {
-      let q = supabase.from('npcs').select('*').eq('visible', true).order('name')
+      let q = supabase.from('npcs').select('*').eq('visible', true)
+      if (campaignId) q = q.eq('campaign_id', campaignId)
+      q = q.order('name')
       if (params.species) q = q.eq('species', params.species)
       if (params.culture) q = q.eq('culture', params.culture)
       if (params.disposition) q = q.ilike('disposition', `%${params.disposition}%`)

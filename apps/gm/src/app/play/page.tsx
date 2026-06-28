@@ -21,15 +21,8 @@ export default async function HomePage({ searchParams }: { searchParams: SearchP
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect('/login')
 
-  const results = await Promise.all([
-    supabase.from('player_characters').select('*').eq('profile_id', user.id).order('name'),
-    supabase.from('species').select('id, name').order('name'),
-    supabase.from('cultures').select('id, name').order('name'),
-  ])
-
-  const allMyPCs     = (results[0].data ?? []) as PlayerCharacter[]
-  const speciesList  = (results[1].data ?? []) as Array<{ id: string; name: string }>
-  const culturesList = (results[2].data ?? []) as Array<{ id: string; name: string }>
+  const { data: rawPCs } = await supabase.from('player_characters').select('*').eq('profile_id', user.id).order('name')
+  const allMyPCs = (rawPCs ?? []) as PlayerCharacter[]
 
   if (allMyPCs.length === 0) {
     return (
@@ -46,6 +39,15 @@ export default async function HomePage({ searchParams }: { searchParams: SearchP
   }
 
   const pc = (params.pc ? allMyPCs.find(c => c.id === params.pc) : null) ?? allMyPCs[0]
+  const cid = pc.campaign_id
+
+  // Load species, cultures, and other data in parallel
+  const [speciesRes, culturesRes] = await Promise.all([
+    supabase.from('species').select('id, name').eq('campaign_id', cid).order('name'),
+    supabase.from('cultures').select('id, name').eq('campaign_id', cid).order('name'),
+  ])
+  const speciesList  = (speciesRes.data ?? []) as Array<{ id: string; name: string }>
+  const culturesList = (culturesRes.data ?? []) as Array<{ id: string; name: string }>
 
   // Load faction memberships + party + plot threads in parallel
   const { data: rawPCFactions } = await supabase

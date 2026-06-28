@@ -2,12 +2,17 @@ import { db } from '@/lib/db'
 import { LoreEntry } from '@ttrpg/db'
 import Link from 'next/link'
 import { renderMentions } from '@/lib/mentions'
+import { getActiveCampaignId } from '@/lib/activeCampaign'
+import { redirect } from 'next/navigation'
 
 export default async function TimelinePage() {
+  const campaignId = await getActiveCampaignId()
+  if (!campaignId) redirect('/')
   const supabase = db()
   const { data: raw } = await supabase
     .from('lore_entries')
     .select('*')
+    .eq('campaign_id', campaignId)
     .eq('category', 'History')
     .order('created_at', { ascending: true })
 

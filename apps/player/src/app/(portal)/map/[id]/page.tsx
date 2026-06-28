@@ -3,10 +3,12 @@ import { notFound } from 'next/navigation'
 import type { Location, LocationConnection, MapConfig } from '@ttrpg/db'
 import { MapView } from '../MapView'
 import Link from 'next/link'
+import { getPlayerCampaignId } from '@/lib/playerCampaign'
 
 export default async function PlayerSubMapPage({ params, searchParams }: { params: Promise<{ id: string }>; searchParams: Promise<{ focus?: string }> }) {
   const { id } = await params
   const { focus } = await searchParams
+  const campaignId = await getPlayerCampaignId()
   const supabase = await createClient()
 
   const { data: rawLoc } = await supabase
@@ -18,8 +20,9 @@ export default async function PlayerSubMapPage({ params, searchParams }: { param
   if (!rawLoc) notFound()
   const location = rawLoc as Location
 
+  const childLocsQ = supabase.from('locations').select('*').eq('parent_location_id', id).or('visible.eq.true,waypoint.eq.true').not('map_x', 'is', null)
   const [locsRes, configRes] = await Promise.all([
-    supabase.from('locations').select('*').eq('parent_location_id', id).or('visible.eq.true,waypoint.eq.true').not('map_x', 'is', null).order('name'),
+    campaignId ? childLocsQ.eq('campaign_id', campaignId).order('name') : childLocsQ.order('name'),
     supabase.from('map_configs').select('*').eq('location_id', id).maybeSingle(),
   ])
 

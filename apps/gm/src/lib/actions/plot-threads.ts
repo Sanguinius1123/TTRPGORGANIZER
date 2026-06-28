@@ -15,6 +15,7 @@ export async function createPlotThread(formData: FormData) {
       status: (formData.get('status') as string) || 'active',
       notes: (formData.get('notes') as string) || null,
       parent_id: (formData.get('parent_id') as string) || null,
+      campaign_id: formData.get('campaign_id') as string,
       visible: false,
     })
     .select()
