@@ -5,12 +5,6 @@ import { usePathname } from 'next/navigation'
 
 const nav = [
   {
-    group: 'Campaign',
-    items: [
-      { label: 'Dashboard', href: '/' },
-    ],
-  },
-  {
     group: 'People',
     items: [
       { label: 'Player Characters', href: '/player-characters' },
@@ -53,6 +47,16 @@ export function Sidebar({ isAdmin, activeCampaignName }: { isAdmin: boolean; act
     return pathname.startsWith(href)
   }
 
+  const linkCls = (href: string, sub?: boolean) => `flex items-center rounded-md text-sm transition-colors ${
+    sub ? 'pl-6 pr-3 py-1' : 'px-3 py-1.5'
+  } ${
+    isActive(href)
+      ? 'bg-slate-700 text-white font-medium'
+      : sub
+      ? 'text-slate-500 hover:text-slate-300 hover:bg-slate-800'
+      : 'text-slate-400 hover:text-slate-100 hover:bg-slate-800'
+  }`
+
   return (
     <aside className="w-56 shrink-0 bg-slate-950 flex flex-col overflow-y-auto">
       <div className="px-4 py-5 border-b border-slate-700">
@@ -65,26 +69,20 @@ export function Sidebar({ isAdmin, activeCampaignName }: { isAdmin: boolean; act
           </Link>
         </div>
       )}
-      <nav className="flex-1 px-2 py-4 space-y-6">
+      <nav className="flex-1 px-2 py-3 space-y-3">
+
+        {/* Dashboard — standalone, no group label */}
+        <Link href="/" className={linkCls('/')}>
+          Dashboard
+        </Link>
+
         {nav.map(({ group, items }) => (
           <div key={group}>
-            <p className="px-3 mb-1 text-xs font-semibold text-slate-500 uppercase tracking-wider">
+            <p className="px-3 pt-1 pb-0.5 text-xs font-semibold text-slate-500 uppercase tracking-wider">
               {group}
             </p>
             {items.map(({ label, href, sub }) => (
-              <Link
-                key={href}
-                href={href}
-                className={`flex items-center rounded-md text-sm transition-colors ${
-                  sub ? 'pl-6 pr-3 py-1.5' : 'px-3 py-2'
-                } ${
-                  isActive(href)
-                    ? 'bg-slate-700 text-white font-medium'
-                    : sub
-                    ? 'text-slate-500 hover:text-slate-300 hover:bg-slate-800'
-                    : 'text-slate-400 hover:text-slate-100 hover:bg-slate-800'
-                }`}
-              >
+              <Link key={href} href={href} className={linkCls(href, sub)}>
                 {sub && <span className="mr-1.5 text-slate-600">·</span>}
                 {label}
               </Link>
@@ -94,17 +92,10 @@ export function Sidebar({ isAdmin, activeCampaignName }: { isAdmin: boolean; act
 
         {isAdmin && (
           <div>
-            <p className="px-3 mb-1 text-xs font-semibold text-slate-500 uppercase tracking-wider">
+            <p className="px-3 pt-1 pb-0.5 text-xs font-semibold text-slate-500 uppercase tracking-wider">
               Admin
             </p>
-            <Link
-              href="/settings"
-              className={`flex items-center rounded-md text-sm transition-colors px-3 py-2 ${
-                isActive('/settings')
-                  ? 'bg-slate-700 text-white font-medium'
-                  : 'text-slate-400 hover:text-slate-100 hover:bg-slate-800'
-              }`}
-            >
+            <Link href="/settings" className={linkCls('/settings')}>
               Settings
             </Link>
           </div>
@@ -113,7 +104,7 @@ export function Sidebar({ isAdmin, activeCampaignName }: { isAdmin: boolean; act
       <div className="px-2 pb-4 border-t border-slate-700 pt-4">
         <Link
           href="/play"
-          className="flex items-center px-3 py-2 rounded-md text-sm text-indigo-400 hover:text-indigo-300 hover:bg-slate-800 transition-colors"
+          className="flex items-center px-3 py-1.5 rounded-md text-sm text-indigo-400 hover:text-indigo-300 hover:bg-slate-800 transition-colors"
         >
           View as Player →
         </Link>
