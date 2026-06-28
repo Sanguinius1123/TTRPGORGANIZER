@@ -23,16 +23,14 @@ const labelCls = 'block text-sm font-medium text-slate-300 mb-1'
 
 export default async function DashboardPage() {
   const supabase = db()
-  const store = await cookies()
-
   const { data: rawCampaigns } = await supabase.from('campaigns').select('*').order('created_at')
   const campaigns = (rawCampaigns ?? []) as Campaign[]
 
+  const store = await cookies()
   let activeCampaignId = store.get(CAMPAIGN_COOKIE)?.value ?? null
 
   if (!activeCampaignId && campaigns.length > 0) {
     activeCampaignId = campaigns[0].id
-    store.set(CAMPAIGN_COOKIE, campaigns[0].id, { path: '/' })
   }
 
   if (!activeCampaignId) {

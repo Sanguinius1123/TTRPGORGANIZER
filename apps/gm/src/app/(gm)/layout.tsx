@@ -23,7 +23,6 @@ export default async function GmLayout({ children }: { children: React.ReactNode
     const firstCampaign = (rawCampaigns ?? [])[0] as { id: string; name: string } | undefined
     if (firstCampaign) {
       activeCampaignId = firstCampaign.id
-      store.set(CAMPAIGN_COOKIE, firstCampaign.id, { path: '/' })
       activeCampaignName = firstCampaign.name
     }
   } else {
