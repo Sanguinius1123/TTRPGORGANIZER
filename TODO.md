@@ -16,6 +16,7 @@ Features and functionality that need to be designed and coded.
 - **POI / local-scale location type expansion** — currently reuses the existing type list. Consider adding room/corridor/chamber/vault types for dungeon and interior maps.
 - **@mention Tiptap upgrade** — replace the custom `MentionTextarea` with a Tiptap rich-text editor; `@` triggers autocomplete across all entity types.
 - **Player portal — distance calculator** — show estimated travel distance from the party's current location to other locations. Needs a design pass on how "party location" is tracked before building.
+- **Shared dice roller** — real-time dice rolling visible to all players and the GM. Needs design: live (WebSocket/Supabase Realtime) vs. session-logged (rolls stored in DB and shown on session page). Could live as a floating widget or a dedicated page. Decide whether rolls are ephemeral or persistent before building.
 - **Settings — access code management** — currently the registration code is set directly in the DB. A simple settings UI field would make this easier to manage.
 
 ---
