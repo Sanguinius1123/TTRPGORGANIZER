@@ -7,6 +7,9 @@ Features and functionality that need to be designed and coded.
 
 - **Item category + descriptor** — add category dropdown (weapon, armour, consumable, tool, currency, relic, document, vehicle, misc) and a Descriptor field to the Items entity. Confirm the category list before implementing.
 - **Shop inventory management UI** — the `shop_inventory` schema already exists; no GM UI yet for adding, editing, or removing items from a shop. Needs design discussion before building.
+- **GM dashboard — campaign panel** — when a campaign is active, show campaign name + editable description at the top of the dashboard. Consider additional campaign-level fields (status, system, tone, start date?). Shrink the entity count/list blocks significantly — they don't need to dominate the screen.
+- **Player dashboard — right panel** — currently empty. Top right should show the active campaign name + description. Below that: quick links to the most recent session, the one before it, and the next upcoming session.
+- **"Watch" system** — eye icon/button on NPC, faction, location, and lore detail pages. A PC can mark things they want to remember or pursue. Watched items appear on a personal "Quick List" page in the player portal. GM side: one page per campaign listing all player characters and what each is watching, so the GM can see overlap and player intent at a glance.
 - **Map background image** — `map_background_url` on `map_configs`. Canvas renders it behind nodes. Intended workflow: place nodes → export PNG → trace in Wonderdraft → upload art URL → nodes sit on the real map.
 - **NPC portrait / image upload** — Supabase Storage bucket needs to be set up; then hook into the NPC detail form.
 - **Live spellcheck** — add the `spellCheck` attribute to all textarea/input fields (browser-native, free).
@@ -20,7 +23,9 @@ Features and functionality that need to be designed and coded.
 ## To-Fix
 Known bugs, rough edges, or UI issues that need a fix or another pass.
 
-- *(add issues here as they're discovered)*
+- **Waypoint visibility** — waypoint nodes should respect the "visible to players" flag: when `visible = true` they show on the player map, when `false` they're hidden. Currently they always show. Newly created waypoints should default to `visible = true`.
+- **Map UI dark mode contrast** — the minimap box (bottom right) and context/zoom buttons (bottom left) render light gray on a near-white background, making them invisible in dark mode. Need dark background or border treatment on those React Flow controls.
+- **Content generation — @mention references** — when Claude generates content that refers to an already-existing entity (a location, NPC, faction, etc.), it should use the `[[type:id|name]]` mention syntax rather than plain text. The insertion agent needs to resolve existing entity IDs and wire up references before inserting.
 
 ---
 
@@ -31,7 +36,7 @@ Before generating any content, a Campaign Bible (`CLAUDE-campaign-[name].md`) mu
 
 ### Active campaigns
 
-*(none yet — add campaigns here as they're started)*
+- **Sci-fi campaign (unnamed)** — ideas and notes exist in conversation but no Campaign Bible yet. Next step: sit down and convert existing thoughts into a `CLAUDE-campaign-scifi.md` file, then begin Tier 1 broad-strokes generation. Setting is original sci-fi; system TBD.
 
 ### Ideas & seeds
 
