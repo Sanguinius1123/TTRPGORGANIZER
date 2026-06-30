@@ -18,7 +18,6 @@ A **setting-agnostic** TTRPG campaign management tool. The GM needs structured, 
 TTRPGorganizer/
   apps/
     gm/          # Next.js — single combined app (GM + player portal), deployed to Vercel
-    player/      # RETIRED — do not edit or deploy; kept for reference only
   packages/
     db/          # Supabase client + TypeScript types
       src/
@@ -62,8 +61,17 @@ apps/gm/src/app/
 - `src/lib/supabase/client.ts` → browser client for client components (login page, player NoteForm, etc.)
 
 ### Key components
-- `Sidebar` — GM nav; `isAdmin: boolean` prop; Settings only shown when isAdmin; "View as Player →" always shown
+- `Sidebar` — GM nav; `isAdmin: boolean` prop; Settings only shown when isAdmin; "View as Player →" always shown; shows `CampaignSwitcher`
 - `PlayerNav` — player nav; `isGm: boolean` prop; "← GM Portal" shown when isGm
+
+## Multi-campaign support
+
+Live — `campaigns` table + `campaign_id` FK (NOT NULL) on all 12 root entity tables: factions, locations, npcs, player_characters, species, cultures, items, shops, sessions, encounters, lore_entries, plot_threads. Junction tables are NOT campaign-scoped (they inherit scope via their parent FK).
+
+- **GM side**: active campaign tracked via `active_campaign_id` cookie (`apps/gm/src/lib/activeCampaign.ts` → `getActiveCampaignId()`). `(gm)/layout.tsx` defaults to the first campaign (by `created_at`) if no cookie is set. `CampaignSwitcher` component + `switchCampaign`/`createCampaign` actions in `apps/gm/src/lib/actions/campaigns.ts`. Every GM list/detail query must filter `.eq('campaign_id', activeCampaignId)`.
+- **Player side**: campaign is derived from the player's active PC, not a cookie choice — `apps/gm/src/lib/playCampaign.ts` → `getPlayCampaignId()` resolves via `active_pc_id` cookie (`activePC.ts`), falling back to the player's first PC alphabetically. `/play/*` pages scope queries to this campaign id.
+- **New entity creation**: server actions for the 12 root tables must set `campaign_id` from the active campaign on insert (see `apps/gm/src/lib/actions/*.ts`).
+- Existing data was backfilled into a seeded "Test Campaign" (`00000000-cafe-4000-8000-000000000001`) — see `supabase/migrations/20260627000001_campaigns.sql` and `CAMPAIGN-MIGRATION.md` for the full migration writeup.
 
 ## Supabase CLI access
 
@@ -79,7 +87,7 @@ Do not ask the user to run migrations manually — run them directly.
 
 | Layer | Choice | Notes |
 |-------|--------|-------|
-| Framework | Next.js 16 (App Router) | Both apps |
+| Framework | Next.js 16 (App Router) | apps/gm only |
 | Styling | Tailwind CSS v4 | `@import "tailwindcss"` syntax, no config file |
 | Language | TypeScript | Strict |
 | Database | Supabase (Postgres) | Live project connected |
@@ -108,8 +116,12 @@ return createServerClient<Database>(url, key, { cookies: ... })
 All migrations applied. All tables exist.
 
 ```
+campaigns           (id, name, description, created_at)
+                    -- all 12 root entity tables below have campaign_id uuid NOT NULL FK -> campaigns(id), indexed
+                    -- junction tables are NOT campaign-scoped (inherit scope via parent FK)
+
 -- Core entities
-factions            (id, name, parent_faction_id FK self, disposition, goal, description, image_url, visible, species text, culture text, created_at)
+factions            (id, name, parent_faction_id FK self, disposition, goal, description, image_url, visible, species text, culture text, campaign_id FK, created_at)
 locations           (id, name text|null, type, descriptor, status, area, description, parent_location_id FK self,
                      image_url, visible, map_x float, map_y float, waypoint bool, terrain text,
                      path_modifiers text[], has_submap bool DEFAULT false, mystery bool DEFAULT false, created_at)
@@ -173,7 +185,7 @@ Trigger `handle_new_user()` fires on `auth.users` INSERT — creates profile, au
 
 ## What has been built
 
-`pnpm --filter gm build` passes with zero type errors. `apps/player` is retired.
+`pnpm --filter gm build` passes with zero type errors.
 
 ### Pages — GM app
 
@@ -305,7 +317,7 @@ Lives in `apps/gm/src/app/play/`. All URLs prefixed `/play/`.
 ### Pages
 | Page | Route | Notes |
 |------|-------|-------|
-| My Character | `/play` | Character sheet + editable fields + party sidebar; multi-PC switcher via `?pc=` param |
+| My Character | `/play` | Character sheet + editable fields + party sidebar; multi-PC switcher persisted via `active_pc_id` cookie |
 | PC detail (other) | `/play/player-characters/[id]` | Read-only sheet for another player's PC |
 | Sessions list | `/play/sessions` | Summary preview strips mention tokens |
 | Session detail | `/play/sessions/[id]` | GM summary + loose threads + player notes; one note per PC per session (upsert) |
@@ -322,7 +334,7 @@ Lives in `apps/gm/src/app/play/`. All URLs prefixed `/play/`.
 
 ### Key design decisions
 - Home page (`/play`) is the character sheet, not a dashboard
-- Multi-PC support: one profile can be assigned to multiple `player_characters`; `?pc=<id>` param switches between them
+- Multi-PC support: one profile can be assigned to multiple `player_characters`; `active_pc_id` cookie (`apps/gm/src/lib/activePC.ts`) tracks the selected PC across navigation, set via `PCSwitch` component
 - `party_faction_id` FK on `player_characters` → `factions(id)` — GM sets per PC on the PC detail page; player portal uses it to populate the party sidebar
 - Session notes: one note per PC per session (upsert); GM can edit/delete any note; players can edit their own
 - `private_notes` on `player_characters` only shown on `/play` (your own sheet)
@@ -407,4 +419,3 @@ const sessions  = (results[1].data ?? []) as Array<{ id: string; session_number:
 5. **NPC portrait / image upload** — needs Supabase Storage setup.
 6. **Live spellcheck** — add `spellCheck` attribute to all textarea/input fields (browser-native).
 7. **POI-scale type list expansion** — currently uses existing location types. May want room/corridor/chamber/etc. types for dungeon/interior maps.
-8. **Multi-campaign support** — add `campaigns` table + `campaign_id` FK on all root entities; GM dashboard campaign selector (cookie-based); player portal derives campaign from PC's `campaign_id`. Do this when starting a second campaign, not before.
