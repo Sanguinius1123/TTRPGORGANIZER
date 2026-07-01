@@ -46,6 +46,13 @@ export async function setSpeciesOriginLocation(formData: FormData) {
   revalidatePath(`/species/${id}`)
 }
 
+export async function toggleSpeciesVisibility(id: string, visible: boolean) {
+  const supabase = db()
+  await supabase.from('species').update({ visible }).eq('id', id)
+  revalidatePath(`/species/${id}`)
+  revalidatePath('/species')
+}
+
 export async function deleteSpecies(formData: FormData) {
   const supabase = db()
   const id = formData.get('id') as string

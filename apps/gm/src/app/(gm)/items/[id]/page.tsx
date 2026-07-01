@@ -1,10 +1,11 @@
 import { db } from '@/lib/db'
-import { updateItem, deleteItem } from '@/lib/actions/items'
+import { updateItem, deleteItem, toggleItemVisibility } from '@/lib/actions/items'
 import { Item } from '@ttrpg/db'
 import MentionTextarea from '@/components/MentionTextarea'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { getActiveCampaignId } from '@/lib/activeCampaign'
+import { SubmitButton } from '@/components/SubmitButton'
 
 const input = 'block w-full rounded-md border border-slate-600 bg-slate-700 px-3 py-2 text-sm text-slate-100 focus:border-indigo-400 focus:ring-1 focus:ring-indigo-400 outline-none'
 const label = 'block text-sm font-medium text-slate-300 mb-1'
@@ -34,7 +35,19 @@ export default async function ItemPage({ params }: { params: Promise<{ id: strin
         <span className="text-slate-600">/</span>
         <span className="text-sm text-slate-100 font-medium">{item.name}</span>
       </div>
-      <h1 className="text-2xl font-bold text-slate-100 mb-6">{item.name}</h1>
+
+      <div className="flex items-start justify-between mb-6">
+        <h1 className="text-2xl font-bold text-slate-100">{item.name}</h1>
+        <form action={async () => { 'use server'; await toggleItemVisibility(id, !item.visible) }}>
+          <button type="submit" className={`rounded-full px-3 py-1 text-xs font-medium border transition-colors ${
+            item.visible
+              ? 'bg-green-900/40 text-green-400 border-green-700 hover:bg-green-900/60'
+              : 'bg-slate-700 text-slate-400 border-slate-600 hover:bg-slate-600'
+          }`}>
+            {item.visible ? 'Visible to players' : 'Hidden from players'}
+          </button>
+        </form>
+      </div>
 
       <form action={updateItem} className="bg-slate-800 rounded-lg border border-slate-700 p-6 space-y-5 mb-8">
         <input type="hidden" name="id" value={item.id} />
@@ -71,9 +84,7 @@ export default async function ItemPage({ params }: { params: Promise<{ id: strin
           <MentionTextarea name="description" defaultValue={item.description ?? ''} rows={4} className={`${input} resize-none`} />
         </div>
         <div className="flex gap-3 pt-2">
-          <button type="submit" className="rounded-md bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700">
-            Save Changes
-          </button>
+          <SubmitButton label="Save Changes" />
         </div>
       </form>
 

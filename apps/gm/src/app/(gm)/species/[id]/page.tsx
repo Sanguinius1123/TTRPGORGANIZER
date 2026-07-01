@@ -1,9 +1,10 @@
 import { db } from '@/lib/db'
-import { updateSpecies, deleteSpecies, setSpeciesOriginLocation } from '@/lib/actions/species'
+import { updateSpecies, deleteSpecies, setSpeciesOriginLocation, toggleSpeciesVisibility } from '@/lib/actions/species'
 import { Species } from '@ttrpg/db'
 import MentionTextarea from '@/components/MentionTextarea'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
+import { SubmitButton } from '@/components/SubmitButton'
 
 const input = 'block w-full rounded-md border border-slate-600 bg-slate-700 px-3 py-2 text-sm text-slate-100 focus:border-indigo-400 focus:ring-1 focus:ring-indigo-400 outline-none'
 const label = 'block text-sm font-medium text-slate-300 mb-1'
@@ -36,7 +37,19 @@ export default async function SpeciesDetailPage({ params }: { params: Promise<{ 
         <span className="text-slate-600">/</span>
         <span className="text-sm text-slate-100 font-medium">{species.name}</span>
       </div>
-      <h1 className="text-2xl font-bold text-slate-100 mb-6">{species.name}</h1>
+
+      <div className="flex items-start justify-between mb-6">
+        <h1 className="text-2xl font-bold text-slate-100">{species.name}</h1>
+        <form action={async () => { 'use server'; await toggleSpeciesVisibility(id, !species.visible) }}>
+          <button type="submit" className={`rounded-full px-3 py-1 text-xs font-medium border transition-colors ${
+            species.visible
+              ? 'bg-green-900/40 text-green-400 border-green-700 hover:bg-green-900/60'
+              : 'bg-slate-700 text-slate-400 border-slate-600 hover:bg-slate-600'
+          }`}>
+            {species.visible ? 'Visible to players' : 'Hidden from players'}
+          </button>
+        </form>
+      </div>
 
       <div className="flex gap-6 items-start">
 
@@ -53,9 +66,7 @@ export default async function SpeciesDetailPage({ params }: { params: Promise<{ 
               <MentionTextarea name="description" defaultValue={species.description ?? ''} rows={6} placeholder="Physical traits, cultural tendencies, origins…" className={`${input} resize-none`} />
             </div>
             <div className="flex gap-3 pt-2">
-              <button type="submit" className="rounded-md bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700">
-                Save Changes
-              </button>
+              <SubmitButton label="Save Changes" />
             </div>
           </form>
 

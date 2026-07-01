@@ -22,6 +22,8 @@ interface LocationRow {
   descriptor: string | null
   status: string | null
   visible: boolean
+  map_x: number | null
+  parent_location_id: string | null
   parent: { id: string; name: string } | null
 }
 
@@ -102,9 +104,21 @@ export default async function LocationsPage({ searchParams }: { searchParams: Se
               {locations.map((loc) => (
                 <ClickableRow key={loc.id} href={`/locations/${loc.id}`} className="border-b border-slate-700/50 last:border-0 hover:bg-slate-700/50">
                   <td className="px-4 py-3">
-                    <SubLink href={`/locations/${loc.id}`} className="font-medium text-slate-100 hover:text-indigo-400">
-                      {loc.name}
-                    </SubLink>
+                    <div className="flex items-center gap-2">
+                      {loc.map_x !== null && (
+                        <SubLink
+                          href={loc.parent_location_id ? `/map/${loc.parent_location_id}` : '/map'}
+                          className="text-slate-500 hover:text-indigo-400 shrink-0"
+                        >
+                          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-3.5 h-3.5">
+                            <path fillRule="evenodd" d="M8.157 2.176a1.5 1.5 0 0 0-1.147 0l-4.084 1.69A1.5 1.5 0 0 0 2 5.25v10.877a.75.75 0 0 0 1.067.672l3.733-1.543 4.144 1.712a1.5 1.5 0 0 0 1.147 0l4.084-1.69A1.5 1.5 0 0 0 18 13.75V2.873a.75.75 0 0 0-1.067-.672l-3.733 1.543-4.043-1.568ZM7.25 4.41l5.5 2.141V15.59l-5.5-2.141V4.41Zm-1.5.08v9.181l-2.5 1.033V5.523l2.5-1.033Zm8.5 9.98V6.27l2.5-1.033v9.181l-2.5 1.033Z" clipRule="evenodd" />
+                          </svg>
+                        </SubLink>
+                      )}
+                      <SubLink href={`/locations/${loc.id}`} className="font-medium text-slate-100 hover:text-indigo-400">
+                        {loc.name}
+                      </SubLink>
+                    </div>
                   </td>
                   <td className="px-4 py-3 text-slate-500">
                     {loc.type ?? '—'}

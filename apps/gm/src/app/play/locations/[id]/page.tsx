@@ -1,5 +1,5 @@
 import { createAnonClient } from '@/lib/supabase/server'
-import { Location, Shop, Item } from '@ttrpg/db'
+import { Location, Shop } from '@ttrpg/db'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { renderMentions } from '@/lib/mentions'
@@ -40,18 +40,39 @@ export default async function LocationDetailPage({ params }: { params: Promise<{
     isWatching = !!watchData
   }
 
-  // Load inventory for each shop
-  const inventories = shops.length > 0
-    ? await Promise.all(
-        shops.map(shop =>
-          supabase
-            .from('shop_inventory')
-            .select('*, items(*)')
-            .eq('shop_id', shop.id)
-            .eq('available', true)
-        )
-      )
-    : []
+  // Load inventory for each shop (two-step to filter items by visible)
+  interface InvRow { id: string; shop_id: string; item_id: string; price_override: number | null }
+  interface ShopInvItem { id: string; invId: string; shopId: string; name: string; base_price: number | null; price_override: number | null }
+  let shopInventory: ShopInvItem[] = []
+  if (shops.length > 0) {
+    const shopIds = shops.map(s => s.id)
+    const { data: rawInv } = await supabase
+      .from('shop_inventory')
+      .select('id, shop_id, item_id, price_override')
+      .in('shop_id', shopIds)
+      .eq('available', true)
+    const invRows = (rawInv ?? []) as InvRow[]
+    if (invRows.length > 0) {
+      const itemIds = invRows.map(r => r.item_id)
+      const { data: rawItems } = await supabase
+        .from('items')
+        .select('id, name, base_price')
+        .in('id', itemIds)
+        .eq('visible', true)
+      const visibleItems = (rawItems ?? []) as Array<{ id: string; name: string; base_price: number | null }>
+      const itemById = Object.fromEntries(visibleItems.map(item => [item.id, item]))
+      shopInventory = invRows
+        .filter(r => itemById[r.item_id])
+        .map(r => ({
+          id: r.item_id,
+          invId: r.id,
+          shopId: r.shop_id,
+          name: itemById[r.item_id].name,
+          base_price: itemById[r.item_id].base_price,
+          price_override: r.price_override,
+        }))
+    }
+  }
 
   return (
     <div className="p-8 max-w-4xl">
@@ -124,8 +145,8 @@ export default async function LocationDetailPage({ params }: { params: Promise<{
 
         {shops.length > 0 && (
           <div className="space-y-4">
-            {shops.map((shop, i) => {
-              const inv = (inventories[i]?.data ?? []) as Array<{ id: string; price_override: number | null; items: Item | null }>
+            {shops.map((shop) => {
+              const inv = shopInventory.filter(r => r.shopId === shop.id)
               return (
                 <div key={shop.id} className="bg-slate-800 rounded-lg border border-slate-700 overflow-hidden">
                   <div className="px-6 py-3 border-b border-slate-700/50 bg-slate-800">
@@ -143,10 +164,10 @@ export default async function LocationDetailPage({ params }: { params: Promise<{
                       </thead>
                       <tbody>
                         {inv.map(row => (
-                          <tr key={row.id} className="border-b border-slate-700/50 last:border-0 hover:bg-slate-700/50">
-                            <td className="px-6 py-3 text-slate-100">{row.items?.name ?? '—'}</td>
+                          <tr key={row.invId} className="border-b border-slate-700/50 last:border-0 hover:bg-slate-700/50">
+                            <td className="px-6 py-3 text-slate-100">{row.name}</td>
                             <td className="px-6 py-3 text-right text-slate-500">
-                              {row.price_override ?? row.items?.base_price ?? '—'}
+                              {row.price_override ?? row.base_price ?? '—'}
                             </td>
                           </tr>
                         ))}

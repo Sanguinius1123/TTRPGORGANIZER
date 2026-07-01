@@ -1,0 +1,2 @@
+ALTER TABLE species  ADD COLUMN IF NOT EXISTS visible boolean NOT NULL DEFAULT true;
+ALTER TABLE cultures ADD COLUMN IF NOT EXISTS visible boolean NOT NULL DEFAULT true;

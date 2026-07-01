@@ -23,11 +23,11 @@ export default async function LorePage({ searchParams }: { searchParams: SearchP
       ? supabase.from('lore_entries').select('*').eq('visible', true).eq('campaign_id', campaignId).order('category').order('title')
       : supabase.from('lore_entries').select('*').eq('visible', true).order('category').order('title'),
     campaignId
-      ? supabase.from('species').select('*').eq('campaign_id', campaignId).order('name')
-      : supabase.from('species').select('*').order('name'),
+      ? supabase.from('species').select('*').eq('visible', true).eq('campaign_id', campaignId).order('name')
+      : supabase.from('species').select('*').eq('visible', true).order('name'),
     campaignId
-      ? supabase.from('cultures').select('*').eq('campaign_id', campaignId).order('name')
-      : supabase.from('cultures').select('*').order('name'),
+      ? supabase.from('cultures').select('*').eq('visible', true).eq('campaign_id', campaignId).order('name')
+      : supabase.from('cultures').select('*').eq('visible', true).order('name'),
   ])
 
   const allEntries = (results[0].data ?? []) as LoreEntry[]

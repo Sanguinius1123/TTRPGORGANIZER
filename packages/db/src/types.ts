@@ -206,6 +206,7 @@ export interface Database {
           item_type: string | null
           descriptor: string | null
           location_id: string | null
+          visible: boolean
           campaign_id: string
           created_at: string
         }
@@ -347,6 +348,7 @@ export interface Database {
           name: string
           description: string | null
           origin_location_id: string | null
+          visible: boolean
           campaign_id: string
           created_at: string
         }
@@ -359,6 +361,7 @@ export interface Database {
           id: string
           name: string
           description: string | null
+          visible: boolean
           campaign_id: string
           created_at: string
         }

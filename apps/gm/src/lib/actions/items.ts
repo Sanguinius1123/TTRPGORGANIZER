@@ -46,6 +46,13 @@ export async function updateItem(formData: FormData) {
   revalidatePath('/items')
 }
 
+export async function toggleItemVisibility(id: string, visible: boolean) {
+  const supabase = db()
+  await supabase.from('items').update({ visible }).eq('id', id)
+  revalidatePath(`/items/${id}`)
+  revalidatePath('/items')
+}
+
 export async function deleteItem(formData: FormData) {
   const supabase = db()
   const id = formData.get('id') as string

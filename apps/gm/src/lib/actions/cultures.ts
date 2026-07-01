@@ -54,6 +54,13 @@ export async function removeCultureLocation(formData: FormData) {
   revalidatePath(`/cultures/${culture_id}`)
 }
 
+export async function toggleCultureVisibility(id: string, visible: boolean) {
+  const supabase = db()
+  await supabase.from('cultures').update({ visible }).eq('id', id)
+  revalidatePath(`/cultures/${id}`)
+  revalidatePath('/cultures')
+}
+
 export async function deleteCulture(formData: FormData) {
   const supabase = db()
   const id = formData.get('id') as string

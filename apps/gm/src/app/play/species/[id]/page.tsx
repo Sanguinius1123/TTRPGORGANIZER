@@ -11,6 +11,7 @@ export default async function SpeciesDetailPage({ params }: { params: Promise<{ 
   const { data: raw } = await supabase.from('species').select('*').eq('id', id).single()
   if (!raw) notFound()
   const species = raw as Species
+  if (!species.visible) notFound()
 
   const visibleIds = await buildVisibleMentionSet(supabase, [species.description])
 

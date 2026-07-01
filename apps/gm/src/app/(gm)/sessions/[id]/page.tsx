@@ -5,6 +5,8 @@ import { Session } from '@ttrpg/db'
 import MentionTextarea from '@/components/MentionTextarea'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
+import { SubmitButton } from '@/components/SubmitButton'
+import { FilterableSelect } from '@/components/FilterableSelect'
 import { getActiveCampaignId } from '@/lib/activeCampaign'
 
 const input = 'block w-full rounded-md border border-slate-600 bg-slate-700 px-3 py-2 text-sm text-slate-100 focus:border-indigo-400 focus:ring-1 focus:ring-indigo-400 outline-none'
@@ -136,9 +138,7 @@ export default async function SessionPage({ params }: { params: Promise<{ id: st
               <MentionTextarea name="loose_threads" defaultValue={session.loose_threads ?? ''} rows={4} placeholder="Unresolved questions, follow-ups, things players may pursue…" className={`${input} resize-none`} />
             </div>
             <div className="flex gap-3 pt-2">
-              <button type="submit" className="rounded-md bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700">
-                Save Changes
-              </button>
+              <SubmitButton label="Save Changes" />
             </div>
           </form>
 
@@ -201,13 +201,15 @@ export default async function SessionPage({ params }: { params: Promise<{ id: st
               <Link href="/encounters/new" className="text-xs text-indigo-400 hover:text-indigo-300 font-medium">+ New</Link>
             </div>
             {availableEncounters.length > 0 && (
-              <form action={addEncounterToSession} className="px-3 pt-2.5 pb-2 border-b border-slate-700/50 flex gap-1.5">
+              <form action={addEncounterToSession} className="px-3 pt-2.5 pb-2 border-b border-slate-700/50 space-y-1.5">
                 <input type="hidden" name="session_id" value={id} />
-                <select name="id" required className={`${smallInput} flex-1`}>
-                  <option value="">Link existing…</option>
-                  {availableEncounters.map(e => <option key={e.id} value={e.id}>{e.title}</option>)}
-                </select>
-                <button type="submit" className="rounded bg-indigo-600 px-2.5 py-1.5 text-xs font-medium text-white hover:bg-indigo-700 whitespace-nowrap">
+                <FilterableSelect
+                  name="id"
+                  options={availableEncounters.map(e => ({ value: e.id, label: e.title }))}
+                  placeholder="Search encounters…"
+                  emptyLabel="Link existing…"
+                />
+                <button type="submit" className="w-full rounded bg-indigo-600 px-2.5 py-1.5 text-xs font-medium text-white hover:bg-indigo-700">
                   Add
                 </button>
               </form>
@@ -256,13 +258,15 @@ export default async function SessionPage({ params }: { params: Promise<{ id: st
               <Link href="/plot-threads/new" className="text-xs text-indigo-400 hover:text-indigo-300 font-medium">+ New</Link>
             </div>
             {availableThreads.length > 0 && (
-              <form action={addSessionPlotThread} className="px-3 pt-2.5 pb-2 border-b border-slate-700/50 flex gap-1.5">
+              <form action={addSessionPlotThread} className="px-3 pt-2.5 pb-2 border-b border-slate-700/50 space-y-1.5">
                 <input type="hidden" name="session_id" value={id} />
-                <select name="plot_thread_id" required className={`${smallInput} flex-1`}>
-                  <option value="">Link existing…</option>
-                  {availableThreads.map(t => <option key={t.id} value={t.id}>{t.title}</option>)}
-                </select>
-                <button type="submit" className="rounded bg-indigo-600 px-2.5 py-1.5 text-xs font-medium text-white hover:bg-indigo-700 whitespace-nowrap">
+                <FilterableSelect
+                  name="plot_thread_id"
+                  options={availableThreads.map(t => ({ value: t.id, label: t.title }))}
+                  placeholder="Search plot threads…"
+                  emptyLabel="Link existing…"
+                />
+                <button type="submit" className="w-full rounded bg-indigo-600 px-2.5 py-1.5 text-xs font-medium text-white hover:bg-indigo-700">
                   Add
                 </button>
               </form>

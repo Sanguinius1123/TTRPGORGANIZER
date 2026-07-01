@@ -11,6 +11,7 @@ export default async function CultureDetailPage({ params }: { params: Promise<{ 
   const { data: raw } = await supabase.from('cultures').select('*').eq('id', id).single()
   if (!raw) notFound()
   const culture = raw as Culture
+  if (!culture.visible) notFound()
 
   const visibleIds = await buildVisibleMentionSet(supabase, [culture.description])
 

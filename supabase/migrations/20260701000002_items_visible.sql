@@ -1,0 +1,1 @@
+ALTER TABLE items ADD COLUMN IF NOT EXISTS visible boolean NOT NULL DEFAULT true;

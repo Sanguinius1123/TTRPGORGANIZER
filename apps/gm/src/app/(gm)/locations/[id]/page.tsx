@@ -5,6 +5,7 @@ import MentionTextarea from '@/components/MentionTextarea'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { getActiveCampaignId } from '@/lib/activeCampaign'
+import { SubmitButton } from '@/components/SubmitButton'
 
 const input = 'block w-full rounded-md border border-slate-600 bg-slate-700 px-3 py-2 text-sm text-slate-100 focus:border-indigo-400 focus:ring-1 focus:ring-indigo-400 outline-none'
 const label = 'block text-sm font-medium text-slate-300 mb-1'
@@ -134,9 +135,7 @@ export default async function LocationPage({ params }: { params: Promise<{ id: s
           <MentionTextarea name="description" defaultValue={loc.description ?? ''} rows={5} className={`${input} resize-none`} />
         </div>
         <div className="flex gap-3 pt-2">
-          <button type="submit" className="rounded-md bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700">
-            Save Changes
-          </button>
+          <SubmitButton label="Save Changes" />
         </div>
       </form>
 
