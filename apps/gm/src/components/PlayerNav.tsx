@@ -13,6 +13,7 @@ type NavItem = {
 
 const navItems: NavItem[] = [
   { label: 'My Character',    href: '/play', exact: true },
+  { label: 'My Watchlist',   href: '/play/watchlist' },
   { label: 'Sessions',        href: '/play/sessions' },
   { label: 'Map',             href: '/play/map' },
   { label: 'Locations',       href: '/play/locations' },

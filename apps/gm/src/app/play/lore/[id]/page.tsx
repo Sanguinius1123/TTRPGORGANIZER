@@ -4,10 +4,14 @@ import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { renderMentions } from '@/lib/mentions'
 import { buildVisibleMentionSet } from '@/lib/mentionVisibility'
+import { getActivePcId } from '@/lib/activePC'
+import { WatchButton } from '@/components/WatchButton'
 
 export default async function LoreDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
   const supabase = await createAnonClient()
+  const activePcId = await getActivePcId()
+
   const { data: raw } = await supabase
     .from('lore_entries')
     .select('*')
@@ -18,6 +22,13 @@ export default async function LoreDetailPage({ params }: { params: Promise<{ id:
   const entry = raw as LoreEntry
 
   const visibleIds = await buildVisibleMentionSet(supabase, [entry.description])
+
+  let isWatching = false
+  if (activePcId) {
+    const { data: watchData } = await supabase.from('pc_watches')
+      .select('id').eq('pc_id', activePcId).eq('entity_type', 'lore').eq('entity_id', id).maybeSingle()
+    isWatching = !!watchData
+  }
 
   return (
     <div className="p-8 max-w-4xl">
@@ -31,7 +42,10 @@ export default async function LoreDetailPage({ params }: { params: Promise<{ id:
         <p className="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1">
           {entry.category ?? 'Lore'}{entry.descriptor ? ` · ${entry.descriptor}` : ''}
         </p>
-        <h1 className="text-2xl font-bold text-slate-100">{entry.title}</h1>
+        <div className="flex items-center gap-4">
+          <h1 className="text-2xl font-bold text-slate-100">{entry.title}</h1>
+          {activePcId && <WatchButton pcId={activePcId} entityType="lore" entityId={id} initialWatching={isWatching} />}
+        </div>
       </div>
 
       {entry.description && (

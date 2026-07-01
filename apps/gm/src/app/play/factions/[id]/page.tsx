@@ -4,10 +4,13 @@ import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { renderMentions } from '@/lib/mentions'
 import { buildVisibleMentionSet } from '@/lib/mentionVisibility'
+import { getActivePcId } from '@/lib/activePC'
+import { WatchButton } from '@/components/WatchButton'
 
 export default async function FactionDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
   const supabase = await createAnonClient()
+  const activePcId = await getActivePcId()
 
   const results = await Promise.all([
     supabase.from('factions').select('*').eq('id', id).eq('visible', true).single(),
@@ -40,6 +43,13 @@ export default async function FactionDetailPage({ params }: { params: Promise<{ 
 
   const visibleIds = await buildVisibleMentionSet(supabase, [faction.goal, faction.description])
 
+  let isWatching = false
+  if (activePcId) {
+    const { data: watchData } = await supabase.from('pc_watches')
+      .select('id').eq('pc_id', activePcId).eq('entity_type', 'faction').eq('entity_id', id).maybeSingle()
+    isWatching = !!watchData
+  }
+
   return (
     <div className="p-8 max-w-4xl">
       <div className="flex items-center gap-2 mb-6 text-sm">
@@ -48,7 +58,10 @@ export default async function FactionDetailPage({ params }: { params: Promise<{ 
         <span className="text-slate-100 font-medium">{faction.name}</span>
       </div>
 
-      <h1 className="text-2xl font-bold text-slate-100 mb-6">{faction.name}</h1>
+      <div className="flex items-center gap-4 mb-6">
+        <h1 className="text-2xl font-bold text-slate-100">{faction.name}</h1>
+        {activePcId && <WatchButton pcId={activePcId} entityType="faction" entityId={id} initialWatching={isWatching} />}
+      </div>
 
       <div className="space-y-6">
         {hasProperties && (

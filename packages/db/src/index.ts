@@ -34,4 +34,5 @@ export type {
   PlotThreadCharacter,
   Profile,
   Setting,
+  PCWatch,
 } from './types'

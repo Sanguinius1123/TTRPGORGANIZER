@@ -4,10 +4,13 @@ import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { renderMentions } from '@/lib/mentions'
 import { buildVisibleMentionSet } from '@/lib/mentionVisibility'
+import { getActivePcId } from '@/lib/activePC'
+import { WatchButton } from '@/components/WatchButton'
 
 export default async function LocationDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
   const supabase = await createAnonClient()
+  const activePcId = await getActivePcId()
 
   const results = await Promise.all([
     supabase.from('locations').select('*').eq('id', id).eq('visible', true).eq('mystery', false).single(),
@@ -29,6 +32,13 @@ export default async function LocationDetailPage({ params }: { params: Promise<{
   }
 
   const visibleIds = await buildVisibleMentionSet(supabase, [location.description, location.area])
+
+  let isWatching = false
+  if (activePcId) {
+    const { data: watchData } = await supabase.from('pc_watches')
+      .select('id').eq('pc_id', activePcId).eq('entity_type', 'location').eq('entity_id', id).maybeSingle()
+    isWatching = !!watchData
+  }
 
   // Load inventory for each shop
   const inventories = shops.length > 0
@@ -61,7 +71,10 @@ export default async function LocationDetailPage({ params }: { params: Promise<{
         <p className="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1">
           {location.type ?? 'Location'}{location.descriptor ? ` · ${location.descriptor}` : ''}
         </p>
-        <h1 className="text-2xl font-bold text-slate-100">{location.name ?? '(unnamed)'}</h1>
+        <div className="flex items-center gap-4">
+          <h1 className="text-2xl font-bold text-slate-100">{location.name ?? '(unnamed)'}</h1>
+          {activePcId && <WatchButton pcId={activePcId} entityType="location" entityId={id} initialWatching={isWatching} />}
+        </div>
       </div>
 
       <div className="space-y-6">

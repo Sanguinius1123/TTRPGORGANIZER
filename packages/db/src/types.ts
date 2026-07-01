@@ -163,6 +163,12 @@ export interface Database {
         Update: Partial<Database['public']['Tables']['pc_factions']['Insert']>
         Relationships: []
       }
+      pc_watches: {
+        Row: { id: string; pc_id: string; entity_type: string; entity_id: string; created_at: string }
+        Insert: Partial<Omit<{ id: string; pc_id: string; entity_type: string; entity_id: string; created_at: string }, 'id' | 'created_at'>> & { pc_id: string; entity_type: string; entity_id: string }
+        Update: Partial<Omit<{ id: string; pc_id: string; entity_type: string; entity_id: string; created_at: string }, 'id' | 'created_at'>>
+        Relationships: []
+      }
       npc_locations: {
         Row: {
           id: string
@@ -510,3 +516,4 @@ export type PlotThreadFaction     = Tables<'plot_thread_factions'>
 export type PlotThreadCharacter   = Tables<'plot_thread_characters'>
 export type Profile               = Tables<'profiles'>
 export type Setting               = Tables<'settings'>
+export type PCWatch               = Tables<'pc_watches'>
