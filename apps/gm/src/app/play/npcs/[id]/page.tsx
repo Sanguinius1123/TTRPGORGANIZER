@@ -4,10 +4,13 @@ import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { renderMentions } from '@/lib/mentions'
 import { buildVisibleMentionSet } from '@/lib/mentionVisibility'
+import { getActivePcId } from '@/lib/activePC'
+import { WatchButton } from '@/components/WatchButton'
 
 export default async function NPCDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
   const supabase = await createAnonClient()
+  const activePcId = await getActivePcId()
 
   const results = await Promise.all([
     supabase.from('npcs').select('*').eq('id', id).eq('visible', true).single(),
@@ -42,6 +45,13 @@ export default async function NPCDetailPage({ params }: { params: Promise<{ id: 
     npc.background, npc.notes, ...facts.map(f => f.fact_text),
   ])
 
+  let isWatching = false
+  if (activePcId) {
+    const { data: watchData } = await supabase.from('pc_watches')
+      .select('id').eq('pc_id', activePcId).eq('entity_type', 'npc').eq('entity_id', id).maybeSingle()
+    isWatching = !!watchData
+  }
+
   const hasProperties = npc.species || npc.profession || npc.culture || npc.disposition
 
   return (
@@ -52,7 +62,10 @@ export default async function NPCDetailPage({ params }: { params: Promise<{ id: 
         <span className="text-slate-100 font-medium">{npc.name}</span>
       </div>
 
-      <h1 className="text-2xl font-bold text-slate-100 mb-6">{npc.name}</h1>
+      <div className="flex items-center gap-4 mb-6">
+        <h1 className="text-2xl font-bold text-slate-100">{npc.name}</h1>
+        {activePcId && <WatchButton pcId={activePcId} entityType="npc" entityId={id} initialWatching={isWatching} />}
+      </div>
 
       <div className="space-y-6">
         {hasProperties && (

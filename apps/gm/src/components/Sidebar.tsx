@@ -10,6 +10,7 @@ const nav = [
       { label: 'Player Characters', href: '/player-characters' },
       { label: 'NPCs', href: '/npcs' },
       { label: 'Factions', href: '/factions' },
+      { label: 'Watch Overview', href: '/watch-overview' },
     ],
   },
   {
