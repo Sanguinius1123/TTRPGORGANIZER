@@ -23,7 +23,6 @@ TTRPGorganizer/
       src/
         types.ts    # Hand-written Database interface + named type exports
         server.ts   # createServerClient() — service role, for Server Components/Actions
-        browser.ts  # createBrowserClient() — anon key (legacy, not used in gm app)
         index.ts    # re-exports all of the above
   CLAUDE.md
   package.json   # pnpm workspace root
