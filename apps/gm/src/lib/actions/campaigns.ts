@@ -29,6 +29,15 @@ export async function createCampaign(formData: FormData) {
   redirect('/')
 }
 
+export async function updateCampaign(formData: FormData) {
+  const supabase = db()
+  const id = formData.get('id') as string
+  const name = formData.get('name') as string
+  const description = (formData.get('description') as string) || null
+  await supabase.from('campaigns').update({ name, description }).eq('id', id)
+  revalidatePath('/')
+}
+
 export async function switchCampaign(campaignId: string) {
   const store = await cookies()
   store.set(CAMPAIGN_COOKIE, campaignId, { path: '/' })

@@ -47,13 +47,17 @@ export default async function HomePage({ searchParams }: { searchParams: SearchP
   ) ?? allMyPCs[0]
   const cid = pc.campaign_id
 
-  // Load species, cultures, and other data in parallel
-  const [speciesRes, culturesRes] = await Promise.all([
+  // Load species, cultures, campaign, and recent sessions in parallel
+  const [speciesRes, culturesRes, campaignRes, sessionsRes] = await Promise.all([
     supabase.from('species').select('id, name').eq('campaign_id', cid).order('name'),
     supabase.from('cultures').select('id, name').eq('campaign_id', cid).order('name'),
+    supabase.from('campaigns').select('name, description').eq('id', cid).single(),
+    supabase.from('sessions').select('id, session_number, title').eq('campaign_id', cid).order('session_number', { ascending: false }).limit(3),
   ])
-  const speciesList  = (speciesRes.data ?? []) as Array<{ id: string; name: string }>
-  const culturesList = (culturesRes.data ?? []) as Array<{ id: string; name: string }>
+  const speciesList   = (speciesRes.data ?? []) as Array<{ id: string; name: string }>
+  const culturesList  = (culturesRes.data ?? []) as Array<{ id: string; name: string }>
+  const campaign      = campaignRes.data as { name: string; description: string | null } | null
+  const recentSessions = (sessionsRes.data ?? []) as Array<{ id: string; session_number: number; title: string | null }>
 
   // Load faction memberships + party + plot threads in parallel
   const { data: rawPCFactions } = await supabase
@@ -155,8 +159,41 @@ export default async function HomePage({ searchParams }: { searchParams: SearchP
           )}
         </div>
 
-        {/* ── Right: party + plot threads ── */}
+        {/* ── Right: campaign info + party + plot threads ── */}
         <div className="w-64 shrink-0 space-y-4">
+
+          {/* Campaign info */}
+          {campaign && (
+            <div className="bg-slate-800 rounded-lg border border-slate-700 overflow-hidden">
+              <div className="px-4 py-2.5 border-b border-slate-700/50">
+                <h3 className="text-xs font-semibold text-slate-400 uppercase tracking-wide">Campaign</h3>
+              </div>
+              <div className="p-4 space-y-2">
+                <p className="text-sm font-medium text-slate-100">{campaign.name}</p>
+                {campaign.description && (
+                  <p className="text-xs text-slate-400 leading-relaxed">{campaign.description}</p>
+                )}
+                {recentSessions.length > 0 && (
+                  <div className="pt-2 border-t border-slate-700/50 space-y-1">
+                    <p className="text-[10px] text-slate-600 uppercase tracking-wide font-medium">Recent Sessions</p>
+                    {recentSessions.map(s => (
+                      <Link
+                        key={s.id}
+                        href={`/play/sessions/${s.id}`}
+                        className="flex items-baseline gap-1.5 rounded px-1 py-1 hover:bg-slate-700/50 transition-colors group"
+                      >
+                        <span className="text-xs text-slate-500 shrink-0">#{s.session_number}</span>
+                        <span className="text-xs text-slate-300 group-hover:text-indigo-400 truncate">{s.title ?? 'Untitled'}</span>
+                      </Link>
+                    ))}
+                    <Link href="/play/sessions" className="block text-[10px] text-indigo-500 hover:text-indigo-400 px-1 pt-1">
+                      All sessions →
+                    </Link>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
 
           {/* Party sidebar */}
           <div className="bg-slate-800 rounded-lg border border-slate-700 overflow-hidden">
