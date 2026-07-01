@@ -45,7 +45,7 @@ export default async function DashboardPage() {
           </div>
           <div>
             <label className={labelCls}>Description</label>
-            <textarea name="description" rows={3} className={`${inputCls} resize-none`} />
+            <textarea spellCheck name="description" rows={3} className={`${inputCls} resize-none`} />
           </div>
           <button type="submit" className="rounded-md bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700">
             Create Campaign

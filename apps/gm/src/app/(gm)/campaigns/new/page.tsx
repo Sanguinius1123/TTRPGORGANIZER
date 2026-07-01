@@ -20,7 +20,7 @@ export default function NewCampaignPage() {
         </div>
         <div>
           <label className={label}>Description</label>
-          <textarea name="description" rows={4} className={`${input} resize-none`} />
+          <textarea spellCheck name="description" rows={4} className={`${input} resize-none`} />
         </div>
         <div className="flex gap-3 pt-2">
           <button type="submit" className="rounded-md bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700">
