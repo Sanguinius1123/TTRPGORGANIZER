@@ -11,4 +11,6 @@ export async function toggleWatch(pcId: string, entityType: string, entityId: st
     await supabase.from('pc_watches').insert({ pc_id: pcId, entity_type: entityType, entity_id: entityId })
   }
   revalidatePath('/play', 'layout')
+  revalidatePath('/play/watchlist')
+  revalidatePath('/watch-overview')
 }

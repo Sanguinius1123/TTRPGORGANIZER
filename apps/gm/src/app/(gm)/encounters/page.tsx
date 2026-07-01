@@ -34,17 +34,21 @@ export default async function EncountersPage({ searchParams }: { searchParams: S
   if (!campaignId) redirect('/')
   const supabase = db()
 
-  const results = await Promise.all([
-    supabase.from('encounters').select('*, location:location_id(id, name)').eq('campaign_id', campaignId).order('created_at', { ascending: false }),
-    supabase.from('encounter_participants').select('encounter_id, role, dr, count'),
-    supabase.from('session_encounters').select('encounter_id, session_id'),
-    supabase.from('sessions').select('id, session_number'),
-  ])
+  const encResult = await supabase.from('encounters').select('*, location:location_id(id, name)').eq('campaign_id', campaignId).order('created_at', { ascending: false })
+  let encounters = (encResult.data ?? []) as unknown as EncounterRow[]
+  const encounterIds = encounters.map(e => e.id)
 
-  let encounters = (results[0].data ?? []) as unknown as EncounterRow[]
-  const participants = (results[1].data ?? []) as ParticipantDr[]
-  const sessionLinks = (results[2].data ?? []) as SessionLink[]
-  const sessions     = (results[3].data ?? []) as SessionRow[]
+  const [partResult, linkResult, sessResult] = encounterIds.length > 0
+    ? await Promise.all([
+        supabase.from('encounter_participants').select('encounter_id, role, dr, count').in('encounter_id', encounterIds),
+        supabase.from('session_encounters').select('encounter_id, session_id').in('encounter_id', encounterIds),
+        supabase.from('sessions').select('id, session_number').eq('campaign_id', campaignId),
+      ])
+    : [{ data: [] }, { data: [] }, { data: [] }]
+
+  const participants = (partResult.data ?? []) as ParticipantDr[]
+  const sessionLinks = (linkResult.data ?? []) as SessionLink[]
+  const sessions     = (sessResult.data ?? []) as SessionRow[]
 
   // Filter by status
   if (params.status) encounters = encounters.filter(e => e.status === params.status)

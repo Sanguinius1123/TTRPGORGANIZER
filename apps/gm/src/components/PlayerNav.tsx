@@ -69,7 +69,7 @@ export function PlayerNav({ displayName, isGm }: { displayName: string; isGm: bo
                 key={child.href}
                 href={child.href}
                 className={`flex items-center pl-7 pr-3 py-1.5 rounded-md text-xs transition-colors ${
-                  pathname === child.href
+                  pathname === child.href || pathname.startsWith(child.href + '/')
                     ? 'text-indigo-400 font-medium'
                     : 'text-slate-500 hover:text-slate-300'
                 }`}
