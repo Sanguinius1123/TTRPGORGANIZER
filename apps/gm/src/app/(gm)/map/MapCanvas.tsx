@@ -686,7 +686,7 @@ function MapCanvasInner({
       description: null,
       parent_location_id: mapLocationId,
       image_url: null,
-      visible: false,
+      visible: true,
       map_x: creationMenu.flowX,
       map_y: creationMenu.flowY,
       waypoint: true,
@@ -961,7 +961,7 @@ function MapCanvasInner({
             deleteKeyCode={null}
           >
             <Background variant={BackgroundVariant.Dots} color="#1e293b" gap={24} />
-            <Controls />
+            <Controls style={{ background: '#1e293b', border: '1px solid #334155', borderRadius: 6 }} />
             <MiniMap
               nodeColor={(node) => {
                 const d = node.data as LocationData
@@ -969,6 +969,7 @@ function MapCanvasInner({
                 return d.visible ? (d.nodeColor || '#475569') : '#1e293b'
               }}
               maskColor="rgba(15, 23, 42, 0.7)"
+              style={{ background: '#1e293b', border: '1px solid #334155' }}
             />
           </ReactFlow>
 
@@ -1094,6 +1095,7 @@ function MapCanvasInner({
                     setCreationMenu(null)
                   }}>
                     <input
+                      spellCheck
                       name="locName"
                       autoFocus
                       placeholder="Name…"
@@ -1214,6 +1216,7 @@ function MapCanvasInner({
               <div className="mb-2">
                 <label className="text-xs text-slate-400 block mb-1">Travel Unit</label>
                 <input
+                  spellCheck
                   value={localConfig.travelUnit}
                   onChange={e => setLocalConfig(prev => ({ ...prev, travelUnit: e.target.value }))}
                   placeholder="light years, days, AU…"
@@ -1353,6 +1356,7 @@ function MapCanvasInner({
               <div className="mb-2">
                 <label className="text-xs text-slate-400 block mb-1">Travel Time</label>
                 <input
+                  spellCheck
                   value={edgeTravelTime}
                   onChange={e => setEdgeTravelTime(e.target.value)}
                   onBlur={e => saveEdgeTravelTime(e.target.value)}

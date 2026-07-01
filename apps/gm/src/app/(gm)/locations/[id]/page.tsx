@@ -99,7 +99,7 @@ export default async function LocationPage({ params }: { params: Promise<{ id: s
         <input type="hidden" name="id" value={loc.id} />
         <div>
           <label className={label}>Name</label>
-          <input name="name" defaultValue={loc.name ?? ''} required className={input} />
+          <input spellCheck name="name" defaultValue={loc.name ?? ''} required className={input} />
         </div>
         <div className="grid grid-cols-2 gap-4">
           <div>
@@ -111,12 +111,12 @@ export default async function LocationPage({ params }: { params: Promise<{ id: s
           </div>
           <div>
             <label className={label}>Descriptor</label>
-            <input name="descriptor" defaultValue={loc.descriptor ?? ''} placeholder="Ocean World, Frontier Colony…" className={input} />
+            <input spellCheck name="descriptor" defaultValue={loc.descriptor ?? ''} placeholder="Ocean World, Frontier Colony…" className={input} />
           </div>
         </div>
         <div>
           <label className={label}>Status</label>
-          <input name="status" defaultValue={loc.status ?? ''} placeholder="active, abandoned…" className={input} />
+          <input spellCheck name="status" defaultValue={loc.status ?? ''} placeholder="active, abandoned…" className={input} />
         </div>
         <div>
           <label className={label}>Area</label>

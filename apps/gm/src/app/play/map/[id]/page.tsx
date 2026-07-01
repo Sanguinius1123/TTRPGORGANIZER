@@ -20,7 +20,7 @@ export default async function PlayerSubMapPage({ params, searchParams }: { param
   if (!rawLoc) notFound()
   const location = rawLoc as Location
 
-  const childLocsQ = supabase.from('locations').select('*').eq('parent_location_id', id).or('visible.eq.true,waypoint.eq.true').not('map_x', 'is', null)
+  const childLocsQ = supabase.from('locations').select('*').eq('parent_location_id', id).eq('visible', true).not('map_x', 'is', null)
   const [locsRes, configRes] = await Promise.all([
     campaignId ? childLocsQ.eq('campaign_id', campaignId).order('name') : childLocsQ.order('name'),
     supabase.from('map_configs').select('*').eq('location_id', id).maybeSingle(),

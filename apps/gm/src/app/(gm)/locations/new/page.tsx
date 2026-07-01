@@ -42,7 +42,7 @@ export default async function NewLocationPage({
         <input type="hidden" name="campaign_id" value={campaignId} />
         <div>
           <label className={label}>Name <span className="text-red-500">*</span></label>
-          <input name="name" required className={input} autoFocus />
+          <input spellCheck name="name" required className={input} autoFocus />
         </div>
         <div className="grid grid-cols-2 gap-4">
           <div>
@@ -54,16 +54,16 @@ export default async function NewLocationPage({
           </div>
           <div>
             <label className={label}>Descriptor</label>
-            <input name="descriptor" placeholder="Ocean World, Frontier Colony…" className={input} />
+            <input spellCheck name="descriptor" placeholder="Ocean World, Frontier Colony…" className={input} />
           </div>
         </div>
         <div>
           <label className={label}>Status</label>
-          <input name="status" placeholder="active, abandoned, destroyed…" className={input} />
+          <input spellCheck name="status" placeholder="active, abandoned, destroyed…" className={input} />
         </div>
         <div>
           <label className={label}>Area</label>
-          <input name="area" placeholder="Relative position within parent (e.g. near the harbour)" className={input} />
+          <input spellCheck name="area" placeholder="Relative position within parent (e.g. near the harbour)" className={input} />
         </div>
         <div>
           <label className={label}>Parent Location</label>

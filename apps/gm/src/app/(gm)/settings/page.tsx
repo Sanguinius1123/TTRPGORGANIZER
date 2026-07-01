@@ -36,6 +36,7 @@ export default async function SettingsPage() {
           <div className="flex-1">
             <label className="block text-xs text-slate-400 mb-1">Access code</label>
             <input
+              spellCheck
               name="registration_code"
               defaultValue={registrationCode}
               className="w-full rounded-md bg-slate-700 border border-slate-600 px-3 py-2 text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400"

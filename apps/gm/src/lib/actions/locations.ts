@@ -112,7 +112,7 @@ export async function createWaypoint(
   const supabase = db()
   const { data, error } = await supabase
     .from('locations')
-    .insert({ name: null, waypoint: true, map_x, map_y, terrain, path_modifiers: [], parent_location_id, campaign_id, visible: false })
+    .insert({ name: null, waypoint: true, map_x, map_y, terrain, path_modifiers: [], parent_location_id, campaign_id, visible: true })
     .select('id')
     .single()
   if (error) throw new Error(error.message)
