@@ -6,6 +6,21 @@ import { redirect } from 'next/navigation'
 import { CAMPAIGN_COOKIE } from '@/lib/activeCampaign'
 import type { Campaign } from '@ttrpg/db'
 
+export async function deleteCampaign(formData: FormData) {
+  const id = formData.get('campaign_id') as string
+  if (!id) return
+  const supabase = db()
+  await supabase.from('campaigns').delete().eq('id', id)
+  // Clear the active campaign cookie if it pointed to the deleted campaign
+  const store = await cookies()
+  if (store.get(CAMPAIGN_COOKIE)?.value === id) {
+    store.delete(CAMPAIGN_COOKIE)
+  }
+  revalidatePath('/settings')
+  revalidatePath('/')
+  redirect('/settings')
+}
+
 export async function getCampaigns(): Promise<Campaign[]> {
   const supabase = db()
   const { data } = await supabase.from('campaigns').select('*').order('created_at')
