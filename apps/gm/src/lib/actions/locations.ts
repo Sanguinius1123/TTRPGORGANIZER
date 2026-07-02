@@ -30,6 +30,55 @@ export async function createLocation(formData: FormData) {
 export async function updateLocation(formData: FormData) {
   const supabase = db()
   const id = formData.get('id') as string
+  const newParentId = (formData.get('parent_location_id') as string) || null
+
+  // Read current location to detect parent change
+  const { data: currentLocRaw } = await supabase
+    .from('locations')
+    .select('parent_location_id, campaign_id')
+    .eq('id', id)
+    .single()
+  const currentLoc = currentLocRaw as { parent_location_id: string | null; campaign_id: string } | null
+
+  const oldParentId = currentLoc?.parent_location_id ?? null
+  const campaignId  = currentLoc?.campaign_id ?? null
+
+  const parentChanged = newParentId !== oldParentId
+
+  // Always clear coordinates when parent map changes — coordinates refer to the old map
+  const extraFields: { map_x?: null; map_y?: null } = parentChanged
+    ? { map_x: null, map_y: null }
+    : {}
+
+  if (parentChanged && newParentId !== null) {
+    // Fetch the new parent's own parent to determine which map it lives on
+    const { data: newParentRaw } = await supabase
+      .from('locations')
+      .select('parent_location_id')
+      .eq('id', newParentId)
+      .single()
+    const newParentLoc = newParentRaw as { parent_location_id: string | null } | null
+    const newParentParentId = newParentLoc?.parent_location_id ?? null
+
+    if (newParentParentId === oldParentId) {
+      // Rule A — sibling → submap: the new parent lives on the same map as this location.
+      // Enable has_submap on the new parent so this location drills into it.
+      await supabase
+        .from('locations')
+        .update({ has_submap: true })
+        .eq('id', newParentId)
+    } else if (oldParentId === null && campaignId !== null) {
+      // Rule B — higher-level parent cascade: this location was on the root map.
+      // Move ALL other root-level locations in the same campaign under the new parent.
+      await supabase
+        .from('locations')
+        .update({ parent_location_id: newParentId, map_x: null, map_y: null })
+        .is('parent_location_id', null)
+        .eq('campaign_id', campaignId)
+        .neq('id', id)
+    }
+    // Otherwise (moving from one non-root submap to another): just clear map_x/map_y (already in extraFields)
+  }
 
   const { error } = await supabase
     .from('locations')
@@ -40,20 +89,25 @@ export async function updateLocation(formData: FormData) {
       status: (formData.get('status') as string) || null,
       area: (formData.get('area') as string) || null,
       description: (formData.get('description') as string) || null,
-      parent_location_id: (formData.get('parent_location_id') as string) || null,
+      parent_location_id: newParentId,
+      ...extraFields,
     })
     .eq('id', id)
 
   if (error) throw new Error(error.message)
   revalidatePath(`/locations/${id}`)
   revalidatePath('/locations')
+  revalidatePath('/map')
 }
 
 export async function deleteLocation(formData: FormData) {
   const supabase = db()
   const id = formData.get('id') as string
+  // Clean up orphaned watches before deleting the entity
+  await supabase.from('pc_watches').delete().eq('entity_type', 'location').eq('entity_id', id)
   const { error } = await supabase.from('locations').delete().eq('id', id)
   if (error) throw new Error(error.message)
+  revalidatePath('/watch-overview')
   redirect('/locations')
 }
 

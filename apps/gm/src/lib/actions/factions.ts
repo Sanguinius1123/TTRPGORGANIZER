@@ -48,8 +48,11 @@ export async function updateFaction(formData: FormData) {
 export async function deleteFaction(formData: FormData) {
   const supabase = db()
   const id = formData.get('id') as string
+  // Clean up orphaned watches before deleting the entity
+  await supabase.from('pc_watches').delete().eq('entity_type', 'faction').eq('entity_id', id)
   const { error } = await supabase.from('factions').delete().eq('id', id)
   if (error) throw new Error(error.message)
+  revalidatePath('/watch-overview')
   redirect('/factions')
 }
 
