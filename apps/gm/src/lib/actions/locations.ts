@@ -45,13 +45,11 @@ export async function updateLocation(formData: FormData) {
 
   const parentChanged = newParentId !== oldParentId
 
-  // Always clear coordinates when parent map changes — coordinates refer to the old map
-  const extraFields: { map_x?: null; map_y?: null } = parentChanged
-    ? { map_x: null, map_y: null }
-    : {}
+  // Rule B preserves coordinates (the whole map becomes the submap in-place).
+  // Rule A and all other parent changes clear coordinates (location moves to a different canvas).
+  let clearCoords = parentChanged
 
   if (parentChanged && newParentId !== null) {
-    // Fetch the new parent's own parent to determine which map it lives on
     const { data: newParentRaw } = await supabase
       .from('locations')
       .select('parent_location_id')
@@ -61,24 +59,24 @@ export async function updateLocation(formData: FormData) {
     const newParentParentId = newParentLoc?.parent_location_id ?? null
 
     if (newParentParentId === oldParentId) {
-      // Rule A — sibling → submap: the new parent lives on the same map as this location.
-      // Enable has_submap on the new parent so this location drills into it.
-      await supabase
-        .from('locations')
-        .update({ has_submap: true })
-        .eq('id', newParentId)
+      // Rule A — sibling → submap: new parent is on the same map as this location.
+      // Enable has_submap on the new parent; clear this location's coords (moves to its submap).
+      await supabase.from('locations').update({ has_submap: true }).eq('id', newParentId)
     } else if (oldParentId === null && campaignId !== null) {
-      // Rule B — higher-level parent cascade: this location was on the root map.
-      // Move ALL other root-level locations in the same campaign under the new parent.
+      // Rule B — whole-map reparent: this location was on the root map.
+      // The existing map becomes the submap of the new parent — preserve all coordinates.
+      clearCoords = false
+      await supabase.from('locations').update({ has_submap: true }).eq('id', newParentId)
       await supabase
         .from('locations')
-        .update({ parent_location_id: newParentId, map_x: null, map_y: null })
+        .update({ parent_location_id: newParentId })
         .is('parent_location_id', null)
         .eq('campaign_id', campaignId)
         .neq('id', id)
     }
-    // Otherwise (moving from one non-root submap to another): just clear map_x/map_y (already in extraFields)
   }
+
+  const extraFields: { map_x?: null; map_y?: null } = clearCoords ? { map_x: null, map_y: null } : {}
 
   const { error } = await supabase
     .from('locations')
