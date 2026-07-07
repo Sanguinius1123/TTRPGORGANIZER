@@ -17,6 +17,10 @@ const LOCATION_TYPES = [
   'Government', 'Prison', 'Guild / Organization', 'Workshop',
   'Research / Laboratory', 'Medical / Healthcare', 'Entertainment', 'Transport Hub',
   'POI',
+  // Internal scale
+  'Room', 'Corridor', 'Chamber', 'Vault', 'Common Area', 'Barracks',
+  'Cell', 'Storage', 'Airlock', 'Bridge', 'Cargo Hold', 'Engineering',
+  'Access Tunnel', 'Medical Bay', 'Armory',
 ]
 
 interface SubLocation { id: string; name: string; type: string | null; visible: boolean }

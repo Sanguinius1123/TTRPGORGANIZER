@@ -78,6 +78,22 @@ const TYPE_COLORS: Record<string, string> = {
   'Transport Hub': '#ea580c',
   'POI': '#7c3aed',
   'Planetoid': '#78716c',
+  // Internal scale
+  'Room': '#64748b',
+  'Corridor': '#475569',
+  'Chamber': '#7c3aed',
+  'Vault': '#b45309',
+  'Common Area': '#0369a1',
+  'Barracks': '#dc2626',
+  'Cell': '#7f1d1d',
+  'Storage': '#78716c',
+  'Airlock': '#0e7490',
+  'Bridge': '#1d4ed8',
+  'Cargo Hold': '#92400e',
+  'Engineering': '#d97706',
+  'Access Tunnel': '#334155',
+  'Medical Bay': '#be185d',
+  'Armory': '#991b1b',
 }
 
 const TYPE_SYMBOLS: Record<string, string> = {
@@ -105,6 +121,22 @@ const TYPE_SYMBOLS: Record<string, string> = {
   'Transport Hub': '⊛',
   'POI': '◈',
   'Planetoid': '●',
+  // Internal scale
+  'Room': '▭',
+  'Corridor': '▬',
+  'Chamber': '⬡',
+  'Vault': '▣',
+  'Common Area': '⊞',
+  'Barracks': '▤',
+  'Cell': '▨',
+  'Storage': '◫',
+  'Airlock': '⊙',
+  'Bridge': '◈',
+  'Cargo Hold': '▥',
+  'Engineering': '⚙',
+  'Access Tunnel': '▬',
+  'Medical Bay': '✚',
+  'Armory': '▲',
 }
 
 type LocationData = {
@@ -599,8 +631,10 @@ function MapCanvasInner({
     })
   }, [recomputeEdges, localConnections, setEdges])
 
+  const isLeafScale = currentScale === 'local' || currentScale === 'internal'
+
   const onNodeClickInternal = useCallback((id: string, data: LocationData) => {
-    if (currentScale !== 'local' && data.rawLoc.has_submap) {
+    if (!isLeafScale && data.rawLoc.has_submap) {
       router.push(`/map/${id}`)
     } else {
       router.push(`/locations/${id}`)
@@ -1006,7 +1040,7 @@ function MapCanvasInner({
                     </button>
 
                     {/* Anonymous waypoint — second */}
-                    {currentScale !== 'local' && (
+                    {!isLeafScale && (
                       <button
                         onClick={() => { setShowSubMenu(false); setCreationMenu(m => m ? { ...m, step: 'pick-terrain' } : null) }}
                         style={{ textAlign: 'left', padding: '5px 8px', borderRadius: 4, background: 'transparent', border: 'none', color: '#64748b', fontSize: 13, cursor: 'pointer' }}
@@ -1192,10 +1226,11 @@ function MapCanvasInner({
                   onChange={e => {
                     const scale = e.target.value
                     const unitDefaults: Record<string, { travelUnit: string; distanceScale: number }> = {
-                      galaxy: { travelUnit: 'LY',  distanceScale: 50 },
-                      system: { travelUnit: 'AU',  distanceScale: 20 },
-                      body:   { travelUnit: 'km',  distanceScale: 10 },
-                      local:  { travelUnit: 'min', distanceScale: 5  },
+                      galaxy:    { travelUnit: 'LY',  distanceScale: 50 },
+                      system:    { travelUnit: 'AU',  distanceScale: 20 },
+                      body:      { travelUnit: 'km',  distanceScale: 10 },
+                      local:     { travelUnit: 'min', distanceScale: 5  },
+                      internal:  { travelUnit: 'm',   distanceScale: 2  },
                     }
                     const defaults = unitDefaults[scale]
                     setLocalConfig(prev => ({
@@ -1212,6 +1247,7 @@ function MapCanvasInner({
                   <option value="system">System</option>
                   <option value="body">Body</option>
                   <option value="local">Local</option>
+                  <option value="internal">Internal</option>
                 </select>
               </div>
               <div className="mb-2">
@@ -1290,7 +1326,7 @@ function MapCanvasInner({
                       />
                       Mystery
                     </label>
-                    {currentScale !== 'local' && (
+                    {!isLeafScale && (
                       <>
                         <label className="flex items-center gap-2 text-xs text-slate-300 cursor-pointer hover:bg-slate-700 rounded px-2 py-1.5">
                           <input
@@ -1312,7 +1348,7 @@ function MapCanvasInner({
                     )}
                   </>
                 )}
-                {(currentScale === 'body' || currentScale === 'local') && PATH_MODIFIER_LIST.length > 0 && (
+                {(currentScale === 'body' || currentScale === 'local' || currentScale === 'internal') && PATH_MODIFIER_LIST.length > 0 && (
                   <div className="mt-1 pt-1 border-t border-slate-700">
                     <div className="text-[10px] text-slate-500 px-2 py-1 uppercase tracking-wide">Path Modifiers</div>
                     {PATH_MODIFIER_LIST.map(p => (

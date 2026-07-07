@@ -13,6 +13,11 @@ export const SCALE_TYPES: Record<string, string[]> = {
     'Research / Laboratory', 'Medical / Healthcare', 'Entertainment',
     'Transport Hub', 'Fortification', 'POI',
   ],
+  internal: [
+    'Room', 'Corridor', 'Chamber', 'Vault', 'Common Area', 'Barracks',
+    'Cell', 'Storage', 'Airlock', 'Bridge', 'Cargo Hold', 'Engineering',
+    'Access Tunnel', 'Medical Bay', 'Armory', 'POI',
+  ],
 }
 
 export const TERRAIN_MULT: Record<string, number> = {
