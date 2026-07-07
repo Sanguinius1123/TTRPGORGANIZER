@@ -1270,18 +1270,27 @@ function MapCanvasInner({
                     Details
                   </button>
                 )}
-                {currentScale !== 'local' && (
+                <label className="flex items-center gap-2 text-xs text-slate-300 cursor-pointer hover:bg-slate-700 rounded px-2 py-1.5">
+                  <input
+                    type="checkbox"
+                    checked={nodeMenu.nodeData.rawLoc.visible}
+                    onChange={() => handleToggleVisibility(nodeMenu.nodeId, !nodeMenu.nodeData.rawLoc.visible)}
+                    className="accent-emerald-500"
+                  />
+                  Visible to players
+                </label>
+                {!nodeMenu.nodeData.waypoint && (
                   <>
                     <label className="flex items-center gap-2 text-xs text-slate-300 cursor-pointer hover:bg-slate-700 rounded px-2 py-1.5">
                       <input
                         type="checkbox"
-                        checked={nodeMenu.nodeData.rawLoc.visible}
-                        onChange={() => handleToggleVisibility(nodeMenu.nodeId, !nodeMenu.nodeData.rawLoc.visible)}
-                        className="accent-emerald-500"
+                        checked={nodeMenu.nodeData.rawLoc.mystery}
+                        onChange={() => handleToggleMystery(nodeMenu.nodeId, !nodeMenu.nodeData.rawLoc.mystery)}
+                        className="accent-purple-500"
                       />
-                      Visible to players
+                      Mystery
                     </label>
-                    {!nodeMenu.nodeData.waypoint && (
+                    {currentScale !== 'local' && (
                       <>
                         <label className="flex items-center gap-2 text-xs text-slate-300 cursor-pointer hover:bg-slate-700 rounded px-2 py-1.5">
                           <input
@@ -1299,15 +1308,6 @@ function MapCanvasInner({
                         >
                           Open Sub-map
                         </button>
-                        <label className="flex items-center gap-2 text-xs text-slate-300 cursor-pointer hover:bg-slate-700 rounded px-2 py-1.5">
-                          <input
-                            type="checkbox"
-                            checked={nodeMenu.nodeData.rawLoc.mystery}
-                            onChange={() => handleToggleMystery(nodeMenu.nodeId, !nodeMenu.nodeData.rawLoc.mystery)}
-                            className="accent-purple-500"
-                          />
-                          Mystery
-                        </label>
                       </>
                     )}
                   </>
