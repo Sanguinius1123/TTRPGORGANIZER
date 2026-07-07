@@ -11,7 +11,6 @@ Features and functionality that need to be designed and coded.
 - **NPC portrait / image upload** — Supabase Storage bucket needs to be set up; then hook into the NPC detail form.
 - **POI / local-scale location type expansion** — currently reuses the existing type list. Consider adding room/corridor/chamber/vault types for dungeon and interior maps.
 - **@mention Tiptap upgrade** — replace the custom `MentionTextarea` with a Tiptap rich-text editor; `@` triggers autocomplete across all entity types.
-- **Shared dice roller** — real-time dice rolling visible to all players and the GM. Needs design: live (WebSocket/Supabase Realtime) vs. session-logged (rolls stored in DB and shown on session page). Could live as a floating widget or a dedicated page. Decide whether rolls are ephemeral or persistent before building.
 
 ---
 
@@ -29,7 +28,7 @@ Before generating any content, a Campaign Bible (`CLAUDE-campaign-[name].md`) mu
 
 ### Active campaigns
 
-- **Sci-fi campaign (unnamed)** — ideas and notes exist in conversation but no Campaign Bible yet. Next step: sit down and convert existing thoughts into a `CLAUDE-campaign-scifi.md` file, then begin Tier 1 broad-strokes generation. Setting is original sci-fi; system TBD.
+- **Sci-fi campaign** — Campaign Bible in progress (active conversation). Cyberpunk/dystopian planet start, system exploration mid-game, interstellar late-game. System TBD. Next step: finalize Bible answers then Tier 1 generation.
 
 ### Ideas & seeds
 
