@@ -454,6 +454,23 @@ export interface Database {
         Update: Partial<Database['public']['Tables']['plot_thread_characters']['Insert']>
         Relationships: []
       }
+      dice_rolls: {
+        Row: {
+          id: string
+          campaign_id: string
+          session_id: string | null
+          rolled_by_pc_id: string | null
+          rolled_by_name: string
+          dice_notation: string
+          individual_rolls: number[]
+          total: number
+          description: string | null
+          created_at: string
+        }
+        Insert: Partial<Omit<Database['public']['Tables']['dice_rolls']['Row'], 'id' | 'created_at'>>
+        Update: Partial<Database['public']['Tables']['dice_rolls']['Insert']>
+        Relationships: []
+      }
       profiles: {
         Row: {
           id: string
@@ -520,3 +537,4 @@ export type PlotThreadCharacter   = Tables<'plot_thread_characters'>
 export type Profile               = Tables<'profiles'>
 export type Setting               = Tables<'settings'>
 export type PCWatch               = Tables<'pc_watches'>
+export type DiceRoll              = Tables<'dice_rolls'>
