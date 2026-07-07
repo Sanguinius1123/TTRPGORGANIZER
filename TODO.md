@@ -5,6 +5,7 @@
 ## To-Add
 Features and functionality that need to be designed and coded.
 
+- **GM Notes on NPCs + Factions** — same pattern as `locations.gm_notes`: amber-bordered textarea in GM detail/new pages, excluded from all player portal queries. Good for voice/behavior/triggers on NPCs, secret internal goals on factions.
 - **Item category + descriptor** — add category dropdown (weapon, armour, consumable, tool, currency, relic, document, vehicle, misc) and a Descriptor field to the Items entity. Confirm the category list before implementing.
 - **Shop inventory management UI** — the `shop_inventory` schema already exists; no GM UI yet for adding, editing, or removing items from a shop. Needs design discussion before building.
 - **Map background image** — `map_background_url` on `map_configs`. Canvas renders it behind nodes. Intended workflow: place nodes → export PNG → trace in Wonderdraft → upload art URL → nodes sit on the real map.
@@ -28,7 +29,7 @@ Before generating any content, a Campaign Bible (`CLAUDE-campaign-[name].md`) mu
 
 ### Active campaigns
 
-- **Sci-fi campaign** — Campaign Bible in progress (active conversation). Cyberpunk/dystopian planet start, system exploration mid-game, interstellar late-game. System TBD. Next step: finalize Bible answers then Tier 1 generation.
+- **Sci-fi campaign (Foxtrot Cluster)** — Campaign Bible complete (`CLAUDE-campaign-scifi.md`). Tier 1 content generated: 10 factions, 23 locations (Holt System + planets + Songah districts), 8 NPCs, 5 lore entries. All visible=false. Next steps: place locations on the map (Holt System scale then Sonhandra scale), generate Tier 2 content (encounters, more NPCs, items, sessions), and write the Session 1 train heist encounter.
 
 ### Ideas & seeds
 

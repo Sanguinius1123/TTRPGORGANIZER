@@ -121,10 +121,11 @@ campaigns           (id, name, description, created_at)
 
 -- Core entities
 factions            (id, name, parent_faction_id FK self, disposition, goal, description, image_url, visible, species text, culture text, campaign_id FK, created_at)
-locations           (id, name text|null, type, descriptor, status, area, description, parent_location_id FK self,
-                     image_url, visible, map_x float, map_y float, waypoint bool, terrain text,
-                     path_modifiers text[], has_submap bool DEFAULT false, mystery bool DEFAULT false, created_at)
+locations           (id, name text|null, type, descriptor, status, area, description, gm_notes text,
+                     parent_location_id FK self, image_url, visible, map_x float, map_y float, waypoint bool,
+                     terrain text, path_modifiers text[], has_submap bool DEFAULT false, mystery bool DEFAULT false, created_at)
                     -- name is nullable (waypoints have no name)
+                    -- gm_notes: GM-only field; never queried or rendered by player portal pages
                     -- map_x/map_y: NULL = not placed on canvas
                     -- waypoint: true = anonymous routing dot, no name; shown on player map but excluded from player locations list
                     -- has_submap: true = clicking this node on the map drills into /map/[id]
@@ -178,7 +179,7 @@ settings  (key, value)  -- registration_code stored here
 ```
 Trigger `handle_new_user()` fires on `auth.users` INSERT — creates profile, auto-sets is_gm + is_admin for `macarthur1123@gmail.com`.
 
-**Visibility model:** `visible` boolean on most tables (GM toggles to expose to players). `revealed` boolean on `npc_facts` (per-fact granularity). `has_submap` on `locations` (per-location map drill-down). `mystery` on `locations` (shows as `???` on player map, excluded from list/detail).
+**Visibility model:** `visible` boolean on most tables (GM toggles to expose to players). `revealed` boolean on `npc_facts` (per-fact granularity). `has_submap` on `locations` (per-location map drill-down). `mystery` on `locations` (shows as `???` on player map, excluded from list/detail). `gm_notes` on `locations` (GM-only text field; player portal pages use explicit column selects that omit it).
 
 **"Unknown" convention:** `NULL` means unknown/nowhere for all location FKs. Never create a fake "Unknown" location row. UI displays `NULL` as "Unknown" or "Nomadic" depending on context.
 
@@ -205,7 +206,7 @@ Trigger `handle_new_user()` fires on `auth.users` INSERT — creates profile, au
 | **Timeline** | `/lore/timeline` | — | — |
 
 ### Key features per detail page
-- **Locations**: edit form, visibility toggle, parent location selector, sub-locations table, shops list; name is nullable (waypoints)
+- **Locations**: edit form, visibility toggle, mystery toggle, parent location selector, sub-locations table, shops list; name is nullable (waypoints); amber GM Notes section (gm_notes field, never shown to players)
 - **NPCs**: edit form, visibility toggle, facts section with per-fact `revealed` checkbox, faction membership chips
 - **Factions**: edit form, visibility toggle, parent faction selector, sub-factions table, NPC members table
 - **Encounters**: edit form, status selector, linked location/session, participant table with Add Participant form
@@ -409,12 +410,23 @@ const sessions  = (results[1].data ?? []) as Array<{ id: string; session_number:
 ### 6. onPaneContextMenu type
 `onPaneContextMenu` expects `(event: MouseEvent | React.MouseEvent) => void` — must accept both types.
 
+## Dice roller
+
+Floating, minimizable dice roller widget available on all pages in both GM and player portals.
+
+- **Files**: `apps/gm/src/components/DiceRoller.tsx`, `apps/gm/src/lib/actions/diceRolls.ts`
+- **DB table**: `dice_rolls` (campaign_id, session_id nullable, rolled_by_pc_id nullable, rolled_by_name, dice_notation, individual_rolls int[], total, description, hidden bool, created_at)
+- **GM mode**: uses service role; rolled_by_name = 'GM'; "Secret roll" checkbox sets `hidden=true`; GM sees all rolls including hidden (marked 🔒)
+- **Player mode**: uses anon client (RLS); "Private roll (GM only)" checkbox sets `hidden=true`; players only fetch non-hidden rolls via RLS (`hidden = false` SELECT policy)
+- **RLS**: service role bypasses RLS (no policy needed). Anon/authenticated users: SELECT only `hidden = false`. INSERT only if `rolled_by_pc_id` matches their own profile's PCs.
+- **Recent rolls**: loaded on mount; new non-hidden rolls prepended to local state; notation/description cleared after roll
+
 ## Next steps (priority order)
 
-1. **Item category + descriptor** — add category dropdown (weapon, armour, consumable, tool, currency, relic, document, vehicle, misc) and Descriptor field to Items. Confirm list before implementing.
-2. **Shop inventory management UI** — schema exists (`shop_inventory`), no GM UI yet for adding/editing items in a shop. Discuss design before building.
-3. **Map background image** — `map_background_url` column on `map_configs` (or settings). React Flow renders it behind nodes. Workflow: place nodes → Export PNG → trace in Wonderdraft → upload art URL → nodes sit on real map.
-4. **@mention Tiptap upgrade** — replace MentionTextarea with Tiptap rich-text editor; `@` triggers autocomplete across all entity types.
-5. **NPC portrait / image upload** — needs Supabase Storage setup.
-6. **Live spellcheck** — add `spellCheck` attribute to all textarea/input fields (browser-native).
+1. **GM Notes on NPCs + Factions** — same pattern as `locations.gm_notes`: `gm_notes text` column, amber section in GM detail/new pages, excluded from player portal selects. NPCs especially need this for voice/behavior/triggers vs public description.
+2. **Item category + descriptor** — add category dropdown (weapon, armour, consumable, tool, currency, relic, document, vehicle, misc) and Descriptor field to Items. Confirm list before implementing.
+3. **Shop inventory management UI** — schema exists (`shop_inventory`), no GM UI yet for adding/editing items in a shop. Discuss design before building.
+4. **Map background image** — `map_background_url` column on `map_configs` (or settings). React Flow renders it behind nodes. Workflow: place nodes → Export PNG → trace in Wonderdraft → upload art URL → nodes sit on real map.
+5. **@mention Tiptap upgrade** — replace MentionTextarea with Tiptap rich-text editor; `@` triggers autocomplete across all entity types.
+6. **NPC portrait / image upload** — needs Supabase Storage setup.
 7. **POI-scale type list expansion** — currently uses existing location types. May want room/corridor/chamber/etc. types for dungeon/interior maps.
