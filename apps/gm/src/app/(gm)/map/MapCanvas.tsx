@@ -694,6 +694,7 @@ function MapCanvasInner({
       path_modifiers: waypointPaths,
       has_submap: false,
       mystery: false,
+      gm_notes: null,
       campaign_id: campaignId,
       created_at: new Date().toISOString(),
     }

@@ -31,7 +31,7 @@ export default async function LocationsPage({ searchParams }: { searchParams: Se
 
   const [locResult, parentResult] = await Promise.all([
     (() => {
-      let q = supabase.from('locations').select('*, parent:parent_location_id(id, name)').eq('visible', true).eq('mystery', false).neq('waypoint', true)
+      let q = supabase.from('locations').select('id, name, type, descriptor, status, area, parent:parent_location_id(id, name)').eq('visible', true).eq('mystery', false).neq('waypoint', true)
       if (campaignId) q = q.eq('campaign_id', campaignId)
       q = q.order('name')
       if (params.type) q = q.ilike('type', `%${params.type}%`)

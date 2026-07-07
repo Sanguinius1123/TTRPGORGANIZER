@@ -13,7 +13,7 @@ export default async function LocationDetailPage({ params }: { params: Promise<{
   const activePcId = await getActivePcId()
 
   const results = await Promise.all([
-    supabase.from('locations').select('*').eq('id', id).eq('visible', true).eq('mystery', false).single(),
+    supabase.from('locations').select('id, name, type, descriptor, status, area, description, parent_location_id, image_url, visible, map_x, map_y, waypoint, terrain, path_modifiers, has_submap, mystery, campaign_id, created_at').eq('id', id).eq('visible', true).eq('mystery', false).single(),
     supabase.from('locations').select('id, name').eq('parent_location_id', id).eq('visible', true).eq('mystery', false).neq('waypoint', true).order('name'),
     supabase.from('shops').select('*').eq('location_id', id),
   ])

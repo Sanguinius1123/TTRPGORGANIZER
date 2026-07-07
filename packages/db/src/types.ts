@@ -47,6 +47,7 @@ export interface Database {
           path_modifiers: string[]
           has_submap: boolean
           mystery: boolean
+          gm_notes: string | null
           campaign_id: string
           created_at: string
         }
