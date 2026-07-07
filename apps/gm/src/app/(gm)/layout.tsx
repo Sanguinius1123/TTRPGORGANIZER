@@ -3,6 +3,7 @@ import { createAnonClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import { cookies } from 'next/headers'
 import { Sidebar } from '@/components/Sidebar'
+import { DiceRoller } from '@/components/DiceRoller'
 import { CAMPAIGN_COOKIE } from '@/lib/activeCampaign'
 
 export default async function GmLayout({ children }: { children: React.ReactNode }) {
@@ -34,6 +35,7 @@ export default async function GmLayout({ children }: { children: React.ReactNode
     <div className="flex h-screen overflow-hidden bg-slate-900">
       <Sidebar isAdmin={profile.is_admin ?? false} activeCampaignName={activeCampaignName} />
       <main className="flex-1 overflow-y-auto">{children}</main>
+      <DiceRoller mode="gm" campaignId={activeCampaignId} />
     </div>
   )
 }

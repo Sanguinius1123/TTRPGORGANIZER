@@ -35,4 +35,5 @@ export type {
   Profile,
   Setting,
   PCWatch,
+  DiceRoll,
 } from './types'
