@@ -29,7 +29,7 @@ Before generating any content, a Campaign Bible (`CLAUDE-campaign-[name].md`) mu
 
 ### Active campaigns
 
-- **Sci-fi campaign (Foxtrot Cluster)** — Campaign Bible complete (`CLAUDE-campaign-scifi.md`). Tier 1 content generated: 10 factions, 23 locations (Holt System + planets + Songah districts), 8 NPCs, 5 lore entries. All visible=false. Next steps: place locations on the map (Holt System scale then Sonhandra scale), generate Tier 2 content (encounters, more NPCs, items, sessions), and write the Session 1 train heist encounter.
+- **Sci-fi campaign (Foxtrot Cluster)** — Campaign Bible complete (`CLAUDE-campaign-scifi.md`). Tier 1 content generated: 10 factions, 23+ locations (Holt System + planets + Songah districts + Mem surface), 8 NPCs, 5 lore entries. All visible=false. Mem surface fleshed out: Legion Outpost (military stronghold), The Holding Block (prison/labor camp), and 3 Harvest Platforms (Tol-Yan, Sel-Arak, Vur-Keth). Ocean terrain set on all Mem bodies so travel times calculate correctly. Next steps: place locations on the map (Holt System scale then Sonhandra/Mem scale), generate Tier 2 content (encounters, more NPCs, items, sessions), and write the Session 1 train heist encounter.
 
 ### Ideas & seeds
 
