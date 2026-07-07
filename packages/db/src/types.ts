@@ -465,6 +465,7 @@ export interface Database {
           individual_rolls: number[]
           total: number
           description: string | null
+          hidden: boolean
           created_at: string
         }
         Insert: Partial<Omit<Database['public']['Tables']['dice_rolls']['Row'], 'id' | 'created_at'>>

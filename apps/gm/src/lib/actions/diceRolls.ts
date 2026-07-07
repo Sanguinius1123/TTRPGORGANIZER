@@ -18,7 +18,7 @@ function parseDice(notation: string): { individual_rolls: number[]; total: numbe
 }
 
 // GM roll — uses service role, campaign from cookie
-export async function rollDiceGm(formData: FormData): Promise<{ roll: DiceRoll | null; error: string | null }> {
+export async function rollDiceGm(formData: FormData, hidden = false): Promise<{ roll: DiceRoll | null; error: string | null }> {
   const supabase = db()
   const notation = (formData.get('notation') as string ?? '').trim()
   const description = (formData.get('description') as string ?? '').trim() || null
@@ -38,6 +38,7 @@ export async function rollDiceGm(formData: FormData): Promise<{ roll: DiceRoll |
       individual_rolls: parsed.individual_rolls,
       total: parsed.total,
       description,
+      hidden,
     })
     .select()
     .single()
@@ -48,7 +49,7 @@ export async function rollDiceGm(formData: FormData): Promise<{ roll: DiceRoll |
 }
 
 // Player roll — uses anon client (RLS), pc_id from cookie
-export async function rollDicePlayer(formData: FormData, pcId: string, pcName: string): Promise<{ roll: DiceRoll | null; error: string | null }> {
+export async function rollDicePlayer(formData: FormData, pcId: string, pcName: string, hidden = false): Promise<{ roll: DiceRoll | null; error: string | null }> {
   const { createAnonClient } = await import('@/lib/supabase/server')
   const supabase = await createAnonClient()
   const notation = (formData.get('notation') as string ?? '').trim()
@@ -70,6 +71,7 @@ export async function rollDicePlayer(formData: FormData, pcId: string, pcName: s
       individual_rolls: parsed.individual_rolls,
       total: parsed.total,
       description,
+      hidden,
     })
     .select()
     .single()
@@ -78,8 +80,22 @@ export async function rollDicePlayer(formData: FormData, pcId: string, pcName: s
   return { roll: data as DiceRoll, error: null }
 }
 
+// GM sees all rolls (service role bypasses RLS hidden filter)
 export async function getRecentRolls(campaignId: string): Promise<DiceRoll[]> {
   const supabase = db()
+  const { data } = await supabase
+    .from('dice_rolls')
+    .select('*')
+    .eq('campaign_id', campaignId)
+    .order('created_at', { ascending: false })
+    .limit(20)
+  return (data ?? []) as DiceRoll[]
+}
+
+// Players only see non-hidden rolls (anon client, RLS filters hidden=true)
+export async function getRecentRollsPlayer(campaignId: string): Promise<DiceRoll[]> {
+  const { createAnonClient } = await import('@/lib/supabase/server')
+  const supabase = await createAnonClient()
   const { data } = await supabase
     .from('dice_rolls')
     .select('*')
