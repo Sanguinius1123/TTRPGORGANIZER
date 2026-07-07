@@ -488,19 +488,20 @@ function MapViewInner({ locations, connections, distanceScale, travelUnit, locat
                   (c.from_location_id === locId && c.to_location_id === nextId) ||
                   (c.bidirectional && c.to_location_id === locId && c.from_location_id === nextId)
                 )
-                let legCost = 0
+                let legCostLabel = ''
                 if (conn) {
                   if (conn.travel_time_manual && conn.travel_time) {
-                    legCost = parseFloat(conn.travel_time) || 0
+                    legCostLabel = conn.travel_time
                   } else {
                     const a = locById.get(locId)
                     const b = locById.get(nextId)
                     if (a?.map_x != null && a.map_y != null && b?.map_x != null && b?.map_y != null) {
-                      legCost = calcTravelCost(
+                      const cost = calcTravelCost(
                         a.map_x, a.map_y, a.terrain ?? null, a.path_modifiers ?? [],
                         b.map_x, b.map_y, b.terrain ?? null, b.path_modifiers ?? [],
                         distanceScale
                       )
+                      legCostLabel = cost > 0 ? `${cost} ${travelUnit}` : ''
                     }
                   }
                 }
@@ -508,7 +509,7 @@ function MapViewInner({ locations, connections, distanceScale, travelUnit, locat
                   <div key={locId}>
                     <div className="text-xs text-slate-200 py-0.5">{loc?.name ?? '(unnamed)'}</div>
                     <div className="text-[10px] text-slate-500 pl-2 py-0.5">
-                      ↓ {legCost} {travelUnit}
+                      ↓ {legCostLabel}
                     </div>
                   </div>
                 )

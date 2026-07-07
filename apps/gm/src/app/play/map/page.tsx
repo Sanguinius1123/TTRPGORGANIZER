@@ -14,8 +14,11 @@ export default async function MapPage({ searchParams }: { searchParams: Promise<
     supabase.from('map_configs').select('*').is('location_id', null).maybeSingle(),
   ])
 
-  const locations = (locsRes.data ?? []) as Location[]
+  const rawLocations = (locsRes.data ?? []) as Location[]
   const mapConfig = configRes.data as MapConfig | null
+  const locations = rawLocations.map(loc =>
+    loc.mystery ? { ...loc, name: null, description: null, area: null } : loc
+  )
 
   const idList = locations.map(l => l.id)
   const connections: LocationConnection[] = idList.length > 0

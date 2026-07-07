@@ -48,6 +48,18 @@ const COLOR: Record<string, string> = {
 
 const PATTERN = /\[\[([\w-]+):([a-f0-9-]+)\|([^\]]+)\]\]/g
 
+const PLAY_ROUTE: Record<string, string> = {
+  location:     'locations',
+  npc:          'npcs',
+  faction:      'factions',
+  lore:         'lore',
+  'plot-thread':'plot-threads',
+  pc:           'player-characters',
+  species:      'species',
+  culture:      'cultures',
+  session:      'sessions',
+}
+
 // visibleIds is accepted for compatibility with player portal callers (ignored here — GM sees all)
 export function renderMentions(text: string | null | undefined, visibleIds?: Set<string> | null): React.ReactNode {
   if (!text) return null
@@ -74,6 +86,50 @@ export function renderMentions(text: string | null | undefined, visibleIds?: Set
         {name}
       </Link>
     )
+
+    last = match.index + full.length
+  }
+
+  if (last < text.length) parts.push(text.slice(last))
+
+  return parts.length > 0 ? <>{parts}</> : text
+}
+
+/** Player portal variant — routes to /play/... and redacts hidden entities with █ blocks. */
+export function renderMentionsPlayer(text: string | null | undefined, visibleIds?: Set<string> | null): React.ReactNode {
+  if (!text) return null
+
+  const parts: React.ReactNode[] = []
+  let last = 0
+  let match: RegExpExecArray | null
+  const re = new RegExp(PATTERN.source, 'g')
+
+  while ((match = re.exec(text)) !== null) {
+    const [full, type, id, name] = match
+
+    if (match.index > last) parts.push(text.slice(last, match.index))
+
+    const route = PLAY_ROUTE[type]
+    const color = COLOR[type] ?? 'text-indigo-400'
+    const isVisible = !visibleIds || visibleIds.has(id)
+
+    if (!isVisible || !route) {
+      parts.push(
+        <span key={match.index} className="font-mono text-slate-600 select-none" title="Unknown">
+          {'█'.repeat(Math.min(name.length, 10))}
+        </span>
+      )
+    } else {
+      parts.push(
+        <Link
+          key={match.index}
+          href={`/play/${route}/${id}`}
+          className={`font-semibold ${color} hover:underline`}
+        >
+          {name}
+        </Link>
+      )
+    }
 
     last = match.index + full.length
   }

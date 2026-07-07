@@ -2,7 +2,7 @@ import { createAnonClient } from '@/lib/supabase/server'
 import { PlayerCharacter, SessionNote } from '@ttrpg/db'
 import Link from 'next/link'
 import { notFound, redirect } from 'next/navigation'
-import { renderMentions } from '@/lib/mentions'
+import { renderMentionsPlayer } from '@/lib/mentions'
 import { buildVisibleMentionSet } from '@/lib/mentionVisibility'
 
 export default async function PCDetailPage({ params }: { params: Promise<{ id: string }> }) {
@@ -74,13 +74,13 @@ export default async function PCDetailPage({ params }: { params: Promise<{ id: s
           {pc.background && (
             <div>
               <p className={label}>Background</p>
-              <p className={`${field} whitespace-pre-wrap leading-relaxed`}>{renderMentions(pc.background, visibleIds)}</p>
+              <p className={`${field} whitespace-pre-wrap leading-relaxed`}>{renderMentionsPlayer(pc.background, visibleIds)}</p>
             </div>
           )}
           {pc.notes && (
             <div>
               <p className={label}>Notes</p>
-              <p className={`${field} whitespace-pre-wrap leading-relaxed`}>{renderMentions(pc.notes, visibleIds)}</p>
+              <p className={`${field} whitespace-pre-wrap leading-relaxed`}>{renderMentionsPlayer(pc.notes, visibleIds)}</p>
             </div>
           )}
         </div>

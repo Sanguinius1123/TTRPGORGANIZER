@@ -653,8 +653,9 @@ function MapCanvasInner({
   }, [setNodes])
 
   const handlePlace = useCallback(async (loc: Location) => {
-    const x = 80 + Math.random() * 400
-    const y = 80 + Math.random() * 300
+    const center = screenToFlowPosition({ x: window.innerWidth / 2, y: window.innerHeight / 2 })
+    const x = center.x + (Math.random() - 0.5) * 60
+    const y = center.y + (Math.random() - 0.5) * 60
     const updatedLoc = { ...loc, map_x: x, map_y: y }
     setNodes(prev => [...prev, toNode(updatedLoc)])
     setLocationsState(prev => new Map(prev).set(loc.id, updatedLoc))

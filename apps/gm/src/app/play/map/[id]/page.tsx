@@ -26,8 +26,11 @@ export default async function PlayerSubMapPage({ params, searchParams }: { param
     supabase.from('map_configs').select('*').eq('location_id', id).maybeSingle(),
   ])
 
-  const childLocations = (locsRes.data ?? []) as Location[]
+  const rawChildLocations = (locsRes.data ?? []) as Location[]
   const mapConfig = configRes.data as MapConfig | null
+  const childLocations = rawChildLocations.map(loc =>
+    loc.mystery ? { ...loc, name: null, description: null, area: null } : loc
+  )
 
   const idList = childLocations.map(l => l.id)
   const connections: LocationConnection[] = idList.length > 0

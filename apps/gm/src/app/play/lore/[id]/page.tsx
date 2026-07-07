@@ -2,7 +2,7 @@ import { createAnonClient } from '@/lib/supabase/server'
 import { LoreEntry } from '@ttrpg/db'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
-import { renderMentions } from '@/lib/mentions'
+import { renderMentionsPlayer } from '@/lib/mentions'
 import { buildVisibleMentionSet } from '@/lib/mentionVisibility'
 import { getActivePcId } from '@/lib/activePC'
 import { WatchButton } from '@/components/WatchButton'
@@ -50,7 +50,7 @@ export default async function LoreDetailPage({ params }: { params: Promise<{ id:
 
       {entry.description && (
         <div className="bg-slate-800 rounded-lg border border-slate-700 p-6">
-          <p className="text-sm text-slate-300 whitespace-pre-wrap leading-relaxed">{renderMentions(entry.description, visibleIds)}</p>
+          <p className="text-sm text-slate-300 whitespace-pre-wrap leading-relaxed">{renderMentionsPlayer(entry.description, visibleIds)}</p>
         </div>
       )}
     </div>

@@ -1,7 +1,7 @@
 import { createAnonClient } from '@/lib/supabase/server'
 import type { LoreEntry } from '@ttrpg/db'
 import Link from 'next/link'
-import { renderMentions } from '@/lib/mentions'
+import { renderMentionsPlayer } from '@/lib/mentions'
 import { buildVisibleMentionSet } from '@/lib/mentionVisibility'
 import { getPlayCampaignId } from '@/lib/playCampaign'
 
@@ -58,7 +58,7 @@ export default async function TimelinePage() {
                         <span className="ml-2 text-xs text-slate-500">{entry.descriptor}</span>
                       )}
                       {entry.description && (
-                        <p className="text-sm text-slate-400 mt-1.5 line-clamp-2">{renderMentions(entry.description, visibleIds)}</p>
+                        <p className="text-sm text-slate-400 mt-1.5 line-clamp-2">{renderMentionsPlayer(entry.description, visibleIds)}</p>
                       )}
                     </div>
                   ) : (

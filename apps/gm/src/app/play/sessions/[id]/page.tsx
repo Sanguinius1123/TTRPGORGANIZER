@@ -3,18 +3,22 @@ import { Session, SessionNote, PlayerCharacter, Profile } from '@ttrpg/db'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { NoteForm } from './NoteForm'
-import { renderMentions } from '@/lib/mentions'
+import { renderMentionsPlayer } from '@/lib/mentions'
 import { buildVisibleMentionSet } from '@/lib/mentionVisibility'
+import { getActivePcId } from '@/lib/activePC'
 
 export default async function SessionDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
   const supabase = await createAnonClient()
   const { data: { user } } = await supabase.auth.getUser()
+  const activePcId = await getActivePcId()
 
   const results = await Promise.all([
     supabase.from('sessions').select('*').eq('id', id).single(),
     supabase.from('session_notes').select('*').eq('session_id', id).order('created_at'),
-    supabase.from('player_characters').select('id, name, player_name').eq('profile_id', user!.id).maybeSingle(),
+    activePcId
+      ? supabase.from('player_characters').select('id, name, player_name').eq('id', activePcId).eq('profile_id', user!.id).maybeSingle()
+      : supabase.from('player_characters').select('id, name, player_name').eq('profile_id', user!.id).order('name').limit(1).maybeSingle(),
     supabase.from('profiles').select('id, display_name'),
     supabase.from('player_characters').select('id, name, player_name, profile_id'),
   ])
@@ -54,14 +58,14 @@ export default async function SessionDetailPage({ params }: { params: Promise<{ 
         {session.summary && (
           <div className="bg-slate-800 rounded-lg border border-slate-700 p-6">
             <h2 className="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-3">Summary</h2>
-            <p className="text-slate-300 whitespace-pre-wrap text-sm leading-relaxed">{renderMentions(session.summary, visibleIds)}</p>
+            <p className="text-slate-300 whitespace-pre-wrap text-sm leading-relaxed">{renderMentionsPlayer(session.summary, visibleIds)}</p>
           </div>
         )}
 
         {session.loose_threads && (
           <div className="bg-slate-800 rounded-lg border border-slate-700 p-6">
             <h2 className="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-3">Loose Threads</h2>
-            <p className="text-slate-300 whitespace-pre-wrap text-sm leading-relaxed">{renderMentions(session.loose_threads, visibleIds)}</p>
+            <p className="text-slate-300 whitespace-pre-wrap text-sm leading-relaxed">{renderMentionsPlayer(session.loose_threads, visibleIds)}</p>
           </div>
         )}
 
