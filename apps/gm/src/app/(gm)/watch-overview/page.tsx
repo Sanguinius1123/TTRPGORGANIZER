@@ -89,13 +89,14 @@ export default async function WatchOverviewPage() {
     )
   }
 
-  function Section({ title, entityType, entityMap, href }: {
+  function Section({ title, entityType, allIds, entityMap, href }: {
     title: string
     entityType: string
+    allIds: Set<string>
     entityMap: Record<string, string>
     href: (id: string) => string
   }) {
-    const entityIds = Object.keys(entityMap)
+    const entityIds = [...allIds]
     if (entityIds.length === 0) return null
 
     return (
@@ -122,9 +123,13 @@ export default async function WatchOverviewPage() {
                 return (
                   <tr key={entityId} className="border-b border-slate-700/50 last:border-0 hover:bg-slate-700/30">
                     <td className="px-6 py-3">
-                      <a href={href(entityId)} className="text-indigo-400 hover:underline text-sm">
-                        {entityMap[entityId]}
-                      </a>
+                      {entityMap[entityId] ? (
+                        <a href={href(entityId)} className="text-indigo-400 hover:underline text-sm">
+                          {entityMap[entityId]}
+                        </a>
+                      ) : (
+                        <span className="text-xs text-red-400/70 italic">(Deleted)</span>
+                      )}
                     </td>
                     {pcs.map(pc => (
                       <td key={pc.id} className="px-3 py-3 text-center">
@@ -154,10 +159,10 @@ export default async function WatchOverviewPage() {
         </div>
       ) : (
         <div className="space-y-6">
-          <Section title="Locations" entityType="location" entityMap={locationMap} href={id => `/locations/${id}`} />
-          <Section title="NPCs" entityType="npc" entityMap={npcMap} href={id => `/npcs/${id}`} />
-          <Section title="Factions" entityType="faction" entityMap={factionMap} href={id => `/factions/${id}`} />
-          <Section title="Lore" entityType="lore" entityMap={loreMap} href={id => `/lore/${id}`} />
+          <Section title="Locations" entityType="location" allIds={byType.location} entityMap={locationMap} href={id => `/locations/${id}`} />
+          <Section title="NPCs" entityType="npc" allIds={byType.npc} entityMap={npcMap} href={id => `/npcs/${id}`} />
+          <Section title="Factions" entityType="faction" allIds={byType.faction} entityMap={factionMap} href={id => `/factions/${id}`} />
+          <Section title="Lore" entityType="lore" allIds={byType.lore} entityMap={loreMap} href={id => `/lore/${id}`} />
         </div>
       )}
     </div>

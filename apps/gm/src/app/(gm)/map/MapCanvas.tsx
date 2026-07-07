@@ -421,7 +421,7 @@ function toNode(loc: Location): Node {
       data: {
         name: null,
         locType: null,
-        visible: false,
+        visible: loc.visible,
         rawLoc: loc,
         waypoint: true,
         terrain: loc.terrain ?? null,
