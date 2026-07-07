@@ -4,6 +4,7 @@ import MentionTextarea from '@/components/MentionTextarea'
 import Link from 'next/link'
 import { getActiveCampaignId } from '@/lib/activeCampaign'
 import { redirect } from 'next/navigation'
+import { TERRAIN_LIST, PATH_MODIFIER_LIST } from '@/lib/mapUtils'
 
 const input = 'block w-full rounded-md border border-slate-600 bg-slate-700 px-3 py-2 text-sm text-slate-100 focus:border-indigo-400 focus:ring-1 focus:ring-indigo-400 outline-none'
 const label = 'block text-sm font-medium text-slate-300 mb-1'
@@ -61,9 +62,34 @@ export default async function NewLocationPage({
             <input spellCheck name="descriptor" placeholder="Ocean World, Frontier Colony…" className={input} />
           </div>
         </div>
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <label className={label}>Status</label>
+            <input spellCheck name="status" placeholder="active, abandoned, destroyed…" className={input} />
+          </div>
+          <div>
+            <label className={label}>Terrain</label>
+            <select name="terrain" className={input}>
+              <option value="">— None —</option>
+              {TERRAIN_LIST.map(t => <option key={t} value={t}>{t}</option>)}
+            </select>
+          </div>
+        </div>
         <div>
-          <label className={label}>Status</label>
-          <input spellCheck name="status" placeholder="active, abandoned, destroyed…" className={input} />
+          <label className={label}>Path Modifiers</label>
+          <div className="flex flex-wrap gap-3 mt-1">
+            {PATH_MODIFIER_LIST.map(p => (
+              <label key={p} className="flex items-center gap-1.5 text-sm text-slate-300 cursor-pointer">
+                <input
+                  type="checkbox"
+                  name="path_modifiers"
+                  value={p}
+                  className="rounded border-slate-600 bg-slate-700 text-indigo-500"
+                />
+                {p}
+              </label>
+            ))}
+          </div>
         </div>
         <div>
           <label className={label}>Area</label>

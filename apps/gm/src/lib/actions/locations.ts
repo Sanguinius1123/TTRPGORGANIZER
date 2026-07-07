@@ -17,6 +17,8 @@ export async function createLocation(formData: FormData) {
       area: (formData.get('area') as string) || null,
       description: (formData.get('description') as string) || null,
       gm_notes: (formData.get('gm_notes') as string) || null,
+      terrain: (formData.get('terrain') as string) || null,
+      path_modifiers: formData.getAll('path_modifiers') as string[],
       parent_location_id: (formData.get('parent_location_id') as string) || null,
       campaign_id: formData.get('campaign_id') as string,
       visible: false,
@@ -89,6 +91,8 @@ export async function updateLocation(formData: FormData) {
       area: (formData.get('area') as string) || null,
       description: (formData.get('description') as string) || null,
       gm_notes: (formData.get('gm_notes') as string) || null,
+      terrain: (formData.get('terrain') as string) || null,
+      path_modifiers: formData.getAll('path_modifiers') as string[],
       parent_location_id: newParentId,
       ...extraFields,
     })
