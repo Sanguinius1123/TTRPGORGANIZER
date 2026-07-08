@@ -17,7 +17,7 @@ export default async function PCDetailPage({ params }: { params: Promise<{ id: s
   if (myRaw) redirect('/play')
 
   const results = await Promise.all([
-    supabase.from('player_characters').select('id, name, player_name, species, culture, background, notes, private_notes, personality_notes, image_url, visible, current_location_id, profile_id, party_faction_id, campaign_id, created_at').eq('id', id).single(),
+    supabase.from('player_characters').select('id, name, player_name, species, culture, background, notes, image_url, visible, current_location_id, profile_id, party_faction_id, campaign_id, created_at').eq('id', id).single(),
     supabase.from('species').select('id, name').order('name'),
     supabase.from('cultures').select('id, name').order('name'),
     supabase.from('session_notes').select('*, session:session_id(session_number, title)').eq('pc_id', id).order('created_at'),

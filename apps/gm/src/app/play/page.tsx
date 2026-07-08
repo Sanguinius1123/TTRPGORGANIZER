@@ -22,7 +22,7 @@ export default async function HomePage({ searchParams }: { searchParams: SearchP
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect('/login')
 
-  const { data: rawPCs } = await supabase.from('player_characters').select('id, name, player_name, species, culture, background, notes, private_notes, personality_notes, image_url, visible, current_location_id, profile_id, party_faction_id, campaign_id, created_at').eq('profile_id', user.id).order('name')
+  const { data: rawPCs } = await supabase.from('player_characters').select('id, name, player_name, species, culture, background, notes, private_notes, image_url, visible, current_location_id, profile_id, party_faction_id, campaign_id, created_at').eq('profile_id', user.id).order('name')
   const allMyPCs = (rawPCs ?? []) as PlayerCharacter[]
 
   if (allMyPCs.length === 0) {
