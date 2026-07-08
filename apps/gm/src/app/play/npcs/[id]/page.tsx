@@ -13,7 +13,7 @@ export default async function NPCDetailPage({ params }: { params: Promise<{ id: 
   const activePcId = await getActivePcId()
 
   const results = await Promise.all([
-    supabase.from('npcs').select('*').eq('id', id).eq('visible', true).single(),
+    supabase.from('npcs').select('id, name, species, profession, culture, background, disposition, notes, personality_notes, image_url, visible, current_location_id, campaign_id, created_at').eq('id', id).eq('visible', true).single(),
     supabase.from('npc_facts').select('*').eq('npc_id', id).eq('revealed', true).order('created_at'),
     supabase.from('species').select('id, name').order('name'),
     supabase.from('cultures').select('id, name').order('name'),

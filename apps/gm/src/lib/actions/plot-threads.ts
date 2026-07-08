@@ -14,6 +14,7 @@ export async function createPlotThread(formData: FormData) {
       description: (formData.get('description') as string) || null,
       status: (formData.get('status') as string) || 'active',
       notes: (formData.get('notes') as string) || null,
+      gm_notes: (formData.get('gm_notes') as string) || null,
       parent_id: (formData.get('parent_id') as string) || null,
       campaign_id: formData.get('campaign_id') as string,
       visible: false,
@@ -36,6 +37,7 @@ export async function updatePlotThread(formData: FormData) {
       description: (formData.get('description') as string) || null,
       status: formData.get('status') as string,
       notes: (formData.get('notes') as string) || null,
+      gm_notes: (formData.get('gm_notes') as string) || null,
       parent_id: (formData.get('parent_id') as string) || null,
     })
     .eq('id', id)

@@ -22,7 +22,7 @@ export default async function PlotThreadPage({ params }: { params: Promise<{ id:
 
   const { data: raw } = await supabase
     .from('plot_threads')
-    .select('*')
+    .select('id, title, type, description, status, notes, parent_id, visible, campaign_id, created_at')
     .eq('id', id)
     .eq('visible', true)
     .single()

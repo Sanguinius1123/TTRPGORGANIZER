@@ -21,6 +21,7 @@ export interface Database {
           visible: boolean
           species: string | null
           culture: string | null
+          gm_notes: string | null
           campaign_id: string
           created_at: string
         }
@@ -95,6 +96,7 @@ export interface Database {
           notes: string | null
           private_notes: string | null
           personality_notes: string | null
+          gm_notes: string | null
           image_url: string | null
           visible: boolean
           current_location_id: string | null
@@ -118,6 +120,7 @@ export interface Database {
           disposition: string | null
           notes: string | null
           personality_notes: string | null
+          gm_notes: string | null
           image_url: string | null
           visible: boolean
           current_location_id: string | null
@@ -248,6 +251,7 @@ export interface Database {
           summary: string | null
           loose_threads: string | null
           faction_id: string | null
+          gm_notes: string | null
           campaign_id: string
           created_at: string
         }
@@ -307,6 +311,7 @@ export interface Database {
           visible: boolean
           major_event: boolean
           event_timestamp: string | null
+          gm_notes: string | null
           campaign_id: string
           created_at: string
         }
@@ -334,6 +339,7 @@ export interface Database {
           description: string | null
           status: string
           notes: string | null
+          gm_notes: string | null
           parent_id: string | null
           visible: boolean
           campaign_id: string
@@ -348,6 +354,7 @@ export interface Database {
           id: string
           name: string
           description: string | null
+          gm_notes: string | null
           origin_location_id: string | null
           visible: boolean
           campaign_id: string
@@ -362,6 +369,7 @@ export interface Database {
           id: string
           name: string
           description: string | null
+          gm_notes: string | null
           visible: boolean
           campaign_id: string
           created_at: string

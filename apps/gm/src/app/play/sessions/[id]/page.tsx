@@ -14,7 +14,7 @@ export default async function SessionDetailPage({ params }: { params: Promise<{ 
   const activePcId = await getActivePcId()
 
   const results = await Promise.all([
-    supabase.from('sessions').select('*').eq('id', id).single(),
+    supabase.from('sessions').select('id, session_number, title, summary, loose_threads, faction_id, campaign_id, created_at').eq('id', id).single(),
     supabase.from('session_notes').select('*').eq('session_id', id).order('created_at'),
     activePcId
       ? supabase.from('player_characters').select('id, name, player_name').eq('id', activePcId).eq('profile_id', user!.id).maybeSingle()

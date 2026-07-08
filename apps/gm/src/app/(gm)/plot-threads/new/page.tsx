@@ -70,6 +70,12 @@ export default async function NewPlotThreadPage() {
           <label className={label}>Notes <span className="text-xs text-slate-500">(private)</span></label>
           <MentionTextarea name="notes" rows={3} className={`${input} resize-none`} />
         </div>
+        <div className="rounded-lg border border-amber-800/50 bg-amber-950/20 p-4 space-y-2">
+          <label className="block text-sm font-medium text-amber-400 mb-1">
+            GM Notes <span className="text-xs text-amber-600 font-normal ml-1">— never shown to players</span>
+          </label>
+          <MentionTextarea name="gm_notes" rows={4} className={`${input} resize-none`} />
+        </div>
 
         <div className="flex gap-3 pt-2">
           <button type="submit" className="rounded-md bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700">

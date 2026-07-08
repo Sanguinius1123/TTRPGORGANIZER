@@ -8,7 +8,7 @@ import { buildVisibleMentionSet } from '@/lib/mentionVisibility'
 export default async function SpeciesDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
   const supabase = await createAnonClient()
-  const { data: raw } = await supabase.from('species').select('*').eq('id', id).single()
+  const { data: raw } = await supabase.from('species').select('id, name, description, origin_location_id, visible, campaign_id, created_at').eq('id', id).single()
   if (!raw) notFound()
   const species = raw as Species
   if (!species.visible) notFound()

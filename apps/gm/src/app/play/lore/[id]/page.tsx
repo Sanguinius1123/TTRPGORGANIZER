@@ -14,7 +14,7 @@ export default async function LoreDetailPage({ params }: { params: Promise<{ id:
 
   const { data: raw } = await supabase
     .from('lore_entries')
-    .select('*')
+    .select('id, title, category, descriptor, description, visible, major_event, event_timestamp, campaign_id, created_at')
     .eq('id', id)
     .eq('visible', true)
     .single()

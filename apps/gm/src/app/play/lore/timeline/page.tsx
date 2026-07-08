@@ -8,7 +8,7 @@ import { getPlayCampaignId } from '@/lib/playCampaign'
 export default async function TimelinePage() {
   const campaignId = await getPlayCampaignId()
   const supabase = await createAnonClient()
-  let q = supabase.from('lore_entries').select('*').eq('category', 'History').eq('visible', true)
+  let q = supabase.from('lore_entries').select('id, title, category, descriptor, description, visible, major_event, event_timestamp, campaign_id, created_at').eq('category', 'History').eq('visible', true)
   if (campaignId) q = q.eq('campaign_id', campaignId)
   const { data: raw } = await q.order('created_at', { ascending: true })
 

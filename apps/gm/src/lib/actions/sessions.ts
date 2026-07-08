@@ -14,6 +14,7 @@ export async function createSession(formData: FormData) {
       summary: (formData.get('summary') as string) || null,
       loose_threads: (formData.get('loose_threads') as string) || null,
       faction_id: (formData.get('faction_id') as string) || null,
+      gm_notes: (formData.get('gm_notes') as string) || null,
       campaign_id: formData.get('campaign_id') as string,
     })
     .select()
@@ -34,6 +35,7 @@ export async function updateSession(formData: FormData) {
       summary: (formData.get('summary') as string) || null,
       loose_threads: (formData.get('loose_threads') as string) || null,
       faction_id: (formData.get('faction_id') as string) || null,
+      gm_notes: (formData.get('gm_notes') as string) || null,
     })
     .eq('id', id)
 

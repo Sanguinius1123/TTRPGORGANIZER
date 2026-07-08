@@ -137,6 +137,12 @@ export default async function SessionPage({ params }: { params: Promise<{ id: st
               <label className={label}>Loose Threads</label>
               <MentionTextarea name="loose_threads" defaultValue={session.loose_threads ?? ''} rows={4} placeholder="Unresolved questions, follow-ups, things players may pursue…" className={`${input} resize-none`} />
             </div>
+            <div className="rounded-lg border border-amber-800/50 bg-amber-950/20 p-4 space-y-2">
+              <label className="block text-sm font-medium text-amber-400 mb-1">
+                GM Notes <span className="text-xs text-amber-600 font-normal ml-1">— never shown to players</span>
+              </label>
+              <MentionTextarea name="gm_notes" defaultValue={session.gm_notes ?? ''} rows={4} className={`${input} resize-none`} />
+            </div>
             <div className="flex gap-3 pt-2">
               <SubmitButton label="Save Changes" />
             </div>
