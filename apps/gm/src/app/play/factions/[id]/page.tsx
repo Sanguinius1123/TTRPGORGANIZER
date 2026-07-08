@@ -13,7 +13,7 @@ export default async function FactionDetailPage({ params }: { params: Promise<{ 
   const activePcId = await getActivePcId()
 
   const results = await Promise.all([
-    supabase.from('factions').select('*').eq('id', id).eq('visible', true).single(),
+    supabase.from('factions').select('id, name, parent_faction_id, disposition, goal, description, image_url, visible, species, culture, campaign_id, created_at').eq('id', id).eq('visible', true).single(),
     supabase.from('npc_factions').select('npc_id, role').eq('faction_id', id),
   ])
 

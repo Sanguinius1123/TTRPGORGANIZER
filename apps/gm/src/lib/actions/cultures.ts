@@ -11,6 +11,7 @@ export async function createCulture(formData: FormData) {
     .insert({
       name: formData.get('name') as string,
       description: (formData.get('description') as string) || null,
+      gm_notes: (formData.get('gm_notes') as string) || null,
       campaign_id: formData.get('campaign_id') as string,
     })
     .select()
@@ -27,6 +28,7 @@ export async function updateCulture(formData: FormData) {
     .update({
       name: formData.get('name') as string,
       description: (formData.get('description') as string) || null,
+      gm_notes: (formData.get('gm_notes') as string) || null,
     })
     .eq('id', id)
   if (error) throw new Error(error.message)
