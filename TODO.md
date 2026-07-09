@@ -2,6 +2,13 @@
 
 ---
 
+## Done ✓
+
+- **GM Notes on all player-visible entities** — `gm_notes text` on npcs, factions, sessions, lore_entries, plot_threads, species, cultures, player_characters. Amber GM-only section on detail/new pages. Excluded from all player portal selects.
+- **Item category + descriptor** — `category`, `descriptor`, `properties jsonb`. 9 categories (weapon, armour, consumable, tool, valuables, relic, document, vehicle, misc) with per-category fields. Legacy `item_type` removed. Visibility flag wired up.
+
+---
+
 ## To-Add
 Features and functionality that need to be designed and coded.
 
