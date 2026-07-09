@@ -8,15 +8,11 @@ import { Suspense } from 'react'
 import { getActiveCampaignId } from '@/lib/activeCampaign'
 import { redirect } from 'next/navigation'
 
-const ITEM_TYPES = [
-  'Weapon', 'Armour', 'Consumable', 'Tool', 'Currency', 'Relic', 'Document', 'Vehicle', 'Misc',
-]
-
 function isItemCategory(value: string | null): value is ItemCategory {
   return value != null && (ITEM_CATEGORIES as readonly string[]).includes(value)
 }
 
-type SearchParams = Promise<{ item_type?: string; category?: string }>
+type SearchParams = Promise<{ category?: string }>
 
 export default async function ItemsPage({ searchParams }: { searchParams: SearchParams }) {
   const params = await searchParams
@@ -25,19 +21,12 @@ export default async function ItemsPage({ searchParams }: { searchParams: Search
   const supabase = db()
 
   let q = supabase.from('items').select('*').eq('campaign_id', campaignId).order('name')
-  if (params.item_type) q = q.eq('item_type', params.item_type)
   if (params.category) q = q.eq('category', params.category)
 
   const { data: rawItems } = await q
   const items = (rawItems ?? []) as Item[]
 
   const filters = [
-    {
-      type: 'select' as const,
-      name: 'item_type',
-      label: 'Type',
-      options: ITEM_TYPES.map(t => ({ value: t, label: t })),
-    },
     {
       type: 'select' as const,
       name: 'category',
@@ -75,7 +64,7 @@ export default async function ItemsPage({ searchParams }: { searchParams: Search
             <thead>
               <tr className="border-b border-slate-700 bg-slate-800">
                 <th className="text-left px-4 py-3 font-medium text-slate-400">Name</th>
-                <th className="text-left px-4 py-3 font-medium text-slate-400">Type / Category</th>
+                <th className="text-left px-4 py-3 font-medium text-slate-400">Category</th>
                 <th className="text-left px-4 py-3 font-medium text-slate-400">Base Price</th>
               </tr>
             </thead>
@@ -91,21 +80,13 @@ export default async function ItemsPage({ searchParams }: { searchParams: Search
                     )}
                   </td>
                   <td className="px-4 py-3">
-                    <div className="flex flex-wrap gap-1.5 items-center">
-                      {item.item_type && (
-                        <span className="rounded-full bg-slate-700 px-2 py-0.5 text-xs text-slate-300 border border-slate-600">
-                          {item.item_type}
-                        </span>
-                      )}
-                      {isItemCategory(item.category) && (
-                        <span className="rounded-full bg-indigo-900/40 px-2 py-0.5 text-xs text-indigo-300 border border-indigo-700">
-                          {CATEGORY_LABELS[item.category]}
-                        </span>
-                      )}
-                      {!item.item_type && !item.category && (
-                        <span className="text-slate-600">—</span>
-                      )}
-                    </div>
+                    {isItemCategory(item.category) ? (
+                      <span className="rounded-full bg-indigo-900/40 px-2 py-0.5 text-xs text-indigo-300 border border-indigo-700">
+                        {CATEGORY_LABELS[item.category]}
+                      </span>
+                    ) : (
+                      <span className="text-slate-600">—</span>
+                    )}
                   </td>
                   <td className="px-4 py-3 text-slate-500">
                     {item.base_price != null ? item.base_price : '—'}

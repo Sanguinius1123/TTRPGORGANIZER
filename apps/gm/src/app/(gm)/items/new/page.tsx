@@ -8,10 +8,6 @@ import { redirect } from 'next/navigation'
 const input = 'block w-full rounded-md border border-slate-600 bg-slate-700 px-3 py-2 text-sm text-slate-100 focus:border-indigo-400 focus:ring-1 focus:ring-indigo-400 outline-none'
 const label = 'block text-sm font-medium text-slate-300 mb-1'
 
-const ITEM_TYPES = [
-  'Weapon', 'Armour', 'Consumable', 'Tool', 'Currency', 'Relic', 'Document', 'Vehicle', 'Misc',
-]
-
 export default async function NewItemPage() {
   const campaignId = await getActiveCampaignId()
   if (!campaignId) redirect('/')
@@ -37,18 +33,9 @@ export default async function NewItemPage() {
 
         <ItemCategorySection />
 
-        <div className="grid grid-cols-2 gap-4">
-          <div>
-            <label className={label}>Type</label>
-            <select name="item_type" className={input}>
-              <option value="">— None —</option>
-              {ITEM_TYPES.map(t => <option key={t} value={t}>{t}</option>)}
-            </select>
-          </div>
-          <div>
-            <label className={label}>Base Price</label>
-            <input name="base_price" type="number" min="0" className={input} />
-          </div>
+        <div>
+          <label className={label}>Base Price</label>
+          <input name="base_price" type="number" min="0" className={input} />
         </div>
 
         <div className="flex gap-3 pt-2">

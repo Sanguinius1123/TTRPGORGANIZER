@@ -8,10 +8,11 @@ const GATED_TABLE: Record<string, string> = {
   lore:         'lore_entries',
   'plot-thread':'plot_threads',
   pc:           'player_characters',
+  item:         'items',
 }
 
 // Types that are always visible (no RLS gate, or always returned)
-const ALWAYS_VISIBLE = new Set(['session', 'species', 'culture', 'item'])
+const ALWAYS_VISIBLE = new Set(['session', 'species', 'culture'])
 
 /**
  * Given a Supabase client and a list of text fields, query which mentioned
