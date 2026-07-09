@@ -1,5 +1,6 @@
 import { createItem } from '@/lib/actions/items'
 import MentionTextarea from '@/components/MentionTextarea'
+import ItemCategorySection from '@/components/ItemCategorySection'
 import Link from 'next/link'
 import { getActiveCampaignId } from '@/lib/activeCampaign'
 import { redirect } from 'next/navigation'
@@ -29,6 +30,13 @@ export default async function NewItemPage() {
           <label className={label}>Name <span className="text-red-500">*</span></label>
           <input name="name" required className={input} autoFocus spellCheck />
         </div>
+        <div>
+          <label className={label}>Description</label>
+          <MentionTextarea name="description" rows={4} className={`${input} resize-none`} />
+        </div>
+
+        <ItemCategorySection />
+
         <div className="grid grid-cols-2 gap-4">
           <div>
             <label className={label}>Type</label>
@@ -38,17 +46,9 @@ export default async function NewItemPage() {
             </select>
           </div>
           <div>
-            <label className={label}>Descriptor</label>
-            <input name="descriptor" placeholder="Material, origin, enchantment…" className={input} spellCheck />
+            <label className={label}>Base Price</label>
+            <input name="base_price" type="number" min="0" className={input} />
           </div>
-        </div>
-        <div>
-          <label className={label}>Base Price</label>
-          <input name="base_price" type="number" min="0" className={input} />
-        </div>
-        <div>
-          <label className={label}>Description</label>
-          <MentionTextarea name="description" rows={4} className={`${input} resize-none`} />
         </div>
 
         <div className="flex gap-3 pt-2">
