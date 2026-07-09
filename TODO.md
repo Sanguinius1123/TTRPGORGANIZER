@@ -5,8 +5,6 @@
 ## To-Add
 Features and functionality that need to be designed and coded.
 
-- **GM Notes on NPCs + Factions** — same pattern as `locations.gm_notes`: amber-bordered textarea in GM detail/new pages, excluded from all player portal queries. Good for voice/behavior/triggers on NPCs, secret internal goals on factions.
-- **Item category + descriptor** — add category dropdown (weapon, armour, consumable, tool, currency, relic, document, vehicle, misc) and a Descriptor field to the Items entity. Confirm the category list before implementing.
 - **Shop inventory management UI** — the `shop_inventory` schema already exists; no GM UI yet for adding, editing, or removing items from a shop. Needs design discussion before building.
 - **Map background image** — `map_background_url` on `map_configs`. Canvas renders it behind nodes. Intended workflow: place nodes → export PNG → trace in Wonderdraft → upload art URL → nodes sit on the real map.
 - **NPC portrait / image upload** — Supabase Storage bucket needs to be set up; then hook into the NPC detail form.
