@@ -208,7 +208,9 @@ export interface Database {
           description: string | null
           base_price: number | null
           item_type: string | null
+          category: string | null
           descriptor: string | null
+          properties: Record<string, unknown>
           location_id: string | null
           visible: boolean
           campaign_id: string
