@@ -36,6 +36,8 @@ Before generating any content, a Campaign Bible (`CLAUDE-campaign-[name].md`) mu
 
 - **Sci-fi campaign (Foxtrot Cluster)** — Campaign Bible complete (`CLAUDE-campaign-scifi.md`). Tier 1 content generated: 10 factions, 23+ locations (Holt System + planets + Songah districts + Mem surface), 8 NPCs, 5 lore entries. All visible=false. Mem surface fleshed out: Legion Outpost (military stronghold), The Holding Block (prison/labor camp), and 3 Harvest Platforms (Tol-Yan, Sel-Arak, Vur-Keth). Ocean terrain set on all Mem bodies so travel times calculate correctly. Next steps: place locations on the map (Holt System scale then Sonhandra/Mem scale), generate Tier 2 content (encounters, more NPCs, items, sessions), and write the Session 1 train heist encounter.
 
+- **Sword & Sorcery campaign** — Campaign Bible drafted (`CLAUDE-campaign-swordandsorcery.md`). Living document — vision still being refined. Core established: west marches structure, competent-mortality tone, post-war world with three diminished empires, the Precursors as ancient prior civilization, six settlements (all TBD names), the Ash Compact (inquisition) vs. cults tension, creature design philosophy + 11 creature sketches, four crisis types, reactive world principle, character background categories. Open: all proper names, ruleset, non-human faction question, sorcerer-lord's secret, Precursor endgame, map scale.
+
 ### Ideas & seeds
 
 *(drop raw ideas, half-formed hooks, and setting concepts here for future development)*
