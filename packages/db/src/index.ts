@@ -36,4 +36,5 @@ export type {
   Setting,
   PCWatch,
   DiceRoll,
+  BoardPosting,
 } from './types'

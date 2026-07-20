@@ -483,6 +483,36 @@ export interface Database {
         Update: Partial<Database['public']['Tables']['dice_rolls']['Insert']>
         Relationships: []
       }
+      board_postings: {
+        Row: {
+          id: string
+          campaign_id: string
+          title: string
+          description: string | null
+          gm_notes: string | null
+          board_label: string | null
+          origin_location_id: string | null
+          posted_by_npc_id: string | null
+          posted_by_faction_id: string | null
+          posted_by_name: string | null
+          status: string
+          difficulty: string
+          reward: string | null
+          deadline: string | null
+          visible: boolean
+          created_by_pc_id: string | null
+          hidden_goal: boolean
+          party_notes: string | null
+          sort_order: number
+          active_section: string | null
+          resolution_notes: string | null
+          resolved_at: string | null
+          created_at: string
+        }
+        Insert: Partial<Omit<Database['public']['Tables']['board_postings']['Row'], 'id' | 'created_at'>>
+        Update: Partial<Database['public']['Tables']['board_postings']['Insert']>
+        Relationships: []
+      }
       profiles: {
         Row: {
           id: string
@@ -550,3 +580,4 @@ export type Profile               = Tables<'profiles'>
 export type Setting               = Tables<'settings'>
 export type PCWatch               = Tables<'pc_watches'>
 export type DiceRoll              = Tables<'dice_rolls'>
+export type BoardPosting          = Tables<'board_postings'>

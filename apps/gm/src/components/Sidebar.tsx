@@ -16,6 +16,7 @@ const nav = [
   {
     group: 'Story',
     items: [
+      { label: 'Objectives', href: '/objectives' },
       { label: 'Sessions', href: '/sessions' },
       { label: 'Plot Threads', href: '/plot-threads' },
       { label: 'Encounters', href: '/encounters' },
