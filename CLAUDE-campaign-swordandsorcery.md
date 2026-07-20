@@ -289,13 +289,125 @@ Backgrounds define who a character was before they ended up at the home base, an
 
 ---
 
+## Peoples of the World
+
+Humans are the dominant people, but others exist. None map cleanly onto standard fantasy archetypes — each is genuinely alien in ways that affect how they experience and move through the world. Names for all are **[TBD]**.
+
+---
+
+### The Time-Displaced [TBD: Name]
+
+Not a people in the traditional sense — a scattered, solitary remnant. They were once practitioners, or a community deeply entwined with sorcery, who pushed too far. Now their consciousness exists partially outside linear time: they are here, present, responsive — but simultaneously living in moments decades past and decades ahead, and they cannot always tell which is which. From the outside this reads as profound alienness, occasional apparent prophecy, and slow deterioration as the displacement widens.
+
+They live alone. They cannot maintain communities. Meeting one is rare and unsettling. The Ash Compact hunts them — they're proof of what sorcery does, and their temporal bleed makes them unpredictable. Cults seek them as sacrificial components, believing that blood or death from someone existing in multiple moments simultaneously has unusual properties. Whether that is true or superstition is deliberately unclear.
+
+---
+
+### Plant-People [TBD: Name]
+
+Vegetation-textured skin — supple and green in youth, increasingly bark-like with age. They photosynthesize partially; extended deprivation of sunlight weakens them the way starvation weakens a human. Wounds weep sap and scar over like bark rather than healing as flesh does.
+
+**Reproduction.** They maintain groves — carefully cultivated gardens where new individuals grow from flowers over years. The grove is not metaphorically important to them; it is irreplaceable in a literal sense. Destroy a grove and you have destroyed their capacity to continue as a people in that place. Their protectiveness is not sentiment; it is species-level survival. They treat the grove's entire current generation as a single extended family regardless of which flower any individual grew from, because the concept of parentage does not map to how they come into being.
+
+**Movement.** They don't wander by nature. A plant-person outside their grove's territory is unusual and usually driven there by necessity — destruction of the grove, exile, or a specific mission the community sent them on. They feel the absence of open sky and rooted soil the way other peoples feel hunger.
+
+---
+
+### Stone-Beings [TBD: Name]
+
+Born as soft clay, roughly shaped, amorphous enough to squeeze through stone gaps and reshape around obstacles. As they age they densify — features becoming more defined, movement becoming more deliberate, geological sense deepening as they become more stone themselves. At the end, over years, movement becomes effortful, then impossible, then unnecessary. The final form is indistinguishable from a carved statue. Whether awareness persists after that is something stone-beings believe deeply and humans cannot verify.
+
+**Anatomy.** No distinct head — their body tapers upward but there is no separate head structure. No eyes at all. Their face, where a human would expect features, is smooth stone or finely textured mineral surface. Sensory organs are distributed patches across their hands, feet, and upper body — slightly smoother than surrounding surface, sensitive to vibration and geological composition. Their mouth is lower on the body than a human's, oriented slightly downward, built for scraping mineral from surfaces rather than biting prey. No nose; they absorb what they need through skin contact with stone and earth. They can function in open air but it is not their native mode.
+
+**The geological sense.** They feel the structure of earth and stone the way humans feel wind — fault lines, underground water, mineral composition, the approach of a tremor. Underground, they are never lost. Above ground, they are partially blind: the sensory patches pick up air vibration well enough to navigate, but it is one degraded sense replacing five. Open spaces, open sky, and the inability to feel what is beneath them is genuinely disorienting, not just culturally uncomfortable.
+
+**Predators.** The underground ecology includes creatures that hunt them specifically. *Boreworms* — massive, vibration-hunting organisms that consume mineral matter — target young clay-beings whose soft bodies are nutritionally dense. Stone-beings carry a species-level dread response to a boreworm's vibration signature, older than their current civilisation. Smaller mineral-eaters erode young clay bodies over time if undetected. These predators are why any stone-being who becomes an adventurer is young — still mobile, still clay enough to travel, still capable of surviving the surface world. The pull of the deep earth is real; they don't stay gone forever.
+
+---
+
+### Prey-Kin [TBD: Name]
+
+Not descended from the same evolutionary line as humans. Their intelligence developed from a prey-animal origin rather than a predator one, and their psychology is structured accordingly: group cohesion, early threat detection, and strategic retreat are instinct, not choice.
+
+**Anatomy.** Small — roughly half to two-thirds human height. Eyes set wide on the sides of the head, giving a broad field of peripheral vision at the cost of frontal depth perception. Large, mobile ears that locate sound spatially with unusual precision and detect things humans filter out. Strong legs relative to their arms — they are built to run, not to wrestle. Their fighting style, when they have no choice, is evasion, repositioning, and striking from unexpected angles. Holding them still is harder than it looks.
+
+**Psychology.** Individual identity is softer than in humans. Their language has communal pronouns that don't translate cleanly. The concept of personal glory is difficult for them to fully internalise; sacrifice for the group is natural and unremarkable. A prey-kin separated from their community is genuinely incomplete in a way that isn't just homesickness — they adopt their party as a surrogate pack, and they do it with an intensity that can feel startling to the humans involved.
+
+**The survival sense.** Their reputation for luck is real but not magical — it is a threat-pattern recognition system operating below conscious thought, refined over countless generations of being hunted. A prey-kin who says "something is wrong" before anything visible has happened is usually right. They will be moving toward the exit before they know why. Humans read this as cowardice; prey-kin read human bravado as suicidal.
+
+**Architecture.** Their settlements show their nature: sturdy entry points, multiple exits always, buildings with back ways out, districts with escape routes that bypass the main gate. Visitors find it slightly unnerving once they notice the pattern.
+
+---
+
+### The Fungal Greenskins [TBD: Name]
+
+Not a people. Not a faction with culture, language, or politics. A single fungal superorganism expressed as multiple phenotypes depending on environment, nutrients, and internal logic that functions like distributed instinct. What humans call "goblins," "orks," and whatever larger variants exist are not different species — they are the same spore-network producing different fruiting bodies for different purposes. Their hunting creatures and beasts of burden are also the same organism, shaped differently.
+
+Killing individual greenskins does not reduce the organism. The spores persist in soil long after the mobile forms are dead, ready to fruit again under the right conditions. Truly clearing a greenskin presence requires destroying the network at the soil level — burning, salting, or something more drastic. This makes them a recurring problem in ways that most threats are not.
+
+They are a monster faction. They are not playable, not negotiable with in any meaningful sense, and have no internal politics that players can influence. They are a pressure in the world, like weather.
+
+---
+
+## The Job Board
+
+Two boards exist at the home base. Both are physical objects in the fiction — the players interact with them, post to them, and read them as part of play.
+
+---
+
+### The Official Board
+
+Maintained by the lord's steward or town guard. Institutional credibility: rewards are guaranteed or held in escrow, sources are named. Jobs here are transactional and the politics are usually legible — a bounty on a specific bandit tells you who the lord is in conflict with, and why.
+
+*Entry types:* Escort contracts, named bounties, official salvage rights, clearance requests, settlement commissions.
+
+---
+
+### The Tavern Board
+
+Community-maintained, no curation. Anyone can post. Two sections:
+
+**Open Contracts** — clear goal, clear reward, named poster. NPC or player-posted. The difference from the official board: no institutional guarantee. If the farmer who posted the job died before the party returned, the negotiation gets complicated.
+
+**Leads & Rumors** — no guaranteed reward, no confirmed goal. Things people noticed, things heard third-hand, threads players want to track but haven't resolved into a clear job yet. Entries here can *graduate* to Open Contracts once someone investigates enough to turn them into actionable work. Players are expected to post here when they find something they can't immediately pursue — an incomplete ruin, a strange sighting, a faction move that smells wrong.
+
+---
+
+### Time Markers
+
+Every entry with a deadline is marked visibly:
+
+**[URGENT]** — Days. Miss this and the window closes. The caravan departs. The prisoner is transferred. The trail goes cold.
+
+**[LIMITED]** — Weeks. Still open, but the situation is moving. The crop rot spreads. The Compact's investigation advances.
+
+**[OPEN]** — No expiry, or far enough out it doesn't pressure the decision. The sealed door isn't going anywhere.
+
+When time runs out, the entry is crossed off with a note. *"DEPARTED — caravan left without escort."* Or: *"OVERDUE — party four days late, no word."* Failed and expired entries stay on the board. They are history, and history matters.
+
+---
+
+### Rules of the Board
+
+**Snooze you lose.** No reservations, no exclusivity. First party to complete a job changes the world. The entry gets crossed off. A second party arriving to find it already crossed off is a consequence of the world moving without them.
+
+**Partial completion is noted.** A party that clears two floors of a ruin but retreats before finishing updates the entry: *"Floors 1–2 cleared. Third floor unknown. See Davorin."* The next party benefits from that information. This is how the board accumulates depth over time.
+
+**Rewards are fixed at posting.** The stated reward is what the poster agreed to pay. It doesn't increase because the job turned out harder than advertised. Parties who want to know more before committing should find the poster and ask questions — that legwork is the cost of better information. XP comes from the actual challenge encountered, which may differ significantly from what the posting implied.
+
+**The board is a historical record.** Completed jobs are crossed off with a note of who did it and roughly what happened. Failed entries stay up. The board at session fifteen looks different from the board at session one — denser, more specific, marked by what the table chose to pursue and what they let go.
+
+---
+
 ## Open Questions — [TBD]
 
-- **Names:** The world, the continent, the March, the three empires, the six settlements, the Ash Compact's proper name
+- **Names:** All peoples, the world, the continent, the March, the three empires, the six settlements, the Ash Compact's proper name
 - **The Precursors:** What exactly wakes in their deep ruins? What were they trying to do?
 - **The Sorcerer-Lord's secret:** What is beneath the palace, and what is the tithe?
-- **Non-human organised threat:** Is there a Greenskin equivalent — a species in long conflict with humanity — or are all organised threats human, with creatures filling the wilderness?
 - **The mainstream religion:** What does it look like, what does it promise, and how does it relate to the Old Faith?
-- **Ruleset:** Cairn 2e, Worlds Without Number, Shadowdark, Realms of Peril, or other
+- **Ruleset:** Realms of Peril, Shadowdark, Knave 2e, Cairn 2e, Worlds Without Number, or other. Note: if Realms of Peril, resolve the level-0 vs. "competent mortality" starting tension explicitly.
 - **Map scale:** How large is the March? A week's hard travel end to end, or something larger?
 - **The starting hook:** Why are these particular characters at the home base right now?
+- **Reputation model:** Does faction standing attach to individual PCs, a company/group identity, or the settlement collectively? Affects how new and returning players inherit standing.
+- **Advancement tie to board goals:** Do player-posted board goals mechanically tie to advancement (FitD-style), or is the board purely a fiction object?
+- **Lethality model mechanics:** Harm ladder principle is decided (scars over death, transient vs. lasting, retirement as dignified choice) — specific mechanics defer to system choice.
