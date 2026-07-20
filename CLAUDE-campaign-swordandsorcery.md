@@ -277,15 +277,23 @@ Backgrounds define who a character was before they ended up at the home base, an
 
 ## West Marches Structure
 
-**One home base** to start. Any major settlement becomes a safe haven as players reach it and establish relationships there. The home base is where expeditions depart from and return to — it has a tavern, a blacksmith, a market, a notice board with work, and a lord who keeps order because she needs the trade.
+**The company model.** The players don't just adventure together — they run a company. This gives the rotating roster a natural home: not everyone goes on every run, but they're all part of the same outfit. The company has a name (chosen by players at session one), a reputation, and a treasury. It can recruit new members. New recruits start at level 0; established members begin at level 1. Recruiting more capable people costs coin, favours, or reputation. The company's standing determines what contracts are available and how factions treat them.
 
-**Sessions are expeditions.** Players organise a party, pick a direction, go, and come back — or don't. Each session is self-contained. No cliffhangers that lock half the table out of next week's game.
+**One home base** to start. Any major settlement becomes a safe haven as players reach it and establish relationships there. The home base is where expeditions depart from and return to. The GM prepares its lore, key NPCs, and starting board postings before session one, then adjusts in reaction to the characters and their choices.
 
-**The map is the campaign.** Explored territory becomes known and changes. Unexplored territory stays dangerous and unknown. The map at the end of the campaign should be visibly the work of the players who made it.
+**Sessions are expeditions.** Players organise a party, pick a direction, go, and come back — or don't. Each session is self-contained. No cliffhangers that strand half the table.
 
-**Drop-in, drop-out.** Characters exist at the home base between sessions. A player who can't make it is simply not on this expedition. New players arrive as new characters who have just reached town. The world accommodates this naturally — the frontier always has new arrivals.
+**The node map.** Travel is constrained by how far a party can go in a session. Settlements are known to exist with general direction and area, but routes between them unlock through play. Players expand their range by finding and establishing safe travel routes. The map starts local. Scope grows with the campaign. The GM plans this structure ahead — knowing what's local, what's mid-range, and what's far shapes how the early campaign feels.
 
-**No rescue.** If a party goes dark, they're gone. The world does not send help. This is what makes the characters' competence meaningful: they're the ones who would have been sent.
+**Drop-in, drop-out.** Characters exist at the home base between sessions. A player who can't make it is simply not on this expedition. New players arrive as new characters joining the company. The world accommodates this naturally — the frontier always has new arrivals.
+
+**No rescue.** If a party goes dark, they're gone. The world does not send help.
+
+**Reputation is layered.** The company has collective standing with factions — it can be built, damaged, and inherited by new members. Individual characters earn nicknames and titles from specific deeds. Characters have relationships with each other and with named NPCs. Factions have relationships with each other. All of these are persistent and visible.
+
+**Advancement is milestone-based**, not XP farming. Specific mechanics defer to system choice.
+
+**Retirement is a dignified exit**, not a failure state. A worn-out character retires to something — coin, a March land grant, a position in the home base — and joins the world as an NPC. Harren is the model for this.
 
 ---
 
@@ -345,7 +353,13 @@ Not a people. Not a faction with culture, language, or politics. A single fungal
 
 Killing individual greenskins does not reduce the organism. The spores persist in soil long after the mobile forms are dead, ready to fruit again under the right conditions. Truly clearing a greenskin presence requires destroying the network at the soil level — burning, salting, or something more drastic. This makes them a recurring problem in ways that most threats are not.
 
-They are a monster faction. They are not playable, not negotiable with in any meaningful sense, and have no internal politics that players can influence. They are a pressure in the world, like weather.
+They are a monster faction — not playable, and their distributed instinct is not politics in any human sense. But they are not without behaviour patterns that can be understood and navigated.
+
+**Greenskins and the shadow economy.** Greenskins avoid fortified, well-patrolled settlements — they are attacked on sight, and rightly so. But in the lawless spaces of the March, they participate in a shadow economy that civilised settlements prefer not to acknowledge. Known exchange points exist at specific locations: abandoned waystation ruins, particular crossroads, places both parties have silently agreed are for commerce. Humans bring metal, tools, and goods greenskins want. Greenskins bring stolen goods, raw materials, and slaves.
+
+The slave trade is the darkest part of this system. Greenskins raid settlements and take prisoners; those prisoners are sold to human slavers operating in the same shadow markets. Players who push into the March's lawless spaces will eventually encounter evidence of this and have to decide what they do about it.
+
+**Hiring greenskins** for a specific task — as someone did before session one — is possible but requires knowing where to find a tribe willing to negotiate, having something worth trading, and being able to communicate a precise objective. That combination is rare and tells you something about whoever arranged it. In or near the home base, the list of people with that capability is short.
 
 ---
 
@@ -399,15 +413,90 @@ When time runs out, the entry is crossed off with a note. *"DEPARTED — caravan
 
 ---
 
+## GM Structure
+
+### Harm and Consequence
+
+Quick death is possible but reserved for extreme circumstances or accumulated consequence. The common outcome of dangerous situations is injury and trauma — minor harm that heals with rest, major harm requiring real recovery time, and lasting harm (a lost limb, permanent scar, psychological weight) that *redirects* a character rather than simply penalising them. Death happens when harm has accumulated and another hit would be lethal — the player almost always sees it coming and chooses to push anyway. That's the good kind of death.
+
+Specific harm mechanics defer to the chosen system. The principle is fixed: attrition over instant death, consequences that change how you play rather than just subtract from what you can do.
+
+### Faction Clocks
+
+Each active faction works toward a goal through a sequence of steps. Players do not see all steps at once — the full sequence is hidden. What's visible: the faction's current active step, because it's happening in the fiction and observant players can notice it. Investigation reveals further steps. The deeper they dig, the more of the sequence becomes legible.
+
+Each visible step is a lever — players can intervene to delay, stop, redirect, or accelerate a faction's progress. The same clock read backwards describes how to *help* the faction instead of oppose it. One clock, two directions.
+
+Clocks advance between sessions regardless of player attention. A faction the party ignores for a month has been moving. The world does not pause.
+
+### Organic World Pressure
+
+The world is a system in motion. Events happen. They create consequences. Consequences motivate goals — players post to the board, pursue personal threads, or react to what factions are doing. Pursuing those goals changes the world and creates new events. The job board, faction clocks, and players' personal threads are all expressions of the same living world, not separate mechanics. Nothing needs to be forced. Pressure comes from the world moving whether or not the players are paying attention.
+
+---
+
+## Campaign Start — The Company
+
+### The Company
+
+The players are members of a small mercenary and escort outfit with modest history. Not famous. Not infamous. Known, where known at all, for reliability and discretion: they complete contracts without unnecessary casualties, avoid high-risk noble conflicts, keep their people fed and working. The kind of company you hire when you want something done quietly and you want your people back.
+
+**Company name:** [TBD — players choose at session one]
+
+**Company focus:** Trade escort, personnel escort, guard duty, specialty goods transport. Occasional local beast hunting where the threat was manageable. Avoided mercenary campaign work after early experience — valuable contracts, but they cost lives.
+
+---
+
+### Captain Harren
+
+Salt-and-pepper short hair. Stocky, average height, well-scarred. Not a hero — a company man. He was not exceptional at the administrative or social demands of running an outfit, but he was tough and experienced, and he kept people fed and working through practical caution and sheer persistence. He survived more than his share of bad situations, mostly by not walking into them in the first place.
+
+This will be his last run.
+
+In session one, Harren takes serious injuries in the ambush. The dice determine his fate: he may die, or he may survive with injuries that end his time in the field. Either way, he will not lead the company out of the home base again. If he survives, he remains in the home base as a retired NPC — opinionated about what the company is becoming, connected to old relationships and debts the players now inherit, and unable to go back out.
+
+---
+
+### Session One — The Ambush
+
+The company is on a routine transport job: a large, locked steel trunk, too heavy for one person to carry alone, to be delivered on behalf of **Casvin** — the lord's right-hand man and trusted aide. Contents unknown. The kind of contract Harren has taken a hundred times.
+
+A greenskin raiding party hits the column hard and fast mid-route. They are better equipped than usual — quality weapons traded to them as payment, which they get to keep. They go straight for the trunk. They take it and leave. They do not stay to slaughter survivors. They do not mount anyone on spears — the standard display of greenskin victory. They scurry off with the goods and are gone.
+
+This is not how greenskins behave. Greenskins stay and kill. These ones had a specific objective and completed it.
+
+**The second half of the session:** Bury the dead. Care for the wounded. Make the march back to the home base without the trunk, without the pay, and without answers. The session ends when they face Casvin.
+
+He is furious. He is not surprised.
+
+---
+
+### Casvin
+
+The lord's right-hand man. Trusted political aide, capable administrator, first point of contact for anything that needs handling quietly. Whether he has any magical capability is unknown — he presents as a political figure, not a practitioner, and nothing about him announces otherwise. His actual nature is for players to investigate if they choose to.
+
+His reaction to the failed contract — fury without surprise — is the first signal that this job was more complicated than advertised. He may rehire the company to recover the trunk. He may use the failure as leverage. He may do both.
+
+---
+
+### Threads Session One Leaves Open
+
+1. What was in the trunk?
+2. Who hired the greenskins — and how did they arrange it?
+3. Why was Casvin not surprised?
+4. The greenskins had better equipment than they should. Someone sourced that and traded it. Who in or near the home base has that capability?
+5. The company failed a contract for the lord's right-hand man. How does that relationship go forward?
+
+None of these need answering in session one. They are questions the players carry out of the session with them.
+
+---
+
 ## Open Questions — [TBD]
 
-- **Names:** All peoples, the world, the continent, the March, the three empires, the six settlements, the Ash Compact's proper name
-- **The Precursors:** What exactly wakes in their deep ruins? What were they trying to do?
-- **The Sorcerer-Lord's secret:** What is beneath the palace, and what is the tithe?
-- **The mainstream religion:** What does it look like, what does it promise, and how does it relate to the Old Faith?
-- **Ruleset:** Realms of Peril, Shadowdark, Knave 2e, Cairn 2e, Worlds Without Number, or other. Note: if Realms of Peril, resolve the level-0 vs. "competent mortality" starting tension explicitly.
-- **Map scale:** How large is the March? A week's hard travel end to end, or something larger?
-- **The starting hook:** Why are these particular characters at the home base right now?
-- **Reputation model:** Does faction standing attach to individual PCs, a company/group identity, or the settlement collectively? Affects how new and returning players inherit standing.
-- **Advancement tie to board goals:** Do player-posted board goals mechanically tie to advancement (FitD-style), or is the board purely a fiction object?
-- **Lethality model mechanics:** Harm ladder principle is decided (scars over death, transient vs. lasting, retirement as dignified choice) — specific mechanics defer to system choice.
+- **All proper names:** World, continent, the March, three empires, six settlements, the Ash Compact, all non-human peoples, the company, the home base lord
+- **Ruleset:** Realms of Peril, Shadowdark, Knave 2e, Cairn 2e, Worlds Without Number, or other
+- **Religion:** One dominant faith, competing major gods, or many smaller ones — needs its own dedicated discussion; may be influenced by system choice
+- **Map planning:** Dedicated session to sketch the node structure — what's local, mid-range, and far; what the first expedition options look like geographically
+- **Sorcerer-lord's secret:** Leave vague; drop hints and rumors until players push to that city and investigate
+- **Precursor endgame:** Multiple possibilities (entombed ancients, autonomous construct, released magical hazard); decide as players approach the ruins, informed by their investigation direction
+- **Advancement specifics:** Milestone-based confirmed; exact triggers and structure defer to system choice
