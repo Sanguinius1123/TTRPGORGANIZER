@@ -45,9 +45,10 @@ export default function LoginPage() {
             className="w-full rounded-md bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700 disabled:opacity-50">
             {loading ? 'Signing in…' : 'Sign in'}
           </button>
-          <p className="text-center text-xs text-slate-500">
-            Player? <a href="/register" className="text-indigo-400 hover:text-indigo-300">Register here</a>
-          </p>
+          <div className="flex justify-between text-xs text-slate-500">
+            <a href="/forgot-password" className="text-indigo-400 hover:text-indigo-300">Forgot password?</a>
+            <span>Player? <a href="/register" className="text-indigo-400 hover:text-indigo-300">Register here</a></span>
+          </div>
         </form>
       </div>
     </div>
