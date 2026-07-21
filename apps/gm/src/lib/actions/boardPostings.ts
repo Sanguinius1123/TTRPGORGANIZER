@@ -107,9 +107,15 @@ export async function updateGmNotes(id: string, gm_notes: string) {
 // ── Shared GM + Player actions ────────────────────────────────────────────────
 
 export async function claimPosting(id: string) {
-  // Player moves an open posting to active (also used by GM)
   const supabase = db()
   await supabase.from('board_postings').update({ status: 'active' }).eq('id', id)
+  revalidatePath('/objectives')
+  revalidatePath('/play/objectives')
+}
+
+export async function untrackPosting(id: string) {
+  const supabase = db()
+  await supabase.from('board_postings').update({ status: 'open' }).eq('id', id)
   revalidatePath('/objectives')
   revalidatePath('/play/objectives')
 }

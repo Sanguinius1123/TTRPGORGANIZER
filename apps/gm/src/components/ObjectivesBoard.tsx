@@ -4,13 +4,14 @@ import { BoardPosting } from '@ttrpg/db'
 import {
   DndContext, DragEndEvent, DragOverEvent, DragStartEvent,
   DragOverlay, PointerSensor, useSensor, useSensors, closestCenter,
+  useDroppable,
 } from '@dnd-kit/core'
 import {
   SortableContext, arrayMove, rectSortingStrategy,
 } from '@dnd-kit/sortable'
 import { PostingCard, PostingCardOverlay, PostingCardMode } from './PostingCard'
 import { PostingDetail } from './PostingDetail'
-import { claimPosting, updateSortOrders } from '@/lib/actions/boardPostings'
+import { claimPosting, untrackPosting, updateSortOrders } from '@/lib/actions/boardPostings'
 
 type Tab = 'available' | 'active' | 'archive'
 
@@ -33,11 +34,13 @@ export function ObjectivesBoard({
 }: Props) {
   const [tab, setTab] = useState<Tab>('available')
   const [activeId, setActiveId] = useState<string | null>(null)
-  const [draggingToActive, setDraggingToActive] = useState(false)
   const [selectedPosting, setSelectedPosting] = useState<BoardPosting | null>(null)
   const [localPostings, setLocalPostings] = useState(allPostings)
 
   const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 8 } }))
+
+  const { setNodeRef: setActiveDropRef, isOver: isOverActiveTab } = useDroppable({ id: 'tab-active' })
+  const { setNodeRef: setAvailableDropRef, isOver: isOverAvailableTab } = useDroppable({ id: 'tab-available' })
 
   // ── Partition postings ─────────────────────────────────────────────────────
   const visible = (p: BoardPosting) => {
@@ -80,31 +83,36 @@ export function ObjectivesBoard({
     setActiveId(e.active.id as string)
   }
 
-  function handleDragOver(e: DragOverEvent) {
-    // Detect hover over the Active tab button
-    const overEl = e.activatorEvent instanceof PointerEvent
-      ? document.elementFromPoint(e.activatorEvent.clientX, e.activatorEvent.clientY)
-      : null
-    void overEl // suppress unused warning — tab hover is detected via onDragOver on the tab button
-  }
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  function handleDragOver(_e: DragOverEvent) { /* tab highlights handled via useDroppable isOver */ }
 
   async function handleDragEnd(e: DragEndEvent) {
     const { active: dndActive, over } = e
     setActiveId(null)
-    setDraggingToActive(false)
 
     if (!dndActive || !over) return
 
     const draggedId = dndActive.id as string
     const overId    = over.id as string
 
-    // Dropped onto "active-tab" sentinel → claim it
-    if (overId === 'active-tab-drop') {
+    // Dropped onto Active tab → claim it (open → active)
+    if (overId === 'tab-active') {
       const posting = localPostings.find(p => p.id === draggedId)
       if (posting && posting.status === 'open') {
         setLocalPostings(prev => prev.map(p => p.id === draggedId ? { ...p, status: 'active' } : p))
         setTab('active')
         await claimPosting(draggedId)
+      }
+      return
+    }
+
+    // Dropped onto Available tab → untrack it (active → open, non-player-created only)
+    if (overId === 'tab-available') {
+      const posting = localPostings.find(p => p.id === draggedId)
+      if (posting && posting.status === 'active' && !posting.created_by_pc_id) {
+        setLocalPostings(prev => prev.map(p => p.id === draggedId ? { ...p, status: 'open' } : p))
+        setTab('available')
+        await untrackPosting(draggedId)
       }
       return
     }
@@ -126,15 +134,14 @@ export function ObjectivesBoard({
     }
   }
 
-  const tabBtn = (t: Tab, label: string, count: number) => (
+  const tabBtn = (t: Tab, label: string, count: number, isOver?: boolean) => (
     <button
-      id={t === 'active' ? 'active-tab-btn' : undefined}
       onClick={() => setTab(t)}
       className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors ${
         tab === t
           ? 'border-indigo-400 text-indigo-300'
           : 'border-transparent text-slate-400 hover:text-slate-200'
-      } ${draggingToActive && t === 'active' ? 'border-amber-400 text-amber-300' : ''}`}
+      } ${isOver ? 'border-amber-400 text-amber-300 bg-amber-950/20' : ''}`}
     >
       {label}
       <span className="ml-2 text-xs bg-slate-700 text-slate-400 rounded-full px-1.5 py-0.5">{count}</span>
@@ -150,20 +157,13 @@ export function ObjectivesBoard({
       onDragEnd={handleDragEnd}
     >
       <div className="flex flex-col h-full">
-        {/* Tab bar */}
+        {/* Tab bar — Available and Active are both drop targets */}
         <div className="flex border-b border-slate-700 mb-4 gap-1">
-          {tabBtn('available', 'Available', available.length)}
-          {/* Active tab is also a drop target */}
-          <div
-            id="active-tab-drop"
-            onPointerUp={() => {
-              if (activeId) {
-                const posting = localPostings.find(p => p.id === activeId)
-                if (posting?.status === 'open') setDraggingToActive(true)
-              }
-            }}
-          >
-            {tabBtn('active', 'Active', active.length)}
+          <div ref={setAvailableDropRef}>
+            {tabBtn('available', 'Available', available.length, isOverAvailableTab && !!activeId)}
+          </div>
+          <div ref={setActiveDropRef}>
+            {tabBtn('active', 'Active', active.length, isOverActiveTab && !!activeId)}
           </div>
           {tabBtn('archive', 'Archive', archive.length)}
         </div>

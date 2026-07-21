@@ -4,7 +4,7 @@ import { BoardPosting } from '@ttrpg/db'
 import { PostingCardMode } from './PostingCard'
 import {
   claimPosting, setPostingStatus, updatePartyNotes,
-  togglePostingVisible, publishHiddenGoal,
+  togglePostingVisible, publishHiddenGoal, untrackPosting,
 } from '@/lib/actions/boardPostings'
 
 const ARCHIVE_STATUSES = ['completed', 'failed', 'expired', 'abandoned']
@@ -152,7 +152,35 @@ export function PostingDetail({
               </button>
             )}
 
-            {/* GM: status controls */}
+            {/* Untrack — move back to Available (non-player-created active postings) */}
+            {posting.status === 'active' && !posting.created_by_pc_id && (
+              <button
+                onClick={() => { startTransition(async () => { await untrackPosting(posting.id); onStatusChange(posting.id, 'open') }) }}
+                className="rounded-md border border-slate-600 bg-slate-800 px-3 py-1.5 text-sm text-slate-300 hover:bg-slate-700"
+              >
+                Move to Available
+              </button>
+            )}
+
+            {/* GM: restore archived posting */}
+            {mode === 'gm' && ARCHIVE_STATUSES.includes(posting.status) && (
+              <>
+                <button
+                  onClick={() => { startTransition(async () => { await untrackPosting(posting.id); onStatusChange(posting.id, 'open') }) }}
+                  className="rounded-md border border-slate-600 bg-slate-800 px-3 py-1.5 text-sm text-slate-300 hover:bg-slate-700"
+                >
+                  Reopen (Available)
+                </button>
+                <button
+                  onClick={() => { startTransition(async () => { await claimPosting(posting.id); onStatusChange(posting.id, 'active') }) }}
+                  className="rounded-md border border-indigo-700 bg-indigo-950/30 px-3 py-1.5 text-sm text-indigo-300 hover:bg-indigo-900/30"
+                >
+                  Move to Active
+                </button>
+              </>
+            )}
+
+            {/* GM: archive status controls */}
             {mode === 'gm' && posting.status === 'active' && (
               <>
                 {ARCHIVE_STATUSES.map(s => (

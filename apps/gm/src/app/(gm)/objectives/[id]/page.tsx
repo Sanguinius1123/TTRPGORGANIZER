@@ -3,6 +3,7 @@ import { BoardPosting, Location, NPC, Faction } from '@ttrpg/db'
 import { getActiveCampaignId } from '@/lib/activeCampaign'
 import { notFound, redirect } from 'next/navigation'
 import { updatePosting, deletePosting, setPostingStatus } from '@/lib/actions/boardPostings'
+import { DeletePostingButton } from '@/components/DeletePostingButton'
 import MentionTextarea from '@/components/MentionTextarea'
 import Link from 'next/link'
 
@@ -166,13 +167,7 @@ export default async function ObjectiveDetailPage({ params }: { params: Promise<
           <Link href="/objectives" className="rounded-md border border-slate-600 bg-slate-700 px-4 py-2 text-sm font-medium text-slate-300 hover:bg-slate-600">
             Back
           </Link>
-          <form action={deleteWithId} className="ml-auto">
-            <button type="submit"
-              onClick={e => { if (!confirm('Delete this posting?')) e.preventDefault() }}
-              className="rounded-md border border-red-800 bg-red-950/30 px-4 py-2 text-sm font-medium text-red-400 hover:bg-red-900/30">
-              Delete
-            </button>
-          </form>
+          <DeletePostingButton action={deleteWithId} />
         </div>
       </form>
     </div>
