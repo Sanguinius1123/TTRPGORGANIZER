@@ -32,7 +32,7 @@ export function ObjectivesBoard({
   mode, campaignId, activePcId, allPostings,
   locationNames, npcNames, factionNames, pcNames,
 }: Props) {
-  const [tab, setTab] = useState<Tab>('available')
+  const [tab, setTab] = useState<Tab>('active')
   const [activeId, setActiveId] = useState<string | null>(null)
   const [selectedPosting, setSelectedPosting] = useState<BoardPosting | null>(null)
   const [localPostings, setLocalPostings] = useState(allPostings)
@@ -159,11 +159,11 @@ export function ObjectivesBoard({
       <div className="flex flex-col h-full">
         {/* Tab bar — Available and Active are both drop targets */}
         <div className="flex border-b border-slate-700 mb-4 gap-1">
-          <div ref={setAvailableDropRef}>
-            {tabBtn('available', 'Available', available.length, isOverAvailableTab && !!activeId)}
-          </div>
           <div ref={setActiveDropRef}>
             {tabBtn('active', 'Active', active.length, isOverActiveTab && !!activeId)}
+          </div>
+          <div ref={setAvailableDropRef}>
+            {tabBtn('available', 'Available', available.length, isOverAvailableTab && !!activeId)}
           </div>
           {tabBtn('archive', 'Archive', archive.length)}
         </div>
