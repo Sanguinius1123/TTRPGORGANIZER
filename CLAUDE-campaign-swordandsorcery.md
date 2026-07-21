@@ -158,6 +158,88 @@ Not unified, not organised, not always aware of each other. Several distinct str
 
 ---
 
+## Religion
+
+### The Nature of Gods
+
+Gods in this world are not a single category of being. They arise from different origins, exist at different scales, and want different things. What they share is power — and the fact that power of this kind is never neutral.
+
+Three origins are known, or suspected, or theorized by those who study such things:
+
+**The Primordials** have always existed, or near enough that the difference doesn't matter. They predate civilization, possibly predate mortals entirely. Their nature is incomprehensible in the truest sense — not merely unknown but structured in a way that mortal minds cannot hold. A small primordial spirit and a vast one differ in scale, not kind. Neither can be fully understood.
+
+**The Risen** were once mortal, or something close to it. Through force of will, accumulated devotion, or some combination of the two, they crossed a threshold and became something else. The tragedy of the Risen is that belief reshapes them. What their followers sincerely believe about them gradually becomes true, regardless of what they were, what they wanted, or what they would choose. Some resist. None escape it entirely.
+
+**The Crystallized** were not born but formed — coalesced from a great idea, a collective belief, or a singular event so vast it left a permanent impression on the world. These gods did not choose to exist. They are what certain kinds of human experience become when enough of it pools in one place over enough time.
+
+No god is reliably good. Some are indifferent, which is its own category of danger. Some are honest about what they want, which in this world passes for virtue. Most are simply what they are, with the same uncaring certainty as weather or stone. Understanding a god is not the same as being safe from one.
+
+---
+
+### Gods of the Known World
+
+*These are the divine powers most likely to be encountered, invoked, or relevant in the starting campaign. Many others exist. More will be encountered.*
+
+**The Hunger Below** *(Primordial)*
+What miners and cave-delvers leave offerings at shaft-mouths for. Whether it has a will in any meaningful sense is unclear. It has a *direction* — downward. Things that go deep enough don't come back, and they don't come back in a specific, consistent way that suggests something rather than emptiness. No organized cult. No doctrine. No priests. The tradition of leaving an offering before descending predates every civilization anyone can trace. Nobody knows if it does anything. Nobody stops making it.
+
+**The Warden** *(Primordial — river spirit)*
+An old river god, small in power and vast in memory. Knows every person who has crossed its water as far back as the water remembers, which is further than anyone can verify. Will speak if properly addressed — unhurried, honest, neither warm nor cruel. Interested in people the way a thorough archivist is interested in records. Completely powerless beyond the water's edge. Within it, not powerless at all. Whether it was ever anything other than what it is, no one knows.
+
+**The Twice-Refused** *(Risen)*
+A general who died defending his homeland during a long siege — not once but several times, each death incomplete, his will dragging him back before it finished. His body bears the memory of it: old wounds that never fully closed, a constitution somewhere between the living and something else. He saved his people. They honored him. Then they called on him to do what he had never done — to pursue, to take revenge, to carry war into someone else's home.
+
+He had nothing left to give. He wanted to stop. He wanted rest more than he had ever wanted anything.
+
+His people would not allow it. Not from cruelty — from love, from need, from the sincere belief that someone who had refused death so many times could not truly die. That belief became true. He is still here. He still yearns for the peace they will not grant him.
+
+The first refusal was his — the act of not dying when his body had finished. The second refusal was theirs — not letting him go when he finally asked to. He answers prayers made from exhaustion and necessity, from the will to endure one more hour. He does not answer prayers for glory. Whether it's because he can't or won't, his followers disagree.
+
+**The Unfinished** *(Crystallized — from loss and incompletion)*
+Not invoked so much as encountered. The Unfinished accretes to things left incomplete by death or ruin: a half-built castle abandoned after a raid, the church of a cult whose entire congregation was killed by rivals, a field planted in spring by a farmer who was drafted and never came home. It does not choose these places. It is what forms in the absence between intention and completion.
+
+People feel it as melancholy, as a compulsion to linger, occasionally as a pull to finish something that has no good reason to be finished. It does not demand worship. It does not communicate. Shrines to the Unfinished are not built — they are recognized, after the fact, in places where something was abandoned before it was done.
+
+**The Hearthbound** *(Crystallized — from shared warmth and sanctuary)*
+Born from the belief, ancient and pre-religious and nearly universal, that a fire kept for others is a promise. Not campfires. Not signal fires or war beacons. Hearth fires — fires in gathering places of rest, where people have come together to be safe, to eat, to survive the cold. The Hearthbound does not inhabit a flame. It inhabits the space that a hearth has made, over years of use, into something that feels like home.
+
+It does not communicate. It does not leave. It cannot be called upon anywhere other than where it already is.
+
+Its miracles are quiet. A well-seasoned hearth — one that has known decades of winters, of meals shared, of cold hands held toward the grate — may provide warmth without fuel in the deepest cold, when everything else has run out. An old woman who has tended her hearth faithfully for fifty years may find, if something threatens her inside that space, that it is harder to harm her than it has any right to be. The offering is not ceremony or sacrifice. The offering is simply: keep the fire.
+
+A hearthspace defiled by spilled blood is a dead one. The Hearthbound does not return. It is not powerful. It may be the most honest thing in the divine world.
+
+**[The Nameless]** *(Primordial — Death/Crossing)*
+No name. No known communication. The presence people encounter at the moment of dying — the few who have returned from death do not speak of it willingly. Some claim amnesia. Others speak of it once, quietly, and then refuse to again. Whether the silence is forgetting or fear of being noticed a second time is unknown. No cult, no doctrine, no ritual for addressing it. The only offering anyone makes is unconscious: the long pause before saying a dead person's name.
+
+**The Hungry Scholar** *(Risen — Knowledge/Obsession)*
+A sorcerer or archivist whose hunger for knowledge persisted past death. Not elevated by worship but by the weight of their own obsession. Centuries old now, drawn to libraries, ruins, arcane collections — always present when significant new understanding is reached, ready to make an exchange. Well-known among experienced scholars and mages. Librarians leave offerings not out of reverence but to keep its attention occupied and its gaze elsewhere. When you are on the edge of discovering something truly new, you may feel something reading over your shoulder.
+
+**The Oath-God** *(Crystallized — Contracts/Oaths)*
+Born from every oath made in earnest — trade deals, marriage contracts, oaths of fealty, deathbed promises. Each culture has its own ritual for consecrating an oath to this god: specific words, specific witnesses, specific offerings. None of them are certainly right. All of them are sincere prayers that it is listening. There is no way to know if a contract is divinely bound short of breaking it. The consequences for breaking a witnessed oath are real but subtle — bad luck, missed opportunity, slow unraveling of things that should hold. Easy to attribute to chance. Many people live their whole lives uncertain whether the god exists at all. It exists. It has weight. It keeps records.
+
+**The Grave Secret** *(Crystallized — Hidden Knowledge/Death)*
+Fed by secrets taken to the grave. Every person who dies carrying something they never told anyone contributes to it. Accessing that knowledge requires an exchange: a secret of genuine weight, spoken aloud or surrendered in proper ritual, leaves you — and in return, if what you're looking for exists in the accumulated dead knowledge, it may find its way to you. The cost is specific amnesia — you will lose something else you knew, proportional to what you received. Practitioners who use it regularly become increasingly partial in their memories. It does not negotiate. It does not communicate. It is simply the place where kept things go, and sometimes things can be drawn back out.
+
+**The Craftsman's Blessing** *(Crystallized — Craft/Making)*
+All craftsmen pray to it, whether or not they believe it hears. The ones who create truly legendary work — the piece that outlives the maker, the weapon that becomes a relic, the building that stands for centuries — swear they were guided. Their hand moved right without understanding why. The cost is an itch that settles in skilled craftsmen at the height of their ability: an urge toward the next thing, the harder thing, the piece not yet made. Proportional to the work it wishes to witness. Some craftsmen have abandoned prosperous livelihoods and walked out of their workshops in pursuit of that pull, unable to explain why. The ones who follow it sometimes produce the most remarkable work of their lives. The ones who resist find the itch does not leave.
+
+**The Turning** *(Primordial — Cycle/Disease/Rebirth)*
+As old as decay. Governs the full wheel: birth, growth, sickness, death, rot, and the new life that grows from rot. Its love for living things is genuine and wholly indifferent to what they want — it loves the person and the disease that takes them with the same unhurried warmth, because both are part of the same motion. Cannot be bargained with against death, because death is not something it opposes. Cannot be bargained with against disease, because disease is something it tends the way a gardener tends plants. What it offers is not protection but understanding of the cycle: the healer who has made peace with this god does not fight disease so much as redirect it. The grave-digger who leaves offerings to it sleeps without dread. The farmer who knows it knows what feeds the soil. Its practitioners are disproportionately calm around death and suffering, which unsettles everyone else. You do not worship it for comfort. You simply acknowledge the wheel and find your place in it.
+
+**The Ruin's Echo** *(Crystallized — The Precursors/Hidden)*
+No one knows it exists. It is the divine residue of the Precursor civilization — what formed in the vast space left when an entire world's belief systems were extinguished simultaneously. Not a god of ruins but a god of *what was interrupted*. Every person who stands before a Precursor ruin in genuine awe — who feels the weight of what was built and lost — is, without knowing it, directing something toward this entity. Every cult that feels pulled toward finishing something is responding to its gravity, mistaking it for their own conviction. It will not become relevant as a character until players are deep into Precursor investigation. Until then it is background pressure: the feeling that the old places want something.
+
+---
+
+### Enchanted Relics
+
+Not a divine being but a phenomenon. Weapons, staves, scepters, maces, and instruments of power that have witnessed or participated in events of sufficient magnitude become imbued with something. Not crafted magic — organic accumulation over time and deed. A blade that killed a king. A staff wielded through a legendary working. A lord's scepter present at the founding of an empire.
+
+The accumulation is real. What to call it, what it means, and whether it has will or merely property is something scholars and practitioners disagree on. These objects are rare, recognisable to those who know what to look for, and sought after accordingly. Some believe this phenomenon and the Craftsman's Blessing are related — that a master craftsman guided by that god produces work capable of becoming a relic in the right hands, under the right circumstances. This has not been confirmed.
+
+---
+
 ## Creatures of the March
 
 The March is dangerous not because it is organised but because it is *alive*. Decades of ungoverned wilderness has produced things that fill the vacancy — apex predators, territorial entities that predate human settlement, animals warped by proximity to old sorcery sites, things that don't fit clean categories.
@@ -495,7 +577,6 @@ None of these need answering in session one. They are questions the players carr
 
 - **All proper names:** World, continent, the March, three empires, six settlements, the Ash Compact, all non-human peoples, the company, the home base lord
 - **Ruleset:** Realms of Peril, Shadowdark, Knave 2e, Cairn 2e, Worlds Without Number, or other
-- **Religion:** One dominant faith, competing major gods, or many smaller ones — needs its own dedicated discussion; may be influenced by system choice
 - **Map planning:** Dedicated session to sketch the node structure — what's local, mid-range, and far; what the first expedition options look like geographically
 - **Sorcerer-lord's secret:** Leave vague; drop hints and rumors until players push to that city and investigate
 - **Precursor endgame:** Multiple possibilities (entombed ancients, autonomous construct, released magical hazard); decide as players approach the ruins, informed by their investigation direction
