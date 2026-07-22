@@ -483,7 +483,8 @@ function toEdge(
   conn: LocationConnection,
   locById: Map<string, Location>,
   distanceScale: number,
-  travelUnit: string
+  travelUnit: string,
+  roundLabels: boolean
 ): Edge {
   let label: string | undefined
   if (conn.travel_time_manual && conn.travel_time) {
@@ -497,7 +498,8 @@ function toEdge(
         b.map_x, b.map_y, b.terrain ?? null, b.path_modifiers ?? [],
         distanceScale
       )
-      label = cost > 0 ? `${cost} ${travelUnit}` : undefined
+      const display = roundLabels ? Math.round(cost) : cost
+      label = display > 0 ? `${display} ${travelUnit}` : undefined
     }
   }
   return {
@@ -550,6 +552,7 @@ function MapCanvasInner({
   const otherTypes = scaleTypes.filter(t => t !== 'POI')
   const [unplacedList, setUnplacedList] = useState(unplaced)
   const [showHidden, setShowHidden] = useState(true)
+  const [roundLabels, setRoundLabels] = useState(false)
   const [creationMenu, setCreationMenu] = useState<{
     screenX: number
     screenY: number
@@ -605,8 +608,8 @@ function MapCanvasInner({
   const effectiveTravelUnit = localConfig.travelUnit || travelUnit
 
   const recomputeEdges = useCallback((locs: Map<string, Location>, conns: LocationConnection[]) => {
-    return conns.map(c => toEdge(c, locs, effectiveDistanceScale, effectiveTravelUnit))
-  }, [effectiveDistanceScale, effectiveTravelUnit])
+    return conns.map(c => toEdge(c, locs, effectiveDistanceScale, effectiveTravelUnit, roundLabels))
+  }, [effectiveDistanceScale, effectiveTravelUnit, roundLabels])
 
   const initialNodes = useMemo(() => placed.map(l => toNode(l)), [placed])
   const initialEdges = useMemo(
@@ -617,6 +620,16 @@ function MapCanvasInner({
 
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes)
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges)
+
+  const handleToggleRoundLabels = useCallback(() => {
+    const next = !roundLabels
+    setRoundLabels(next)
+    setEdges(prev => prev.map(e => {
+      const conn = localConnections.find(c => c.id === e.id)
+      if (!conn) return e
+      return toEdge(conn, locationsState, effectiveDistanceScale, effectiveTravelUnit, next)
+    }))
+  }, [roundLabels, localConnections, locationsState, effectiveDistanceScale, effectiveTravelUnit, setEdges])
 
   const onNodeDragStop = useCallback<OnNodeDrag<Node>>((_event, node) => {
     void updateLocationPosition(node.id, node.position.x, node.position.y)
@@ -678,12 +691,12 @@ function MapCanvasInner({
       created_at: new Date().toISOString(),
     }
     setLocalConnections(prev => [...prev, tempConn])
-    setEdges(prev => [...prev, toEdge(tempConn, locationsState, effectiveDistanceScale, effectiveTravelUnit)])
+    setEdges(prev => [...prev, toEdge(tempConn, locationsState, effectiveDistanceScale, effectiveTravelUnit, roundLabels)])
 
     const realConn = await createLocationConnection(params.source, params.target, true)
     setLocalConnections(prev => prev.map(c => c.id === tempId ? realConn : c))
-    setEdges(prev => prev.map(e => e.id === tempId ? toEdge(realConn, locationsState, effectiveDistanceScale, effectiveTravelUnit) : e))
-  }, [locationsState, effectiveDistanceScale, effectiveTravelUnit, setEdges])
+    setEdges(prev => prev.map(e => e.id === tempId ? toEdge(realConn, locationsState, effectiveDistanceScale, effectiveTravelUnit, roundLabels) : e))
+  }, [locationsState, effectiveDistanceScale, effectiveTravelUnit, roundLabels, setEdges])
 
   const onPaneContextMenu = useCallback((e: React.MouseEvent | MouseEvent) => {
     e.preventDefault()
@@ -780,10 +793,11 @@ function MapCanvasInner({
         { ...updatedConn, travel_time: manual ? value : null, travel_time_manual: manual },
         locationsState,
         effectiveDistanceScale,
-        effectiveTravelUnit
+        effectiveTravelUnit,
+        roundLabels
       )
     }))
-  }, [edgePanel, localConnections, locationsState, effectiveDistanceScale, effectiveTravelUnit, setEdges])
+  }, [edgePanel, localConnections, locationsState, effectiveDistanceScale, effectiveTravelUnit, roundLabels, setEdges])
 
   const saveEdgeBidirectional = useCallback(async (val: boolean) => {
     if (!edgePanel) return
@@ -965,6 +979,12 @@ function MapCanvasInner({
               className="w-full text-xs text-slate-400 hover:text-slate-200 border border-slate-600 hover:border-slate-500 rounded px-2 py-1.5 transition-colors"
             >
               {showHidden ? 'Hide Hidden' : 'Show Hidden'}
+            </button>
+            <button
+              onClick={handleToggleRoundLabels}
+              className={`w-full text-xs border rounded px-2 py-1.5 transition-colors ${roundLabels ? 'text-indigo-300 border-indigo-700 bg-indigo-950' : 'text-slate-400 hover:text-slate-200 border-slate-600 hover:border-slate-500'}`}
+            >
+              Round Labels
             </button>
             <button
               onClick={exportPng}
