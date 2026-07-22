@@ -80,9 +80,10 @@ export function calcTravelCost(
   const multB = TERRAIN_MULT[bterrain ?? ''] ?? 1.0
   const avgTerrain = (multA + multB) / 2
 
-  const allPaths = [...apaths, ...bpaths]
-  const pathMult = allPaths.length > 0
-    ? Math.min(...allPaths.map(p => PATH_MULT[p] ?? 1.0))
+  // Only apply a path modifier if both endpoints share it (road must connect both nodes)
+  const sharedPaths = apaths.filter(p => bpaths.includes(p))
+  const pathMult = sharedPaths.length > 0
+    ? Math.min(...sharedPaths.map(p => PATH_MULT[p] ?? 1.0))
     : 1.0
 
   const raw = scaled * avgTerrain * pathMult
