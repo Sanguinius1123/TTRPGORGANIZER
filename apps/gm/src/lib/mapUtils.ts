@@ -82,8 +82,8 @@ export function calcTravelCost(
   // River-connected: River/Lake terrain OR a Dock path modifier (settlement with water access)
   const aRiver = aterrain === 'River / Lake' || apaths.includes('Dock')
   const bRiver = bterrain === 'River / Lake' || bpaths.includes('Dock')
-  // River-to-river (or dock-to-river): boat travel is twice as fast as open terrain
-  const avgTerrain = (aRiver && bRiver) ? 0.5 : (multA + multB) / 2
+  // River-to-river (or dock-to-river): half the time of plains+road (0.6 / 2 = 0.3)
+  const avgTerrain = (aRiver && bRiver) ? 0.3 : (multA + multB) / 2
 
   // Only apply a path modifier if both endpoints share it (road must connect both nodes)
   const sharedPaths = apaths.filter(p => bpaths.includes(p))

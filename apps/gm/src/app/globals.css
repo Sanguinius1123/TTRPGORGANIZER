@@ -21,6 +21,9 @@ body {
 .react-flow__controls-button svg {
   fill: #e2e8f0;
 }
+.react-flow__controls-button svg {
+  fill: #e2e8f0;
+}
 .react-flow__minimap {
   background: #1e293b;
   border: 1px solid #334155;
