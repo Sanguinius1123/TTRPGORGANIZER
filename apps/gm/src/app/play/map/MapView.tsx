@@ -435,7 +435,7 @@ function MapViewInner({ locations, connections, distanceScale, travelUnit, locat
           deleteKeyCode={null}
         >
           <Background variant={BackgroundVariant.Dots} color="#1e293b" gap={24} />
-          <Controls showInteractive={false} style={{ background: '#1e293b', border: '1px solid #334155', borderRadius: 6 }} />
+          <Controls showInteractive={false} style={{ background: '#1e293b', border: '1px solid #334155', borderRadius: 6 }} svgStyle={{ fill: '#e2e8f0' }} />
           <MiniMap nodeColor="#6366f1" maskColor="rgba(15, 23, 42, 0.7)" style={{ background: '#1e293b', border: '1px solid #334155' }} />
         </ReactFlow>
 

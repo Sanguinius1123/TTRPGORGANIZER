@@ -1033,7 +1033,7 @@ function MapCanvasInner({
             deleteKeyCode={null}
           >
             <Background variant={BackgroundVariant.Dots} color="#1e293b" gap={24} />
-            <Controls style={{ background: '#1e293b', border: '1px solid #334155', borderRadius: 6 }} />
+            <Controls style={{ background: '#1e293b', border: '1px solid #334155', borderRadius: 6 }} svgStyle={{ fill: '#e2e8f0' }} />
             <MiniMap
               nodeColor={(node) => {
                 const d = node.data as LocationData
