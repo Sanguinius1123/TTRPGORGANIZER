@@ -935,6 +935,28 @@ function MapCanvasInner({
     await updateLocationWaypoint(nodeId, loc?.terrain ?? null, modifiers)
   }, [locationsState, setNodes, setEdges, recomputeEdges, localConnections])
 
+  const handleUpdateTerrain = useCallback(async (nodeId: string, terrain: string | null) => {
+    const loc = locationsState.get(nodeId)
+    setLocationsState(prev => {
+      const next = new Map(prev)
+      const existing = next.get(nodeId)
+      if (existing) next.set(nodeId, { ...existing, terrain })
+      setEdges(recomputeEdges(next, localConnections))
+      return next
+    })
+    setNodes(prev => prev.map(n => {
+      if (n.id !== nodeId) return n
+      const d = n.data as LocationData
+      const nodeColor = TERRAIN_COLORS[terrain ?? ''] || '#64748b'
+      return { ...n, data: { ...d, terrain, nodeColor, rawLoc: { ...d.rawLoc, terrain } } }
+    }))
+    setNodeMenu(prev => prev ? {
+      ...prev,
+      nodeData: { ...prev.nodeData, terrain, rawLoc: { ...prev.nodeData.rawLoc, terrain } },
+    } : null)
+    await updateLocationWaypoint(nodeId, terrain, loc?.path_modifiers ?? [])
+  }, [locationsState, setNodes, setEdges, recomputeEdges, localConnections])
+
   const visibleNodes = useMemo(() =>
     showHidden ? nodes : nodes.filter(n => (n.data as LocationData).visible),
     [nodes, showHidden]
@@ -1336,6 +1358,21 @@ function MapCanvasInner({
                   />
                   Visible to players
                 </label>
+                {nodeMenu.nodeData.waypoint && (
+                  <div className="mt-1 pt-1 border-t border-slate-700 px-1">
+                    <div className="text-[10px] text-slate-500 py-1 uppercase tracking-wide">Terrain</div>
+                    <select
+                      value={nodeMenu.nodeData.terrain ?? ''}
+                      onChange={e => handleUpdateTerrain(nodeMenu.nodeId, e.target.value || null)}
+                      className="w-full text-xs bg-slate-800 border border-slate-600 text-slate-200 rounded px-2 py-1 outline-none focus:border-indigo-400"
+                    >
+                      <option value="">None</option>
+                      {TERRAIN_LIST.map(t => (
+                        <option key={t} value={t}>{t}</option>
+                      ))}
+                    </select>
+                  </div>
+                )}
                 {!nodeMenu.nodeData.waypoint && (
                   <>
                     <label className="flex items-center gap-2 text-xs text-slate-300 cursor-pointer hover:bg-slate-700 rounded px-2 py-1.5">
