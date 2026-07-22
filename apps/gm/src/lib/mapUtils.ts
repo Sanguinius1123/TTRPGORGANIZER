@@ -22,7 +22,7 @@ export const SCALE_TYPES: Record<string, string[]> = {
 
 export const TERRAIN_MULT: Record<string, number> = {
   'Forest': 1.3,
-  'Mountain': 2.0,
+  'Mountain': 1.7,
   'Plains': 1.0,
   'Desert': 1.5,
   'Ocean': 1.8,
