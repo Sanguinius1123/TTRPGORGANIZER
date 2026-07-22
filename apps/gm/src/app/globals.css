@@ -10,14 +10,13 @@ body {
   color: var(--foreground);
 }
 
-/* React Flow dark-mode overrides — SVG icons use fill:currentColor, so set color not fill */
-.react-flow__controls-button {
-  background: #1e293b;
-  border-color: #334155;
-  color: #e2e8f0;
-}
-.react-flow__controls-button:hover {
-  background: #334155;
+/* React Flow controls — override CSS variables so theming is consistent regardless of OS mode */
+.react-flow__controls {
+  --xy-controls-button-background-color: #1e293b;
+  --xy-controls-button-background-color-hover: #334155;
+  --xy-controls-button-color: #e2e8f0;
+  --xy-controls-button-color-hover: #fff;
+  --xy-controls-button-border-color: #334155;
 }
 .react-flow__controls-button svg {
   fill: #e2e8f0;
