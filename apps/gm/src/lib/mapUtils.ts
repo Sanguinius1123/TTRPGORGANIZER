@@ -44,6 +44,7 @@ export const PATH_MULT: Record<string, number> = {
   'Bridge': 0.8,
   'Ferry / Crossing': 1.2,
   'Mountain Pass': 1.5,
+  'Dock': 1.0,  // signals river access; no speed effect on its own
 }
 
 export const TERRAIN_COLORS: Record<string, string> = {
@@ -78,10 +79,11 @@ export function calcTravelCost(
 
   const multA = TERRAIN_MULT[aterrain ?? ''] ?? 1.0
   const multB = TERRAIN_MULT[bterrain ?? ''] ?? 1.0
-  // River-to-river: traveling on the water is twice as fast as open terrain
-  const avgTerrain = (aterrain === 'River / Lake' && bterrain === 'River / Lake')
-    ? 0.5
-    : (multA + multB) / 2
+  // River-connected: River/Lake terrain OR a Dock path modifier (settlement with water access)
+  const aRiver = aterrain === 'River / Lake' || apaths.includes('Dock')
+  const bRiver = bterrain === 'River / Lake' || bpaths.includes('Dock')
+  // River-to-river (or dock-to-river): boat travel is twice as fast as open terrain
+  const avgTerrain = (aRiver && bRiver) ? 0.5 : (multA + multB) / 2
 
   // Only apply a path modifier if both endpoints share it (road must connect both nodes)
   const sharedPaths = apaths.filter(p => bpaths.includes(p))
