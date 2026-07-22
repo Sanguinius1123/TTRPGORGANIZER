@@ -78,7 +78,10 @@ export function calcTravelCost(
 
   const multA = TERRAIN_MULT[aterrain ?? ''] ?? 1.0
   const multB = TERRAIN_MULT[bterrain ?? ''] ?? 1.0
-  const avgTerrain = (multA + multB) / 2
+  // River-to-river: traveling on the water is twice as fast as open terrain
+  const avgTerrain = (aterrain === 'River / Lake' && bterrain === 'River / Lake')
+    ? 0.5
+    : (multA + multB) / 2
 
   // Only apply a path modifier if both endpoints share it (road must connect both nodes)
   const sharedPaths = apaths.filter(p => bpaths.includes(p))
