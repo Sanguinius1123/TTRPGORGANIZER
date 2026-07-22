@@ -1003,12 +1003,6 @@ function MapCanvasInner({
               {showHidden ? 'Hide Hidden' : 'Show Hidden'}
             </button>
             <button
-              onClick={handleToggleRoundLabels}
-              className={`w-full text-xs border rounded px-2 py-1.5 transition-colors ${roundLabels ? 'text-indigo-300 border-indigo-700 bg-indigo-950' : 'text-slate-400 hover:text-slate-200 border-slate-600 hover:border-slate-500'}`}
-            >
-              Round Labels
-            </button>
-            <button
               onClick={exportPng}
               className="w-full text-xs text-slate-400 hover:text-slate-200 border border-slate-600 hover:border-slate-500 rounded px-2 py-1.5 transition-colors"
             >
@@ -1303,7 +1297,7 @@ function MapCanvasInner({
                   className="w-full rounded bg-slate-700 border border-slate-600 px-2 py-1 text-xs text-slate-100 outline-none focus:border-indigo-400"
                 />
               </div>
-              <div className="mb-3">
+              <div className="mb-2">
                 <label className="text-xs text-slate-400 block mb-1">Distance Scale</label>
                 <input
                   type="number"
@@ -1313,6 +1307,15 @@ function MapCanvasInner({
                   className="w-full rounded bg-slate-700 border border-slate-600 px-2 py-1 text-xs text-slate-100 outline-none focus:border-indigo-400"
                 />
               </div>
+              <label className="flex items-center gap-2 text-xs text-slate-300 cursor-pointer hover:bg-slate-700 rounded px-1 py-1.5 mb-2">
+                <input
+                  type="checkbox"
+                  checked={roundLabels}
+                  onChange={handleToggleRoundLabels}
+                  className="accent-indigo-500"
+                />
+                Round labels to whole number
+              </label>
               <button
                 onClick={handleSaveConfig}
                 className="w-full text-xs bg-indigo-600 hover:bg-indigo-700 text-white rounded px-2 py-1.5"
