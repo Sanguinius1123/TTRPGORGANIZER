@@ -546,7 +546,7 @@ function MapCanvasInner({
   mapConfig, mapLocationId, focusNodeId, campaignId,
 }: MapCanvasProps) {
   const router = useRouter()
-  const { screenToFlowPosition, fitView } = useReactFlow()
+  const { screenToFlowPosition, fitView, getNodes } = useReactFlow()
   const currentScale = mapConfig?.map_scale ?? 'galaxy'
   const scaleTypes = SCALE_TYPES[currentScale] ?? SCALE_TYPES.galaxy
   const otherTypes = scaleTypes.filter(t => t !== 'POI')
@@ -620,6 +620,37 @@ function MapCanvasInner({
 
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes)
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges)
+
+  // D key: duplicate selected waypoint (same terrain + path_modifiers, offset 60px right)
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      if (e.key !== 'd' && e.key !== 'D') return
+      const tag = (e.target as HTMLElement).tagName
+      if (tag === 'INPUT' || tag === 'TEXTAREA' || (e.target as HTMLElement).isContentEditable) return
+      const selected = getNodes().filter(n => n.selected)
+      if (selected.length !== 1) return
+      const srcData = selected[0].data as LocationData
+      if (!srcData.waypoint) return
+      const srcLoc = srcData.rawLoc
+      const newX = (srcLoc.map_x ?? 0) + 60
+      const newY = srcLoc.map_y ?? 0
+      createWaypoint(newX, newY, srcLoc.terrain ?? null, mapLocationId, campaignId).then(result => {
+        const newLoc: Location = {
+          id: result.id,
+          name: null, type: null, descriptor: null, status: null, area: null,
+          description: null, parent_location_id: mapLocationId, image_url: null,
+          visible: srcLoc.visible, map_x: newX, map_y: newY, waypoint: true,
+          terrain: srcLoc.terrain ?? null, path_modifiers: srcLoc.path_modifiers ?? [],
+          has_submap: false, mystery: false, gm_notes: null,
+          campaign_id: campaignId, created_at: new Date().toISOString(),
+        }
+        setNodes(prev => [...prev, toNode(newLoc)])
+        setLocationsState(prev => new Map(prev).set(result.id, newLoc))
+      })
+    }
+    window.addEventListener('keydown', handler)
+    return () => window.removeEventListener('keydown', handler)
+  }, [getNodes, mapLocationId, campaignId, setNodes, setLocationsState])
 
   const handleToggleRoundLabels = useCallback(() => {
     const next = !roundLabels
