@@ -655,7 +655,7 @@ function MapCanvasInner({
       const dragged = draggedWaypointRef.current
       if (!dragged) return
       const srcLoc = (dragged.node.data as LocationData).rawLoc
-      const newX = dragged.x + 60
+      const newX = dragged.x
       const newY = dragged.y
       const prevPlaced = lastPlacedRef.current
       const withConnection = (key === 'c' || key === 'C') && prevPlaced !== null
