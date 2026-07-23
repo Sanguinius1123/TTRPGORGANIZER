@@ -1,0 +1,12 @@
+-- Add Hills terrain: retag foothill waypoints from Plains → Hills
+-- 2026-07-22
+
+UPDATE locations
+SET terrain = 'Hills'
+WHERE id IN (
+  'ee000001-5573-4000-8000-000000000012',
+  'ee000001-5573-4000-8000-000000000013',
+  'ee000001-5573-4000-8000-000000000014',
+  'ee000001-5573-4000-8000-000000000015'
+)
+AND campaign_id = '00000000-5573-4000-8000-000000000001';

@@ -22,6 +22,7 @@ export const SCALE_TYPES: Record<string, string[]> = {
 
 export const TERRAIN_MULT: Record<string, number> = {
   'Forest': 1.3,
+  'Hills': 1.2,
   'Mountain': 1.7,
   'Plains': 1.0,
   'Desert': 1.5,
@@ -49,6 +50,7 @@ export const PATH_MULT: Record<string, number> = {
 
 export const TERRAIN_COLORS: Record<string, string> = {
   'Forest': '#166534',
+  'Hills': '#a3a030',
   'Mountain': '#475569',
   'Plains': '#65a30d',
   'Desert': '#d97706',
