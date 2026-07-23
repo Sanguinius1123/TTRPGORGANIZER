@@ -546,7 +546,7 @@ function MapCanvasInner({
   mapConfig, mapLocationId, focusNodeId, campaignId,
 }: MapCanvasProps) {
   const router = useRouter()
-  const { screenToFlowPosition, fitView, getNodes } = useReactFlow()
+  const { screenToFlowPosition, fitView } = useReactFlow()
   const currentScale = mapConfig?.map_scale ?? 'galaxy'
   const scaleTypes = SCALE_TYPES[currentScale] ?? SCALE_TYPES.galaxy
   const otherTypes = scaleTypes.filter(t => t !== 'POI')
@@ -621,20 +621,45 @@ function MapCanvasInner({
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes)
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges)
 
-  // D key: duplicate selected waypoint (same terrain + path_modifiers, offset 60px right)
+  // Track whichever waypoint node is currently being dragged
+  const draggedWaypointRef = useRef<{ node: Node; x: number; y: number } | null>(null)
+  // Track the last waypoint placed via D or C (used by C to create a connected chain)
+  const lastPlacedRef = useRef<Location | null>(null)
+
+  const onNodeDragStart = useCallback<OnNodeDrag<Node>>((_event, node) => {
+    const d = node.data as LocationData
+    if (d.waypoint) {
+      draggedWaypointRef.current = { node, x: node.position.x, y: node.position.y }
+    }
+  }, [])
+
+  const onNodeDragMove = useCallback<OnNodeDrag<Node>>((_event, node) => {
+    if (draggedWaypointRef.current?.node.id === node.id) {
+      draggedWaypointRef.current = { node, x: node.position.x, y: node.position.y }
+    }
+  }, [])
+
+  const onNodeDragEnd = useCallback<OnNodeDrag<Node>>(() => {
+    draggedWaypointRef.current = null
+  }, [])
+
+  // D = stamp a copy of the dragged waypoint at offset (no connection)
+  // C = stamp a copy AND connect it to the last waypoint placed via D or C
+  // Both update lastPlacedRef so C can chain continuously
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
-      if (e.key !== 'd' && e.key !== 'D') return
+      const key = e.key
+      if (key !== 'd' && key !== 'D' && key !== 'c' && key !== 'C') return
       const tag = (e.target as HTMLElement).tagName
       if (tag === 'INPUT' || tag === 'TEXTAREA' || (e.target as HTMLElement).isContentEditable) return
-      const selected = getNodes().filter(n => n.selected)
-      if (selected.length !== 1) return
-      const srcData = selected[0].data as LocationData
-      if (!srcData.waypoint) return
-      const srcLoc = srcData.rawLoc
-      const newX = (srcLoc.map_x ?? 0) + 60
-      const newY = srcLoc.map_y ?? 0
-      createWaypoint(newX, newY, srcLoc.terrain ?? null, mapLocationId, campaignId).then(result => {
+      const dragged = draggedWaypointRef.current
+      if (!dragged) return
+      const srcLoc = (dragged.node.data as LocationData).rawLoc
+      const newX = dragged.x + 60
+      const newY = dragged.y
+      const prevPlaced = lastPlacedRef.current
+      const withConnection = (key === 'c' || key === 'C') && prevPlaced !== null
+      createWaypoint(newX, newY, srcLoc.terrain ?? null, mapLocationId, campaignId).then(async result => {
         const newLoc: Location = {
           id: result.id,
           name: null, type: null, descriptor: null, status: null, area: null,
@@ -646,11 +671,21 @@ function MapCanvasInner({
         }
         setNodes(prev => [...prev, toNode(newLoc)])
         setLocationsState(prev => new Map(prev).set(result.id, newLoc))
+        lastPlacedRef.current = newLoc
+        if (withConnection && prevPlaced) {
+          const conn = await createLocationConnection(prevPlaced.id, result.id, true)
+          setLocalConnections(prev => [...prev, conn])
+          setEdges(prev => [...prev, toEdge(conn,
+            new Map([[prevPlaced.id, prevPlaced], [result.id, newLoc]]),
+            effectiveDistanceScale, effectiveTravelUnit, roundLabels
+          )])
+        }
       })
     }
     window.addEventListener('keydown', handler)
     return () => window.removeEventListener('keydown', handler)
-  }, [getNodes, mapLocationId, campaignId, setNodes, setLocationsState])
+  }, [mapLocationId, campaignId, setNodes, setLocationsState, setLocalConnections, setEdges,
+      effectiveDistanceScale, effectiveTravelUnit, roundLabels])
 
   const handleToggleRoundLabels = useCallback(() => {
     const next = !roundLabels
@@ -1049,6 +1084,8 @@ function MapCanvasInner({
             edges={edges}
             onNodesChange={onNodesChange}
             onEdgesChange={onEdgesChange}
+            onNodeDragStart={onNodeDragStart}
+            onNodeDrag={onNodeDragMove}
             onNodeDragStop={onNodeDragStop}
             onConnect={onConnect}
             onEdgeClick={onEdgeClick}
