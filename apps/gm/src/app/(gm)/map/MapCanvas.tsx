@@ -672,7 +672,7 @@ function MapCanvasInner({
         setNodes(prev => [...prev, toNode(newLoc)])
         setLocationsState(prev => new Map(prev).set(result.id, newLoc))
         lastPlacedRef.current = newLoc
-        if (withConnection && prevPlaced) {
+        if (withConnection && prevPlaced && prevPlaced.id !== result.id) {
           const conn = await createLocationConnection(prevPlaced.id, result.id, true)
           setLocalConnections(prev => [...prev, conn])
           setEdges(prev => [...prev, toEdge(conn,
@@ -743,7 +743,7 @@ function MapCanvasInner({
   }, [setNodes])
 
   const onConnect = useCallback(async (params: Connection) => {
-    if (!params.source || !params.target) return
+    if (!params.source || !params.target || params.source === params.target) return
     const tempId = `temp-${Date.now()}`
     const tempConn: LocationConnection = {
       id: tempId,

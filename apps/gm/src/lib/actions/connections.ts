@@ -9,6 +9,7 @@ export async function createLocationConnection(
   travel_time: string | null = null,
   travel_time_manual: boolean = false
 ) {
+  if (from_location_id === to_location_id) throw new Error('Cannot connect a location to itself')
   const supabase = db()
   const { data, error } = await supabase.from('location_connections').insert({
     from_location_id,
