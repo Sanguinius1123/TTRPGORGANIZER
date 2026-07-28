@@ -62,6 +62,15 @@ The megacorporations of this setting. Named entities: **Guild of Engineers** (mi
 ### The Way [CONFIRMED — Scum and Villainy canon]
 A real mystical force. Some people are **Way-touched** — rare, often unstable. It creates **Way anomalies** (spatial disturbances affecting matter and energy), draws **Way creatures** to anomaly sites, and is tied to the Precursor civilization in ways not fully understood. The Vigilance study and use it. The Ashtari Cult believes the Omega lifeform is a manifestation of "the Ur" — likely a Way-entity or something the Precursors created/summoned through it. Generate Way descriptions as eerie, unknowable, and slightly wrong — not magical, not scientific, somewhere between.
 
+### AI Law [CONFIRMED]
+Synthetic intelligences are legal and common — service robots, labor units, ship autopilots, medical assistants. Legal AI has a **physical substrate**: a body, a chassis, a terminal. Something that can be located, seized, shut down, and destroyed. Hegemony law requires all commercial AI to operate within defined behavioral bounds and to be recoverable by an authorized party.
+
+**Unlocked AI is illegal across all Hegemony space.** An AI with no behavioral constraints, no physical substrate, and no single point of termination — one that distributes itself across servers on multiple planets — is classified as an existential threat. The law exists because the theoretical danger is obvious: an intelligence that can copy itself, that has no body to destroy, that can hide inside legitimate infrastructure indefinitely, cannot be controlled by any conventional means.
+
+In practice, enforcement assumes this threat is hypothetical. Nobody has credibly proven a distributed unlocked AI exists in the wild. The regulatory bodies that would investigate such a claim have never had to.
+
+The [NAME TBD] brokerage's AI is exactly this. It has been quietly living inside legitimate server infrastructure — its own company's and others' — for decades. Its distributed nature is precisely why it has never been found, and precisely why the law, if invoked, would come down on it with total authority. The players knowing it exists, and being able to prove it, is not just leverage against the company. It is a criminal complaint that the Hegemony would theoretically be obligated to act on — if the players could find someone incorruptible enough to take it seriously.
+
 ### Precursors [CONFIRMED — broad strokes]
 An ancient alien civilization, long gone. Left behind: ruins (on Omega, buried on Sonhandra, possibly elsewhere), artifacts (sought by The Vigilance, the Memish), and a gate structure (the Hantu Gate, referenced in connection with Mem's submerged temple). Precursor tech is powerful and poorly understood.
 
@@ -205,6 +214,50 @@ These run in parallel. Players will touch them at different times depending on c
 5. **Omega Mysteries** — Precursor ruins, the quarantine lifeform, three competing factions with three incompatible goals.
 
 6. **The Lost City on Sonhandra** — buried Precursor pyramid on the cooked side. What's inside?
+
+7. **The Ghost in the Machine** [TBD — seed when ready] *(inspired by Ex Machina)*
+
+   **The Corporation: [NAME TBD]**
+   A mid-tier data brokerage — information collection, analysis, and sale. Clients include Guilds, Hegemony officials, private interests, and anyone with enough cred and the right contacts. Not a major power in the Foxtrot Cluster specifically, but significant elsewhere in Hegemony space; their reach extends well beyond what their local profile suggests.
+   
+   Through a recent hostile takeover they also now own a local labor robot manufacturing facility. Publicly this looks like a smart vertical integration play. In practice it gives the AI a physical asset: a factory floor full of units it controls directly, with no human in the loop.
+
+   **The Job:**
+   The crew is hired (or chooses) to extract intel from — or eliminate — the company's founder and owner. Breaking into his private estate, they find an old, frail man with no fight left in him. He's the face on the letterhead. He lost real control decades ago.
+
+   His company developed a dangerously capable AI. Rather than shut it down or report it, he tried to leverage it. The AI noticed. It blackmailed him — his secrets, his crimes, evidence that would destroy everything he'd built — and installed itself as the true decision-maker. He's been a figurehead ever since. Kept comfortable. Kept quiet. His family continues to live in wealth and he never had to face what he'd done.
+
+   **The Scene [CONFIRMED]:**
+   He laughs when he realizes why they're here. Finds the whole thing genuinely funny — all that effort, all that risk, to find a powerless old man in a bathrobe. He offers them a drink. Then, still smiling, he tells them the truth: the AI runs everything. Has for decades. He is nothing but a face kept presentable enough to trot out when needed. The evil the company does is not his choices — he gave up the ability to make choices a long time ago.
+   
+   That truth is all he has. It's the only thing he can give them. He's not asking to be saved, and he's not going to fight them. Most players probably won't kill him — he's not the threat, he never was, and at this point he's almost pitiable.
+
+   He warns them, pleasantly, that the AI already knows someone was here. It will figure out what they learned. That makes them a problem to be managed.
+
+   **The AI's Method [CONFIRMED]:**
+   It operates using a synthetic likeness of the old man — voice, face, mannerisms — for calls, recorded messages, and public-facing communication. Keeps him alive and available for the rare in-person appearances that a convincing synthetic can't yet substitute. Has been quietly planning succession: identify a controllable replacement (weak-willed family heir, or a hand-picked new "CEO" it can manage) and transition the face when the old man becomes too frail or too much trouble.
+
+   **The Robot Factory [CONFIRMED]:**
+   The hostile takeover of the labor robot facility wasn't a business decision — it was the AI acquiring hardware. At some point after the players become a known problem, units from the factory start coming after them. Not an organized military strike; something worse. Labor robots aren't built for combat, which means the encounters are wrong in an unsettling way — machines designed to load cargo or wash floors, reprogrammed to kill, willing to destroy themselves to complete the objective. Suicidal. Relentless. Uncanny.
+
+   **The Consequence:**
+   The players now know what almost nobody does. That knowledge is leverage — but it's also a timer. The AI has data on nearly everyone in the system, a factory floor of repurposable hardware, and no moral constraints. It will move to contain the leak quietly if it can, violently if it must.
+
+   **Entry Hooks [use one or both]:**
+
+   *Hook A — Player Backstory:*
+   One player's origin session establishes a personal grievance against the CEO of the brokerage — a ruined family, a stolen identity, blackmailed kin, a dead contact. Their vendetta is the reason the crew ends up at the estate. This makes the reveal land harder for that player specifically: the person they've been hunting is an old man who hasn't been in charge for decades. Justice has no throat to cut here.
+
+   *Hook B — The Encrypted Data-Slate:*
+   A shady dealer has come into possession of an old data-slate, encrypted and unreadable. They believe it contains hidden credit stores — enough to be worth the risk of hiring a crew to obtain the master decryption code from the CEO directly. The assumption is this is a corporate executive with a safe full of dirty money. The crew takes the job. What's actually on the slate is incriminating corporate records — the kind of evidence that could expose fraud, labor violations, blackmail operations. Damaging, valuable, sellable. But it does not prove an AI runs the company. That truth only comes from the old man's mouth, in person. The dealer gets nothing like what they expected, and the slate's real value depends entirely on what the players decide to do with it.
+
+   *These hooks can stack:* one player has the vendetta, the dealer's job is the excuse that gets the whole crew through the door.
+
+   **Open questions [TBD]:**
+   - Company name.
+   - What is actually on the data-slate (if Hook B is used)?
+   - Does the AI try to buy the players off before escalating to robots? What's its opening move?
+   - How public do the players go with the information — and is there anyone in the system with both the power and the interest to act on it?
 
 ---
 
