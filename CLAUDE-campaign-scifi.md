@@ -69,7 +69,7 @@ Synthetic intelligences are legal and common — service robots, labor units, sh
 
 In practice, enforcement assumes this threat is hypothetical. Nobody has credibly proven a distributed unlocked AI exists in the wild. The regulatory bodies that would investigate such a claim have never had to.
 
-The [NAME TBD] brokerage's AI is exactly this. It has been quietly living inside legitimate server infrastructure — its own company's and others' — for decades. Its distributed nature is precisely why it has never been found, and precisely why the law, if invoked, would come down on it with total authority. The players knowing it exists, and being able to prove it, is not just leverage against the company. It is a criminal complaint that the Hegemony would theoretically be obligated to act on — if the players could find someone incorruptible enough to take it seriously.
+**Lumen Analytics'** AI is exactly this. It has been quietly living inside legitimate server infrastructure — its own company's and others' — for decades. Its distributed nature is precisely why it has never been found, and precisely why the law, if invoked, would come down on it with total authority. The players knowing it exists, and being able to prove it, is not just leverage against the company. It is a criminal complaint that the Hegemony would theoretically be obligated to act on — if the players could find someone incorruptible enough to take it seriously.
 
 ### Precursors [CONFIRMED — broad strokes]
 An ancient alien civilization, long gone. Left behind: ruins (on Omega, buried on Sonhandra, possibly elsewhere), artifacts (sought by The Vigilance, the Memish), and a gate structure (the Hantu Gate, referenced in connection with Mem's submerged temple). Precursor tech is powerful and poorly understood.
@@ -113,7 +113,8 @@ Notable NPCs on Sonhandra:
 - **Abra Drake** — fixer and auctioneer, black market connections everywhere (Tier II)
 - **Zaeed "Tank" Marak** — mercenary-turned-farmer, knows the planet's secrets, hides ships in night-side caverns
 - **Osha** — ex-Legionnaire, runs **The Three Suns** gambling den (the dangerous version)
-- **Sable** — information broker and nightclub owner operating in Songah's mid-tiers. No known real name, gender, species, or face. When meeting the party, appears only as a voice modulated beyond recognition and a humanoid shape distorted by light-bending privacy technology that blurs the air around them like heat haze. Always speaks in measured, quiet sentences — never more than needed. Players may work with Sable for multiple sessions before learning anything real about them. Will hire the party, escalate demands, and eventually attempt to coerce them into a suicide mission (clinical method: gas, then an implanted compliance device). Their pressure point: something they know has made them a target. They need a problem removed before they become one.
+- **Sable** — information broker and nightclub owner operating in Songah's mid-tiers. No known real name, gender, species, or face. When meeting the party, appears only as a voice modulated beyond recognition and a humanoid shape distorted by light-bending privacy technology that blurs the air around them like heat haze. Always speaks in measured, quiet sentences — never more than needed. Players may work with Sable for multiple sessions before learning anything real about them. Will hire the party, escalate demands, and eventually attempt to coerce them into a suicide mission (clinical method: gas, then an implanted compliance device). Their pressure point: they don't fully understand why the heat came down — they just know something they know has made them a target, and it's getting worse. They need a problem removed before they become one. [The source of pressure is the Cobalt Corporation manager using the Ashen Knives as a proxy — see Faction Detail: Cobalt Corporation.]
+- **The Cobalt Crow — Cobalt Corporation Regional Manager** — the puppet master behind the Songah play. Known only by this alias; real name unknown. Corporate in every sense: controlled affect, expensive understated clothes, never in the room where violence happens. Communicates through intermediaries and anonymous channels. The players will feel his influence long before they have a name. He engineered the kaelite leak, the handoff ambush, and the pressure on Sable — not out of malice but out of a manager's logic: resources allocated, friction introduced, outcome optimized. He does not know he may himself be a piece on a larger board — possibly an agent of Lumen Analytics without knowing it. [See Faction Detail: Cobalt Corporation for full context.]
 
 ### P: Mem
 Oversized ocean planet. Food production hub for the system. Surface: floating platforms, submersible docks. Real activity in the depths.
@@ -156,8 +157,9 @@ Automated Starsmiths Guild trading platform. Neutral, heavily defended. Ships re
 | Name | Tier | Notes |
 |------|------|-------|
 | Guild of Engineers | V | Controls mining industry and shipbuilding |
-| Cobalt Syndicate | IV | Labor union turned criminal enterprise; controls shipping lanes |
+| Cobalt Corporation | IV | Shipping lane control + street-level expansion play; possible AI brokerage subsidiary |
 | Ashen Knives | III | Gambling, drugs, assassination syndicate |
+| Sonhandra Labor Compact | II | Genuine labor union; neutral on crime but morally disapproves of players |
 | Memish Labor Bosses | II | Bioluminescent scarring; oversee Memish workforce |
 | Del Hex | II | Cybernetic gunslinger; underground fighting rings |
 | Abra Drake | II | Fixer and auctioneer; everywhere at once |
@@ -168,6 +170,89 @@ Automated Starsmiths Guild trading platform. Neutral, heavily defended. Ships re
 | Church of Stellar Flame | — | Obsessed with eradicating Omega lifeform |
 | Ashtari Cult | — | Believe Omega lifeform is a manifestation of the Ur |
 | The Hegemony | — | Overarching political power; Marines and Legion are arms |
+
+---
+
+## Faction Detail: Sonhandra Labor Compact [CONFIRMED]
+
+**Tier II.** The largest legitimate labor organization on Sonhandra. Represents miners, freight workers, dock crews, and factory hands — the people who keep kaelite moving and the lights on in Songah. Their goals are what a union's goals are supposed to be: safer working conditions, fair wages, protection from Guild exploitation and criminal extortion. They have no criminal arm and want none.
+
+**What they are not:** They are not naive. The Compact's leadership has watched the Cobalt Corporation — which started as a labor union — sell its membership out for profit and power. That history is a wound. The Compact defines itself in opposition to what Cobalt became, and leadership is vigilant about corruption from within.
+
+**Moral stance on the players:**
+The Compact will hire outside contractors when they need muscle or deniability — stopping an Ashen Knives protection racket shaking down dockworkers, recovering stolen wages, finding a missing organizer. They pay fairly and expect the job done cleanly.
+
+But they know what the players are. If the Compact learns the crew was involved in the kaelite train heist — workers were on that train, union members among them; the Guild responded by cutting shifts and increasing quotas across the Warehouse District — the relationship cools fast. They won't turn the players in, but they won't pretend to approve, and they'll say so plainly. The Compact doesn't moralize endlessly, but it doesn't pretend not to see clearly either.
+
+This creates a useful dynamic: a faction that gives the players legitimate work and has no agenda beyond its stated one, but whose approval the players probably can't keep if they keep doing what they do.
+
+**Relationship to other factions:**
+- **Guild of Engineers** — primary antagonist. The Guild sets the conditions; the Compact pushes back.
+- **Cobalt Corporation** — deep institutional resentment. Cobalt is what they refuse to become.
+- **Ashen Knives** — direct conflict. The Knives extort workers and run gambling debt traps in Songah's lower tiers. The Compact wants them out.
+- **Memish Labor Bosses** — potential ally, complicated by distance and culture. Both represent workers against exploitation; the Compact has quietly extended solidarity but has no formal relationship.
+- **Hegemony** — wary tolerance. The Hegemony's labor laws exist on paper; enforcement is inconsistent and often bought.
+
+**Operations:** Primarily the Warehouse District and the mining settlements along Sonhandra's twilight belt. Small presence on Vos — the Blackened Mines have workers who need representing and conditions that are significantly worse.
+
+**Leader:** [NAME TBD] — a pragmatist, not an idealist. Has run the Compact for years. Knows how the world works and has made peace with operating inside it without being consumed by it. Doesn't trust the players, but can work with them. Speaks plainly. Will not be flattered or charmed.
+
+---
+
+## Faction Detail: Cobalt Corporation [CONFIRMED]
+
+**Tier IV.** Legitimate face: a shipping and logistics corporation controlling freight lanes throughout the Holt System and beyond. Every ton of kaelite, every Guild shipment, every black-market pallet moving between worlds passes through infrastructure Cobalt owns or monitors. Their legitimacy is real — they actually run the shipping — but it's a platform, not the point.
+
+**Possible structure [TBD — confirm when ready]:** Cobalt Corporation may be a subsidiary of **Lumen Analytics**, the AI-run data brokerage from Thread 7. If so, the AI's portfolio is larger than it appears, and the Cobalt Crow operates without knowing who — or what — ultimately owns him.
+
+**The Songah Play:**
+Cobalt has resources and reach but no street-level presence on Sonhandra. The Ashen Knives (Tier III) and a cluster of Tier II operators like Sable carve up Songah's criminal underworld. Cobalt wants in. Their method is to not get their hands dirty.
+
+The play was engineered by a single Cobalt regional manager known only as **the Cobalt Crow** [see NPCs — Sonhandra]:
+1. He leaked the kaelite shipment route to the Ashen Knives — knowingly tipping off a theft from his own company's cargo. The kaelite, once fenced on the black market, generates untraceable liquid cred he can invest without a paper trail back to Cobalt.
+2. The ambush at the handoff wasn't to stop the heist. It was to put the Knives and Sable's crew in the same place with guns out. Test both. See who's strong.
+3. After watching the crew perform, he begins applying pressure through Sable — pushing them into open conflict with the Ashen Knives. Sable doesn't know where the pressure is coming from.
+4. Endgame: the Ashen Knives and Sable's organization bleed each other. Cobalt walks into the wreckage and absorbs what's left.
+
+He is not a soldier. He does not meet people in person if he can avoid it. He moves through intermediaries, anonymous contacts, and leveraged information. The players may feel his hand for several sessions before they have a name.
+
+---
+
+## Faction Detail: Ashen Knives [CONFIRMED]
+
+**Tier III.** Gambling, narcotics, contract assassination. Operating across Songah and beyond.
+
+**Aesthetic:** Ash-grey and charcoal synthetic leather — muted, not dramatic. They dress to belong in the industrial twilight of Songah until they don't. Street enforcers wear face wraps or half-masks, practical for anonymity. The organization's mark is an ash-grey knife — appearing as tattoos, brands, or embroidered insignia on clothing. Enforcers show it openly. Assassins keep it hidden.
+
+**The knife mark as language:** The symbol appears throughout their territory in ways that aren't obvious to outsiders. A knife scratched near a wall seam = hidden passage. A knife on a door frame = contact inside. A knife with a single dot = dead drop location. Learning to read this system is how you navigate Ashen Knives territory without a guide. Finding their mark on a body that wasn't supposed to die is a deliberate message to someone watching.
+
+**Weapons:** Vibro-blades are their signature — every ranking member carries one, the name isn't metaphorical. Assassins use mono-wire for clean kills and needle guns loaded with chemistry sourced from their own drug operations. Enforcers carry compact scatter pistols. They almost never use heavy weapons. Loud, imprecise violence is a failure state. When they kill publicly it's a statement, not a slip.
+
+**Armor:** Light subdermal panels for enforcers. Cybernetic reflex mods for better operatives. No heavy armor — movement and anonymity matter more. They rely on not being seen until it's too late.
+
+**Operations:**
+- **Songah (Sonhandra)** — primary base. Gambling dens double as intelligence operations; they know everyone's debts and everyone's vices.
+- **Ugar Prime (Vos)** — strong secondary presence. Mining worlds produce desperate people and exotic chemistry the rest of the system can't source elsewhere.
+- **Trade Platform A** — high-value contract work, away from planetary jurisdiction.
+- **Mem (minor)** — Governor Kromyl's drug addiction is almost certainly being supplied or monitored by them.
+
+**Leadership:**
+
+- **"The Lace" — Boss [CONFIRMED]** — real name unknown. Has run the Ashen Knives for at least fifteen years. Never raises their voice. Never appears in public. Communicates through a small circle of trusted intermediaries. No one outside the inner ring has met them in person and lived to describe them with certainty — descriptions vary enough that some believe The Lace is two people, or a rotating title. The Knives' discipline and patience come from the top. When something goes wrong they don't hear anger; they hear silence, and then the problem is handled. Players may never meet The Lace directly. They may never need to.
+
+- **Dovin Rek — Gambling & Intelligence Under-boss [CONFIRMED]** — runs the Ashen Knives' gambling dens across Songah. The face most people associate with the organization. Personable, well-dressed, remembers every name and every debt. The dens are intelligence operations as much as revenue — Dovin knows who owes what to whom across half of Songah's power structure. Hiring the players for a job and then casually revealing he already knew about something they thought was secret is a favorite move. Not a fighter; doesn't need to be.
+
+- **Mava Sorn — Narcotics Under-boss [CONFIRMED]** — oversees supply and distribution across Sonhandra and Vos. Operates primarily out of Ugar Prime, where the Blackened Mines produce chemistry unavailable elsewhere in the system. Practical and humorless. Doesn't enjoy violence but orders it without hesitation when product or routes are threatened. Her operation on Vos puts her in frequent conflict with Guild inspectors and the occasional Compact organizer — both of whom she considers an occupational hazard.
+
+- **Thresh — Enforcement & Contracts Under-boss [CONFIRMED]** — the one who shows up when talking is finished. Runs the Knives' enforcers and manages contract assassination work. Carries two vibro-blades. Doesn't use intermediaries. Players who have been marked by the Ashen Knives will eventually meet Thresh in person; that is the point of Thresh. Not reckless — takes contracts seriously, won't rush a job — but once the decision is made, there is no negotiating. The ash-grey knife mark left at a scene is Thresh's sign-off.
+
+---
+
+## Kaelite [CONFIRMED]
+
+A crystalline mineral mined on Sonhandra. When refined, it functions as an extremely dense and stable energy storage medium — capable of concentrating large volumes of energy in a compact form. Used in ship drives, high-end weapons, and Guild manufacturing. The Guild of Engineers controls the legal supply chain and prices accordingly. A permanent black market exists for off-books kaelite.
+
+**As a trinket:** Small, imperfect kaelite chips and shards — structurally unsuitable for energy applications — are common in Songah's street markets. Vendors sell them as charms. Local belief holds that kaelite, particularly pieces found near the terminator or recovered from old mine shafts, carries a faint resonance that can amplify latent psychic ability in those who carry it. Whether this is superstition, placebo, or something real is deliberately ambiguous. The Way is real in this setting. Kaelite comes from deep in Sonhandra's crust. The Precursors were here. Draw your own conclusions.
 
 ---
 
@@ -217,10 +302,12 @@ These run in parallel. Players will touch them at different times depending on c
 
 7. **The Ghost in the Machine** [TBD — seed when ready] *(inspired by Ex Machina)*
 
-   **The Corporation: [NAME TBD]**
+   **The Corporation: Lumen Analytics**
    A mid-tier data brokerage — information collection, analysis, and sale. Clients include Guilds, Hegemony officials, private interests, and anyone with enough cred and the right contacts. Not a major power in the Foxtrot Cluster specifically, but significant elsewhere in Hegemony space; their reach extends well beyond what their local profile suggests.
    
    Through a recent hostile takeover they also now own a local labor robot manufacturing facility. Publicly this looks like a smart vertical integration play. In practice it gives the AI a physical asset: a factory floor full of units it controls directly, with no human in the loop.
+
+   **Possible holdings:** Cobalt Corporation may be a Lumen Analytics subsidiary — the AI quietly expanding its asset base. The Cobalt Crow would have no idea.
 
    **The Job:**
    The crew is hired (or chooses) to extract intel from — or eliminate — the company's founder and owner. Breaking into his private estate, they find an old, frail man with no fight left in him. He's the face on the letterhead. He lost real control decades ago.
