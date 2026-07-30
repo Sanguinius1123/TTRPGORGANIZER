@@ -165,7 +165,7 @@ Automated Starsmiths Guild trading platform. Neutral, heavily defended. Ships re
 | Abra Drake | II | Fixer and auctioneer; everywhere at once |
 | Jerek | I | Neutral merchant; legal and illegal equipment |
 | The Vigilance | I | Warrior mystics; seek Precursor artifacts and Way anomalies |
-| Borniko Syndicate | — | Thieves; fence through Jerek's Junkyard |
+| Borniko Syndicate | I | Small-time thieves; fence through Jerek's Junkyard; hired as disposable muscle by anonymous clients |
 | Starsmiths Guild | — | Guild affiliate; operates Trade Platform A |
 | Church of Stellar Flame | — | Obsessed with eradicating Omega lifeform |
 | Ashtari Cult | — | Believe Omega lifeform is a manifestation of the Ur |
@@ -248,6 +248,18 @@ He is not a soldier. He does not meet people in person if he can avoid it. He mo
 
 ---
 
+## Faction Detail: Borniko Syndicate [CONFIRMED — partial]
+
+**Tier I.** Small-time thieves and opportunists operating primarily in Songah and around Jerek's Junkyard. No ideology, no long-term agenda — they take jobs, fence goods through Jerek, and avoid attention. Jerek tolerates them because they bring him product; they stay in his orbit because he moves things no one else will touch.
+
+Their value to larger players is precisely their disposability. They take anonymous work without asking questions — which makes them easy to hire and easy to disavow. Lumen Analytics used them in the Bounty Arc for exactly this reason. They won't know who hired them or why.
+
+**First introduction (Thread 2):** Players may encounter the Borniko Syndicate staking out the hospital ward, or clash with them in a corridor when both crews are after the same target. The Syndicate will back down if the odds are bad — they're not soldiers, and they know it. If the players let them walk, they remember it. If the players make an example of them, word gets back to Jerek.
+
+**Leadership and detail [TBD — flesh out when they appear at the table].**
+
+---
+
 ## Kaelite [CONFIRMED]
 
 A crystalline mineral mined on Sonhandra. When refined, it functions as an extremely dense and stable energy storage medium — capable of concentrating large volumes of energy in a compact form. Used in ship drives, high-end weapons, and Guild manufacturing. The Guild of Engineers controls the legal supply chain and prices accordingly. A permanent black market exists for off-books kaelite.
@@ -290,11 +302,31 @@ These run in parallel. Players will touch them at different times depending on c
 
 1. **The Crime Boss Arc** — starts as normal criminal employment → escalates → boss eventually attempts to coerce the crew into a suicide mission (implied: he's being pressured by someone much bigger). Who is above him? Why is he so desperate?
 
-2. **The Bounty Arc** — crew is hired to bring in a wanted merc. When they find him, they realize someone knows him and he has a good reputation. The rap sheet is fake. Who put the bounty out and why?
+2. **The Bounty Arc** — Sable passes the crew a job: bring in a target, dead or alive. He doesn't know or care why — someone up the chain handed it down and the money is good. The target is not a merc. He's a mid-level Hegemony auditor, a desk worker, a nobody. He audited the wrong file.
+
+   There was already one attempt on him. It failed. He's currently unconscious in a hospital ward with Hegemony investigators stationed outside, waiting for him to wake up so they can question him. Lumen Analytics does not want that conversation to happen.
+
+   **The criminal record:** If the players look him up before taking the job — or out of curiosity after — his record is wrong in ways that don't add up. Charges that predate his career. Convictions in places he'd have had to be in two cities at once. The kind of file that gets someone fired, not imprisoned. It reads like someone who needed a dossier built fast and didn't check for consistency. It reeks of fabrication.
+
+   **The second crew:** Lumen Analytics didn't rely on Sable alone. The **Borniko Syndicate** — small-time thieves who fence through Jerek's Junkyard — were also hired, through a different anonymous channel, to watch the hospital and finish the job if an opportunity opens. Players may encounter them staking out the ward, or clash with them over the target. The Syndicate doesn't know who hired them either.
+
+   **The choice:** Deliver the auditor to Sable and he's a dead man. Protect him and both the Syndicate and Sable's people become problems. Hand him to the Hegemony investigators and hope they're not already compromised. The auditor, if he wakes up, may not even know exactly what he saw — just that he flagged an anomaly in a data ledger that led somewhere it shouldn't.
+
+   **What he found [TBD]:** A specific data anomaly in a Hegemony-adjacent file that points toward Lumen Analytics' operations. Not proof of anything damning on its own — but enough that someone panicked.
 
 3. **The Miners' Rebellion** (Red Faction-style) — corporation calls in outside contractors (possibly the players) to crush a miner revolt. Local militia won't go in. What do the players do when they get inside and understand the situation?
 
-4. **The Cosmic Horror Arc** (Thorian-style) — an ancient organism with a hive mind has been on a planet for an unknown duration. A corporation has a research station in orbit and is secretly using the colonists as test subjects. Players are called in for something innocuous. It escalates.
+4. **Background Horror — The Ashtari Cult** — not a story arc. A presence that builds in the background until the players decide to pull on it.
+
+   The **Ashtari Cult** believes the lifeform on Omega is a manifestation of something ancient — "the Ur," a Way-entity or Precursor-summoned force that predates the current age. They do not want it eradicated. They want to communicate with it. They have been operating quietly in the Foxtrot Cluster for some time, in ways that don't announce themselves.
+
+   **How it surfaces — seed these throughout the campaign:**
+   - Whispers. A dockworker mentions a sect that meets in Songah's lower tiers. A gambling den regular disappears and someone says he'd gotten involved with "a group." Nothing actionable.
+   - Staged murders. Bodies found arranged deliberately — not chaotic violence, but intentional geometry. Symbols that don't match any known faction. The scenes are extremely bloody but the wounds don't fully explain the blood loss.
+   - Way-sensitivity. Characters with Way-touched ability occasionally feel something at the edge of perception — not a presence exactly, more like pressure. A direction. It doesn't repeat consistently enough to track.
+   - A symbol appearing in unconnected places: carved into a wall in a location the players visited, tattooed on a corpse they weren't looking for, chalked on the floor of an abandoned building.
+
+   The cult is not the immediate threat. It is the thing in the corner of the frame that the camera hasn't pointed at yet. When the players finally pull on it, it leads toward Omega — and whatever the Precursors left behind there.
 
 5. **Omega Mysteries** — Precursor ruins, the quarantine lifeform, three competing factions with three incompatible goals.
 
