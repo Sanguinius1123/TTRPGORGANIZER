@@ -184,7 +184,27 @@ The entity's direct presence warps the people within it. Followers who have been
 
 These are not mindless creatures. They retain personality, memory, and the ability to speak. They believe completely. They are also significantly harder to kill than a baseline human and feel pain differently. Think Warhammer 40K chaos cultists — devoted, altered, dangerous, and certain they are on the right side of history.
 
-**The colonists:** The original survey team and the investigation team that followed are not dead. Some of them are still on Omega. They were the entity's first successful incorporations in this age. They have had years.
+**What actually happened to the colonists [CONFIRMED — classified]:**
+The Hegemony did not lose the colonists to the entity. They killed them.
+
+Timeline:
+- Colony established on Omega. Initial reports normal.
+- Reports stop. Colony goes silent over approximately three weeks — gradual rather than sudden.
+- Investigation team dispatched. They make contact with surviving colonists, report disturbing behavior, then they too go silent.
+- A military unit is dispatched under sealed orders. What they found on the surface is classified at the highest level. What they did on the surface is also classified.
+- The unit returned with three survivors — from their own ranks, not from the colony or the investigation team. Those three were immediately placed in psychiatric containment on a Hegemony facility. They have not been heard from since.
+- The official record states: crew lost, dangerous lifeform, quarantine established. The colony is not mentioned in public records. It has been scrubbed.
+
+The Hegemony's reasoning, as best it can be reconstructed: the colonists and investigators were too far gone to extract safely. The risk of bringing them off-world — of whatever they had become, or carried, or transmitted — was unacceptable. The decision was made at a level high enough that the officers who carried out the order were never publicly identified.
+
+Was it the right call? The players will have to decide that for themselves when they see the evidence. The remains on Omega's surface were not killed by a creature. The wound patterns are consistent with Hegemony military-grade weapons. Some bodies show signs of restraint before death. A few were found in positions suggesting they tried to surrender.
+
+**The survivors:**
+A small number — one to three — were not on the surface when the military unit swept through. They were in a remote sensor outpost, a maintenance tunnel, somewhere the soldiers didn't reach. They got off-world during the chaos of the military's arrival, using a supply ship that hadn't been locked down yet.
+
+They are somewhere in the Holt System now. Living under new identities. They know what they saw, what they felt, and what the Hegemony did. They do not know how much of what they experienced was real perception and how much was the entity reshaping their minds. They are not sure they're clean. They are terrified of being found by either the Hegemony or by whatever is still reaching out from Omega.
+
+Whether they are still influenced — subtly, slowly, without knowing it — is left to the GM.
 
 **What the Hegemony knows vs. what is true:**
 The Hegemony knows the planet causes madness and has a dangerous fast-moving lifeform (the altered colonists, seen briefly before the military unit fled). They do not know about the entity's nature, its reach across the system, or the pillar project. Their quarantine is precautionary containment of something they don't understand. It is not sufficient.
@@ -194,6 +214,17 @@ The cult thinks they are worshipping. They are being cultivated. The Mouth belie
 
 **Relationship to the Precursors:**
 The Precursor ruins underground on Omega are not incidental. The Precursors built something here — either in service to the entity or in an attempt to contain it. What they built and which of those it was is the deepest mystery of the campaign's cosmic layer.
+
+**The investigation hook — Thread 5 entry point:**
+Someone tips the players off. Not about the entity — about the colony. Rumors exist in the right circles that Omega wasn't always uninhabited, that there was a settlement, that people went there and the Hegemony's official account of what happened doesn't add up. The tip could come from:
+- A family member of a colonist who never got a body, never got a real answer, and has spent years quietly pulling threads
+- One of the survivors themselves, having watched long enough to decide they need someone else to know what happened
+- A Hegemony insider with a conscience — one of the soldiers on the original military unit, or someone who processed the classified report and couldn't leave it alone
+- Abra Drake, who dealt in information and has heard enough fragments to know something was buried
+
+The job as framed: go to Omega, find evidence of what really happened. Simple investigation, good pay. What they find on the surface is a crime scene — execution wounds, restraint marks, Hegemony military equipment, personal effects of people who were supposed to never have existed. And beneath all of that, the ruins, the signal, and whatever is still down there waiting.
+
+**What the three military survivors know:** They are in Hegemony psychiatric containment. They are alive. They have presumably been debriefed and silenced. If the players ever find a way to reach them, they would be the most direct source of what was actually ordered and by whom — and possibly the most dangerous loose end the Hegemony has.
 
 ---
 
