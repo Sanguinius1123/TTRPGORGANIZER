@@ -138,9 +138,17 @@ Key locations:
 - **The Guild Outpost** — Starsmiths/Engineers oversight base
 
 ### P: Omega ← QUARANTINED
-"DO NOT LAND" — Hegemony quarantine enforced. Former survey mission. Crew lost. Deadly fast-moving lifeform, resistant to conventional weapons. Precursor ruins underground. Abandoned Hegemonic base.
+"DO NOT LAND" — Hegemony quarantine enforced.
 
-Factions with interest: Church of Stellar Flame (eradication), Ashtari Cult (communication), Ashen Knives (artifact extraction)
+The official story: a colonial survey mission made landfall, established a base, and went silent. A second team sent to investigate also went silent. A military unit sent after them returned — barely — with three survivors who were immediately placed in psychiatric containment. The Hegemony classified the full incident report and declared a permanent exclusion zone.
+
+What they tell the public: a deadly fast-moving lifeform, resistant to conventional weapons. Precursor ruins underground, possibly unstable. The planet is not worth the risk.
+
+**The patrol problem:** Hegemony patrol ships maintain the quarantine but keep significant distance from the planet itself. Crew rotation is mandatory and frequent — extended proximity causes psychological deterioration even from orbit. The patrol web is wide and thin. A small ship with a careful pilot can find gaps. Getting down to the surface is not the hard part. Getting back is.
+
+**What's actually there:** The entity. See below.
+
+Factions with interest: Church of Stellar Flame (eradication), Ashtari Cult (communion — they believe), Ashen Knives (artifact extraction from Precursor ruins)
 
 ### Jerek's Junkyard
 Floating mass of ships, parts, scrap. Held by magnetism and cables. Merchant station with legal and illegal goods.
@@ -149,6 +157,43 @@ Notable: **Jerek** — canny, neutral merchant. Sells illegal goods to those who
 
 ### Trade Platform Auto #A ("Trade Platform A")
 Automated Starsmiths Guild trading platform. Neutral, heavily defended. Ships refuel, trade, conduct business outside Hegemony interference. The Vigilance uses it as a base.
+
+---
+
+## The Omega Entity [CONFIRMED — campaign backbone]
+
+*(Inspired by Dead Space and Warhammer 40K chaos. Not to be named or explained to players directly — experienced through effects, symptoms, and consequences.)*
+
+**What it is:**
+Something that was on Omega before the Precursors arrived. Possibly what drew them there. Possibly what ended them. It has no body in the conventional sense — it is a presence, a will, a signal that operates on a frequency that biological minds receive without knowing they're receiving it. The Ashtari Cult calls it the Ur. That name is as good as any. It does not name itself.
+
+It is not malevolent in the way a person is malevolent. It does not hate. It extends. It incorporates. It is doing what it does, and what it does is expand.
+
+**What it does at range:**
+The entity reaches outward across the system, passively, continuously. Most people feel nothing. But those who are Way-touched and purposeless — spiritually hollow, unmoored, searching — are susceptible. The signal finds them and begins a slow process of orientation: nudging attention, shaping dreams, creating a sense of meaning and direction that feels like personal revelation. Victims don't know they've been found. They feel chosen.
+
+This is how the Ashtari Cult was made. The Mouth heard something and built a theology around it. The Choir followed. None of them understand that the communion they believe they're initiating is a process that was already underway before they started praying.
+
+**The Pillars [IN PROGRESS — not yet complete]:**
+The entity is attempting to extend its influence beyond Omega through physical anchor points — structures its followers are being compelled to construct, often without understanding why. They feel a powerful drive to build, to arrange, to place things in specific configurations. They believe it is devotion. It is instruction.
+
+The pillars are not finished. The cult has not yet produced a working one. The geometry is almost right. When a pillar is completed and activated, it functions as a relay — a fixed point that amplifies the entity's signal in its vicinity, making the area around it a node of its control web rather than just its passive reach. The entity is trying to build a network. It is not in a hurry. It has time.
+
+**Physical manifestations — near Omega or near a completed pillar:**
+The entity's direct presence warps the people within it. Followers who have been in sustained proximity to Omega or to a strong signal source begin to change — not the rapid grotesque transformation of horror media, but a slow process of enhancement and alteration that the victim experiences as gift rather than violation. Heightened physical capability. Reduced need for sleep or food. A sense of profound calm. Then the structural changes become visible: thickened skin, altered musculature, eyes that catch light wrong.
+
+These are not mindless creatures. They retain personality, memory, and the ability to speak. They believe completely. They are also significantly harder to kill than a baseline human and feel pain differently. Think Warhammer 40K chaos cultists — devoted, altered, dangerous, and certain they are on the right side of history.
+
+**The colonists:** The original survey team and the investigation team that followed are not dead. Some of them are still on Omega. They were the entity's first successful incorporations in this age. They have had years.
+
+**What the Hegemony knows vs. what is true:**
+The Hegemony knows the planet causes madness and has a dangerous fast-moving lifeform (the altered colonists, seen briefly before the military unit fled). They do not know about the entity's nature, its reach across the system, or the pillar project. Their quarantine is precautionary containment of something they don't understand. It is not sufficient.
+
+**Relationship to the Ashtari Cult:**
+The cult thinks they are worshipping. They are being cultivated. The Mouth believes they have achieved two-way communication with the Ur. They have achieved reception — the signal comes in. Whether anything they send reaches anything that listens is a question the GM can answer at the table when the moment is right.
+
+**Relationship to the Precursors:**
+The Precursor ruins underground on Omega are not incidental. The Precursors built something here — either in service to the entity or in an attempt to contain it. What they built and which of those it was is the deepest mystery of the campaign's cosmic layer.
 
 ---
 
