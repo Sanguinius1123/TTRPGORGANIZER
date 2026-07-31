@@ -168,7 +168,7 @@ Automated Starsmiths Guild trading platform. Neutral, heavily defended. Ships re
 | Borniko Syndicate | I | Small-time thieves; fence through Jerek's Junkyard; hired as disposable muscle by anonymous clients |
 | Starsmiths Guild | — | Guild affiliate; operates Trade Platform A |
 | Church of Stellar Flame | — | Obsessed with eradicating Omega lifeform |
-| Ashtari Cult | — | Believe Omega lifeform is a manifestation of the Ur |
+| Ashtari Cult | — | Believe Omega lifeform is a manifestation of the Ur; operate in secret across the Holt System |
 | The Hegemony | — | Overarching political power; Marines and Legion are arms |
 
 ---
@@ -245,6 +245,58 @@ He is not a soldier. He does not meet people in person if he can avoid it. He mo
 - **Mava Sorn — Narcotics Under-boss [CONFIRMED]** — oversees supply and distribution across Sonhandra and Vos. Operates primarily out of Ugar Prime, where the Blackened Mines produce chemistry unavailable elsewhere in the system. Practical and humorless. Doesn't enjoy violence but orders it without hesitation when product or routes are threatened. Her operation on Vos puts her in frequent conflict with Guild inspectors and the occasional Compact organizer — both of whom she considers an occupational hazard.
 
 - **Thresh — Enforcement & Contracts Under-boss [CONFIRMED]** — the one who shows up when talking is finished. Runs the Knives' enforcers and manages contract assassination work. Carries two vibro-blades. Doesn't use intermediaries. Players who have been marked by the Ashen Knives will eventually meet Thresh in person; that is the point of Thresh. Not reckless — takes contracts seriously, won't rush a job — but once the decision is made, there is no negotiating. The ash-grey knife mark left at a scene is Thresh's sign-off.
+
+---
+
+## Faction Detail: Ashtari Cult [CONFIRMED]
+
+**No tier assigned.** Not a power faction — a hidden one. They do not control territory, trade, or enforcement. Their influence is measured in believers, not resources.
+
+**What they believe:**
+The Omega lifeform is not an animal, a plague, or a threat. It is a physical instrument of something far older — the **Ur**, a force or entity that predates the Precursors themselves. The Precursors did not create the Ur. They found it. Their ruins, their artifacts, the Hantu Gate on Mem — these are the remnants of a civilization that reached toward the Ur and was consumed or transformed by the contact. The Ashtari Cult believes this was not a tragedy. It was completion.
+
+They want what the Precursors achieved. Communication. Union. They believe certain rituals, performed correctly, open a channel to the Ur through the Omega lifeform — which is why the Hegemony's quarantine of Omega is, to them, a sacrilege.
+
+**Structure:**
+The cult operates in concentric rings. Outer rings don't know what they've joined — they're drawn in through desperation, spiritual hunger, or the promise of community in Songah's lower tiers. Inner rings know the full doctrine and have participated in ritual. The innermost circle — called **the Choir** — have made an offering and bear the mark.
+
+Leadership is held by a single figure known as **the Mouth** — believed to be Way-touched, the only person who has reportedly heard something reply. Real identity unknown. May be based on Sonhandra or may move between worlds. The Choir receive direction and pass it down; most believers have never seen the Mouth directly.
+
+**The symbol:**
+A circle bisected by a vertical line, with seven short marks radiating outward from the right side only — asymmetric, deliberately unbalanced. It appears wrong at a glance; the eye expects symmetry and doesn't find it. At larger scale it resembles a partial star map, but the configuration matches no known system. Cult members call it **the Opened Eye**. It appears as graffiti, scratched into surfaces, worked into jewelry or clothing as a subtle design element. Once you know it you start seeing it everywhere.
+
+**The rituals:**
+Staged killings are offerings — not to the Omega lifeform directly, but to the Ur through it. The body arrangement follows a specific geometry tied to the Opened Eye symbol. The blood loss that exceeds visible wounds is unexplained by forensics; Way-touched investigators have reportedly refused to continue examining the scenes. The cult believes the excess passes through. Whether this is true is left deliberately ambiguous.
+
+**What they're doing in the Holt System:**
+Recruiting quietly in Songah's deep lower tiers. Moving artifacts they believe are Precursor-connected through black market channels. Watching Omega from a distance and waiting. Some members have attempted to reach the planet's surface and not returned — the cult considers this martyrdom.
+
+---
+
+## Ashtari Cult — Session Seeds [DROP ONE PER SESSION]
+
+These are ordered by rough escalation — early seeds are easy to miss, later ones impossible to ignore. Use them out of order if something fits a session better.
+
+**Tier 1 — Almost invisible:**
+1. A symbol scratched into the wall of an alley the players cut through. Old, worn, could be anything.
+2. A street market vendor sells trinkets including a cheap piece of jewelry with a subtle asymmetric design. She doesn't know what it means; got a batch from a supplier she doesn't see often.
+3. At a gambling den, someone at the next table mentions offhand that their downstairs neighbor stopped coming home two weeks ago. "Probably just moved. Happens."
+4. A public info terminal in Songah's lower tiers has the symbol scratched into the corner of the screen surround. Tiny. Easy to miss.
+5. A drunk in a bar tells anyone who'll listen that "something was here before the stars." He's laughed off. He doesn't remember saying it the next morning.
+
+**Tier 2 — Something is wrong:**
+6. A body found staged in a maintenance corridor in Songah's lower tiers. Not the players' problem — they just hear about it through street chatter. Two wounds, four times the blood. Hegemony investigators closed the scene fast.
+7. A second staged body. Same geometry. Different district. The Opened Eye symbol scratched into the floor beneath where the body was placed. A player who has seen the alley graffiti recognizes it.
+8. A Way-touched player character briefly feels something in the lower tiers — not a presence, more like pressure from a specific direction, gone in seconds. It doesn't repeat for several sessions.
+9. Someone asks too many questions about the disappearances. That person turns up dead a week later. Routine violence, officially.
+10. The symbol appears on the wall outside a location the players frequent. Fresh. It wasn't there yesterday.
+
+**Tier 3 — It notices them:**
+11. A young person — desperate, frightened — approaches the players or one of their contacts. They got pulled into what they thought was a spiritual community in the lower tiers. They want out. They're not sure they're allowed to leave.
+12. A player with Way sensitivity wakes from sleep with the sensation of something very large paying brief attention to them, then moving on. Like being looked at by something that doesn't see the way people see.
+13. The players find the Opened Eye symbol inside a location they control or frequent — somewhere it could only have been placed by someone who knew they'd be there.
+14. An Ashtari inner-ring member makes deliberate contact. Not threatening. They want to know what the players know. They're calm, intelligent, and completely sincere in their belief.
+15. A Choir member is found dead — not staged, not ritualistic. Someone executed them cleanly. The Church of Stellar Flame is the likely suspect. The cult's enemies are also moving.
 
 ---
 
