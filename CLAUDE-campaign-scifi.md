@@ -77,6 +77,35 @@ An ancient alien civilization, long gone. Left behind: ruins (on Omega, buried o
 ### The Memish [CONFIRMED]
 A sapient xeno species native to Mem. Adapted to ocean depths. Bioluminescent markings/scarring. Deeply spiritual — their mystics pray to the Prophet Ruum. Have their own labor hierarchy (Memish Labor Bosses). Exist in tension with Hegemony colonial presence on their home planet.
 
+### The Keth'vari [CONFIRMED]
+Native to [homeworld TBD] — a hot, arid planet with high UV, scorched stone, and thin atmosphere. Tall, angular, covered in small interlocking hard scales (thicker on forearms and shoulders). Large amber or gold eyes. Voices are low and resonant. Society is rigidly stratified along biological caste lines — scale color is determined at birth and is simultaneously biological fact and social destiny.
+
+**Castes:**
+- **Highborn** (9–11ft, ebony scales): Merchant-lords, power brokers, ruling class. Do not address strangers directly — their servants speak for them.
+- **Military/Labor** (7–9ft, copper or grey scales): Soldiers, heavy work, enforcers.
+- **Servant** (4–7ft, sand or pale scales — widest size variation): Domestic service, court function, and covert work. The most physically agile caste; some function as spies. The ones who move in silence.
+
+**Xeno Ability Card:**
+
+| Tier | Abilities |
+|------|-----------|
+| **0-stress** | Resist extreme heat without harm · Scales reduce one tier of slashing/impact harm · Presence is instinctively imposing — others hesitate to challenge without cause |
+| **1-stress** | Crushing grip (one-handed restrain or break objects) · Read intent from micro-expression and body heat · Move in near-silence despite size (servant caste especially) |
+| **2-stress** | Full heat absorption — survive briefly in environments lethal to humans · Terrifying display that breaks nerve (targets must act to resist fleeing or surrendering) |
+| **Weakness** | Prolonged cold causes stiffness and level 2 harm ("Scale-lock") — generates a gambit when triggered |
+
+### The Chelkin [CONFIRMED]
+Native to [homeworld TBD] — a single vast forested world spanning every biome: tropical lowlands, temperate canopy, alpine ridgelines, and subterranean mushroom-grove networks. Fur coloring varies by regional population — warm tans and rust-browns in tropical zones, grey-white banding in alpine regions, pale or faintly bioluminescent variants underground. Compact and solidly built at 4ft. Round expressive face, prehensile toe-pads. Six limbs of roughly equivalent function — any configuration is possible (typically two as legs, four as arms). Koala compactness, raccoon curiosity — nothing simian.
+
+**Xeno Ability Card:**
+
+| Tier | Abilities |
+|------|-----------|
+| **0-stress** | Climb any surface without tools · Use any limb as a dexterous hand simultaneously · Fit through gaps two sizes below what a human requires |
+| **1-stress** | Run two independent precision tasks at once · Sense structural flaws and hidden mechanisms by touch · Anchor completely still on any surface — walls, ceilings, hull exteriors |
+| **2-stress** | Interface directly with a machine by instinct — bypasses normal roll difficulty once per engagement · Reassemble or cannibalize a device under fire without losing track |
+| **Weakness** | Open, featureless environments (void, flat desert, open ocean) cause disorientation. Level 1-2 harm ("Exposure") when prolonged — generates a gambit |
+
 ---
 
 ## Map Scale Ladder [CONFIRMED]
