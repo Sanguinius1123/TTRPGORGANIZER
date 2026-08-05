@@ -133,7 +133,37 @@ Tidally locked. Night side: ice storm blackness. Day side: scorching sandstorm t
 
 Key locations:
 - **Songah** — massive hive city along the northern twilight pole. Cavern depths to finger towers. Neon-lit perpetual twilight. Vertical class stratification (wealthy above, poor below). Starting city for most PCs.
-- **The Steel Warehouse District** — industrial sprawl along the twilight zone outside Songah. Corrupt enforcers, Guild inspectors. High-speed **maglev train** runs the full planetary circumference along the twilight band.
+- **Sohan Industrial District** — industrial sprawl along the twilight zone outside Songah. Corrupt enforcers, Guild inspectors. High-speed **maglev train** runs the full planetary circumference along the twilight band.
+
+### Songah — District Map [CONFIRMED]
+
+All locations exist as a single local map under Songah (no sub-maps). Three main tiers, each with branching districts and specific locations.
+
+**Upper Tier**
+- **The Upper Spires** — Guild administrators, Hegemony officials, wealthy residents. Private security. Filtered air. Being caught where you don't belong is treated seriously.
+  - *The Canopy* — small exclusive greenspace. Artificial lighting, bioluminescent cultivars. Not accessible without the right name.
+  - *Civic Authority Post* — city police and militia barracks. Sizeable hangar with police and military aircraft. Sits between Central City and the Spires — close enough to respond, close enough to intimidate.
+
+**Mid Tier**
+- **Central City** — functional heart of Songah. Commerce, nightlife, and criminal enterprise operating in the open. Enforcers patrol selectively.
+  - *Songah Central Hospital* — largest medical facility in Songah. Accredited, Hegemony-overseen, understaffed.
+  - *Central Terminal* — maglev station connecting Songah to the Sohan Industrial District and the twilight belt. Hegemony checkpoint presence during peak periods.
+- **The Strip** — entertainment and gambling belt. Where Central City's social life concentrates.
+  - *Abra Drake's Auction House* — Drake's operation; location is always described as temporary even if it hasn't moved in years. High-value black market items and fixer services.
+  - *The Three Suns* — Osha's gambling den. Games are rigged just enough. Disputes settled in the back room.
+  - *Dovin Rek's House of Fortune* — Ashen Knives gambling front. Warm lighting, easy credit, debt that follows you home.
+  - *Sable's Club* — no name on the door. Heavy bass, private booths, professional staff who remember nothing. Sable is always here, never clearly visible.
+- **The Blocks** — tightly packed residential district. Working class housing, community notice boards, local trade.
+  - *The Holdout* — salvaged ship hull embedded into The Blocks during Songah's construction. Curved metal walls, low bulkhead doorways. The party's base of operations. It will never fly again.
+  - *Labor Compact Hall* — Sonhandra Labor Compact HQ. Notice boards, union reps, canteen open to members.
+
+**Lower Tier**
+- **The Warrens** — base level and underground section. Sparse lighting, recycled air, Guild authority absent. Governed by whoever is strongest.
+  - *Del Hex's Fighting Ring* — accessible through unmarked doors in the industrial depths. Vibro-weapon bouts. Del Hex presides from a gantry above the pit.
+  - *The Offload* — rotating black market. Stolen goods, contraband, no questions, no receipts.
+- **The Sump** — deepest cavern levels beneath the Warrens. Unreliable infrastructure, poor air quality. Breathers recommended.
+  - *The Hollows* — makeshift squatter settlement. No services, no lighting, no safety net. People come here because they have nowhere else to go. Ashtari Cult recruiting ground.
+  - *The Stitch* — unaccredited clinic. Cash up front, no names taken, no records filed. Secondhand equipment, no questions.
 - **The Lost City** — buried Precursor pyramid on the cooked side. Tip just visible above drifting sand. Reaching it requires a Tier 3 hazard suit and a way across the scorching surface — a natural mid/late discovery if players go looking. Don't telegraph it early; let it surface through rumors.
 - **Zaeed's Caverns** — night side caverns where "Tank" Marak hides ships and contraband.
 
