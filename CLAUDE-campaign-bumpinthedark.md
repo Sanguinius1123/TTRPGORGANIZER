@@ -52,12 +52,22 @@ in minutes:
   quite let them leave. Outsider's eye, weakest local ties, easiest to drop a new player into
   cold.
 
-## "IT" — Why Nobody Else Seems to Care [CONFIRMED]
+## "The Dark" — Why Nobody Else Seems to Care [CONFIRMED]
+
+**GM-only, always.** "The dark" (referred to as **TD** in the user's own shorthand notes/chat —
+not an in-fiction term) never appears in anything player-facing once this campaign gets built out
+in the app or on the map. It belongs in hidden GM notes / GM-only fields only (e.g. `gm_notes` on
+locations, unrevealed `npc_facts`) — never in a `description`, a `visible` field, or anything else
+a player could see. In-fiction, NPCs and documents can gesture at "the dark" as shown below; the
+app itself should never expose that term to the player portal.
 
 Something about Corvid Cove makes its people not want to look too closely. Whether it's a
 genuine supernatural effect, generations of learned small-town avoidance, or some blend of
 both is a season-long mystery, not a rule to be explained upfront — **keep it deliberately
-unnamed in-fiction.** Characters refer to it as "it," never with a proper name; NPCs who start to name it tend to change the subject, physically flinch, or just trail off. The Pact can spend the whole campaign chasing the question of what "IT" actually is.
+unnamed in-fiction.** Characters refer to it as "the dark" or "the darkness" — never anything
+more specific than that; NPCs who start to get more specific tend to change the subject,
+physically flinch, or just trail off. The Pact can spend the whole campaign chasing the question
+of what "the dark" actually is.
 
 **Mechanically, this is a Keeper tool, not a hard rule:**
 - Background NPCs downplay, rationalize, and forget strange events faster than they realistically should. A missing person becomes "oh, they moved away, I think." A mauled livestock becomes "cougars again." Something the Pact clearly witnessed becomes, within days, a story nobody but them remembers happening.
@@ -66,7 +76,7 @@ unnamed in-fiction.** Characters refer to it as "it," never with a proper name; 
 - Play this up gently in early sessions and let players start connecting it themselves. It should feel uncanny before it's ever confirmed as supernatural.
 
 **Dormant vs. hungry — the loose working model [holding pattern, not locked]:** most of the
-time, "IT" is asleep or something close to it. Even asleep, it "leaks" into its surroundings —
+time, the dark is asleep, or something close to it. Even asleep, it "leaks" into its surroundings —
 this is the in-fiction explanation for most weekly monster-of-the-week hunts. Strange creatures,
 localized bad weather, animals acting wrong, people acting wrong (Crane's spree may itself have
 been a leak expressing through a person rather than an obviously supernatural event — deliberately
@@ -100,7 +110,7 @@ this section as answers emerge in actual play rather than deciding them in advan
   installed for the county records digitization grant a few years back. If the Pact needs to
   actually look something up online, or call someone off-peninsula who'll pick up, this is where they go.
 - **During a hunt**, comms conveniently die — weather, a blown transformer, "the tower's down
-  again." Keepers should use this as a framing tool, not a hard rule: isolate the Pact when the scene calls for it. Over time, players may start to notice comms die *specifically* around void activity — that's intentional, and can pay off later as a Void Clue in its own right (see *"IT,"* above).
+  again." Keepers should use this as a framing tool, not a hard rule: isolate the Pact when the scene calls for it. Over time, players may start to notice comms die *specifically* around void activity — that's intentional, and can pay off later as a Void Clue in its own right (see *"the dark,"* above).
 
 ## Tone & Aesthetic [CONFIRMED]
 
@@ -206,22 +216,30 @@ communities, a small number of descendants still traceable today (see *Beyond th
 below). The town has never corrected the record. Its own founding myth is built on a massacre
 it still tells itself was justified.
 
-**How this interacts with "IT":** the archive gap and the town's selective memory (see *"IT,"*
-above) may not need any supernatural help to keep this quiet — small towns are frequently very
-good at forgetting their own atrocities without any outside force required. Keepers can leave it
-ambiguous how much of the silence is "IT" and how much is ordinary human shame. That ambiguity is
-the point.
+**How this interacts with "the dark":** the archive gap and the town's selective memory (see
+*"the dark,"* above) may not need any supernatural help to keep this quiet — small towns are
+frequently very good at forgetting their own atrocities without any outside force required.
+Keepers can leave it ambiguous how much of the silence is the dark's doing and how much is
+ordinary human shame. That ambiguity is the point.
 
 ### 1903 — The Rename
 
 Theodore Roosevelt's real 1903 tour of the Pacific coast is the historical peg this hangs on — as
 local legend tells it (and local legend is doing a lot of work here), Roosevelt made a stop at
-Sable Cove specifically to see its unusually large, unusually bold local population of
-crows — a distinctive coastal offshoot of the Northwestern Crow, thick enough in number and
-strange enough in behavior that word of them had reached him. Whatever actually happened during
-that visit, the town seized the moment: within a year or two it had rebranded itself **Corvid
-Cove**, trading a founder's surname for a marketable, presidentially-adjacent bit of civic
-identity.
+Sable Cove specifically to see its local crows: not just numerous or bold, but noticeably
+*larger* than any Northwestern Crow had a right to be — closer to raven size, loud, fearless
+around people, thick enough in number that word of them had reached a sitting president with a
+naturalist's reputation to protect. As the story's told in town, Roosevelt himself was the one
+who suggested the rename on the spot, charmed enough by the birds to say the town ought to be
+named for them — and within a year or two, it was: **Corvid Cove**, trading a founder's surname
+for a presidential blessing.
+
+The same visit (or close enough to it that locals have always told the two stories together) is
+credited with the federal forest protections that still cover the wild land at the town's
+back — the same authority Roosevelt used to establish forest reserves and national monuments up
+and down the coast during his presidency. Alder Hollow, Greywood Trail, and Old Baldy all fall
+inside that protected boundary today, which is the mundane, on-paper reason they're maintained,
+mapped, and open to the public at all rather than simply trackless private timberland.
 
 The old name didn't disappear so much as get demoted — Sable Pass, Sable Chapel, and Founders
 Hollow all kept their names, and the town's oldest deed records and gravestones still say Sable
@@ -230,12 +248,14 @@ proudly repeated to tourists, entirely separate in most people's minds from anyt
 also happens to be the exact kind of quirky historical footnote a small town produces on its own,
 with no supernatural help required — much like the massacre, above.
 
-**A texture note, not a rule:** the crows themselves are worth leaning into as ambient atmosphere.
-They gather in unusual numbers around Founders Hollow Cemetery and Cutter's Bluff specifically,
-and old-timers have a loose, half-joking sense that the birds "know" when something's wrong
-before people do. Keepers can use a sudden mass of crows going silent, or gathering somewhere
-they shouldn't, as a free, non-verbal tension cue — it costs nothing narratively and it's already
-baked into the town's own self-image.
+**A texture note, not a rule:** lean into the crows as active, physical ambient atmosphere, not
+just background color. They're big — unsettlingly so at a glance — and they gather in unusual
+numbers around Founders Hollow Cemetery and Cutter's Bluff specifically. Old-timers have a loose,
+half-joking sense that the birds "know" when something's wrong before people do. Keepers should
+feel free to drop a sudden, too-loud caw right on top of a tense beat — mid-sentence, right after
+a reveal, from somewhere the players can't immediately place — purely as a jump-scare beat. It
+costs nothing narratively, it's already baked into the town's own self-image, and it never has to
+mean anything more than itself... unless, eventually, it does.
 
 ### 1918–1919 — The Grey Fever
 
@@ -281,10 +301,10 @@ Bluff** ever since (POI #2).
 1819 disappearance → mid-1850s massacre → 1918-19 Grey Fever → 1943 shipwreck → 1980-ish serial
 killer, all touching the same short stretch of coastline, spread across roughly 160 years, and
 no one currently alive in Corvid Cove has ever laid all five next to each other. That's
-deliberate — see *"IT,"* above. Imogen Pryce's private archive (POI #5) is the closest anything
-in town comes to doing it, and she hasn't finished the job herself. Notably, she's found the
-supernatural pattern before she's found the massacre — the town's cover-up of its own crime has
-outperformed even "IT" at staying buried.
+deliberate — see *"the dark,"* above. Imogen Pryce's private archive (POI #5) is the closest
+anything in town comes to doing it, and she hasn't finished the job herself. Notably, she's found
+the supernatural pattern before she's found the massacre — the town's cover-up of its own crime
+has outperformed even the dark at staying buried.
 
 ---
 
@@ -443,7 +463,9 @@ on.
 
 Beyond the six anchor POIs and Cutter's Bluff: lighter-weight outdoor locations, useful as scene
 backdrops and hunt settings without needing the full NPC/hook treatment above. Add more as
-sessions demand them.
+sessions demand them. Alder Hollow, Greywood Trail, and Old Baldy all sit inside the federal
+forest protections established around the time of the 1903 rename (see *Founding & Layered
+History*) — the on-paper reason these three are maintained, mapped, and open to the public.
 
 **Alder Hollow** — a gentle, well-marked day-hike trail through dense mixed forest, moss-heavy
 even at midday, the easy "nature walk" the tourist brochures point to. Locals mostly stick to the
@@ -494,7 +516,7 @@ to share.
 **Hook seeds:**
 - Something the Pact finds — an object, a phrase, a symbol — turns out to be recognizable to Marguerite, and clearly upsetting.
 - She already knows what really happened in 1818–19, or something close to it, passed down; she's just never had a reason to tell a Corvid Cove local before.
-- She's heard of "IT" — not by that word, but she knows the old warning her ancestors gave. She won't call it a name either.
+- She's heard of "the dark" — not by that phrase exactly, but she knows the old warning her ancestors gave. She won't call it a name either.
 
 ---
 
@@ -572,7 +594,7 @@ Songah district.
 - **Exact form of the Kellewa remembrance effort** — standalone "Remembering the Kellewa" center vs. a seat at a larger regional inter-tribal office. Can emerge organically rather than being pre-decided.
 
 **Deliberately left open — by design, not oversight (don't resolve without the user):**
-- **What did Sable actually promise, and to what? Is the debt still outstanding? What is "IT"?** All confirmed as intentionally unresolved even by the Keeper — Bump in the Dark is built around discovering the threat's shape through play, clues, and player theory, not pre-writing the answer. Update the *"IT"* section as answers emerge in actual sessions; don't front-load them here.
+- **What did Sable actually promise, and to what? Is the debt still outstanding? What is "the dark"?** All confirmed as intentionally unresolved even by the Keeper — Bump in the Dark is built around discovering the threat's shape through play, clues, and player theory, not pre-writing the answer. Update the *"The Dark"* section, above, as answers emerge in actual sessions; don't front-load them here.
 - **Was Crane's spree a "leak," or purely his own?** Same treatment — ambiguous on purpose.
 - **Is Wendell Crane actually dead?** Body never recovered; "probably, in the human sense" is the current leaning, but not committed, and doesn't need resolving until it comes up in play.
 
