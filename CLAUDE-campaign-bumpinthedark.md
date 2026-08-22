@@ -496,15 +496,112 @@ for later in the season, not a location to place on the map or hand out details 
 
 ---
 
+## Factions of Corvid Cove [CONFIRMED]
+
+Seven factions, deliberately far fewer than Iron Country's ~25 — this is one small town, not a
+county with multiple cities, and every faction here is meant to be a recurring presence, not
+setting dressing. Tiers (I–V) use the book's scale (BID p. 97) but stay compressed at the low
+end: nothing here is bigger than Tier III. Notably absent on purpose: covens, courts, lodges, or
+any other competing supernatural power bloc — "the dark" stays singular and unclaimed by design,
+and stacking rival occult factions on top of it would blunt that.
+
+### Corvid Cove Chamber of Commerce & Visitors Bureau (Tier III)
+
+The tourism boosters, and the closest thing the town has to real political power. Its figurehead
+is **Mayor Roland Vance** — an out-of-towner who arrived during the early years of the boom,
+got himself elected on a growth platform, and has been quietly collecting kickbacks from local
+businesses ever since in exchange for zoning favors and Chamber promotion. Runs his own
+business alongside the office: **The Corvid's Perch**, an exclusive, expensive bed-and-breakfast
+that has nothing to do with the town's working-class character and everything to do with why he
+wanted the boom in the first place. The Chamber actively spins or downplays anything that could
+scare off tourists — the mundane, self-interested half of the town's denial problem.
+
+### Sable Cove Fishermen's Co-op — "the Fleet" (Tier II)
+
+Old-guard commercial fishing families, still using the pre-rename name out of tradition (and no
+small amount of spite toward the Chamber's branding). Insular, superstitious, "here before the
+tourists and we'll be here after." Silas Bricke (The Drowned Anchor) is a member — his refusal to
+fish past a certain point is Fleet-wide common knowledge, even if nobody says why out loud. Natural
+rival to the Chamber: fishing grounds and working waterfront vs. resort development and
+"quaint coastal town" branding.
+
+### Cormorant Historical Society (Tier II)
+
+A local chapter of the **Olympic Peninsula Heritage Trust**, a regional organization covering
+historical sites across the peninsula and the national forest — which is the real reason it
+outranks a purely local operation like the Fleet, even though the regional Trust itself barely
+registers Corvid Cove as a priority. A bureaucratic engine with all the problems that implies:
+slow, form-driven, more interested in preserving a presentable version of history than an
+accurate one. Local chapter board president **Harriet Voss** is Imogen Pryce's direct
+superior — image-conscious, protective of the charming Roosevelt/crow story the Society
+publishes, and no fan of how far Imogen's private research has strayed from anything the Society
+would sanction. Real friction between them, not yet public.
+
+### The Corvid Call (Tier I)
+
+Corvid Cove High School's student newspaper — not a real news operation, a journalism-class
+hobby project that happens to be the closest thing the town has to a press. **Mr. Dennis
+Whitlock**, the faculty advisor, is the one constant behind it year-round; during the school year
+it's genuinely student-run, with a handful of kids who are really into it doing most of the
+actual reporting. Over the summer — with the students gone but the tourist season (and whatever
+comes with it) at its worst — Whitlock takes a heavier hand himself, and the paper quietly shifts
+into something closer to a real adult publication for a few months before handing back to the
+kids in the fall. Useful, reusable rumor/clue-delivery mechanism for the Town Ledger; a student reporter who won't let a strange
+story go is a cheap, renewable hook.
+
+### U.S. Forest Service — local ranger station (Tier III)
+
+Manages the federal reserve covering Alder Hollow, Greywood Trail, and Old Baldy (see *Founding
+& Layered History*, 1903). Real institutional power, but minimal actual interest in the town
+itself — rangers and survey crews pass through, and the Service only gets directly involved when
+a crime happens on federal land, at which point it can outrank local authority fast. Otherwise it
+defers entirely to the Sheriff's Department. A natural, grounded way to eventually stumble toward
+the cave system without needing a conspiracy to explain it.
+
+### County Sheriff's Department — Corvid Cove substation (Tier II)
+
+**Sheriff Deborah Calloway** runs a small, stretched-thin operation: a handful of deputies, two
+or three holding cells at most. Mostly handles drunk tourists, parking complaints, and the
+occasional bar fight at the Drowned Anchor. Not complicit in anything dark by default — just
+genuinely under-resourced, and one bad night from being completely overwhelmed. If things
+actually escalate, the department maxes out its capacity almost immediately, which is its own
+kind of pressure on the Pact: no cavalry is coming.
+
+### Remembering the Kellewa (Tier I, off-peninsula)
+
+A program run out of the **Olympic Coast Heritage Center**, a regional Indigenous cultural and
+historical organization located elsewhere on the peninsula that advocates for accurate,
+respectful treatment of *all* the area's tribal histories — not just the Kellewa's. Small and
+low on institutional power (Tier I), but not toothless: it's the only organized effort actively
+working to correct Corvid Cove's official record. Marguerite Colvin (see *Beyond the Peninsula*,
+below) is its point of contact for anything related to the Kellewa specifically.
+
+---
+
+## Town Services [CONFIRMED, light]
+
+Not full factions — background civic infrastructure, useful for logistics and stakes rather than
+plot. Add more only if a hunt needs them.
+
+- **Corvid Cove Volunteer Fire Department** — small and entirely volunteer-staffed, the classic
+  small-town arrangement: fishermen, Chamber employees, even a Forest Service ranger or two pull
+  shifts. Reliable for a house fire; not equipped for much more.
+- **Corvid Cove Community Clinic** — urgent care only, a couple of nurses and a part-time
+  physician, limited hours. Not equipped for serious trauma or anything requiring real
+  diagnostics. Anything bad enough sends a patient over Sable Pass or across on the ferry to the
+  nearest real hospital, in **Port Halsey** — a few hours away either route, which is the point:
+  the town cannot patch up its own worst nights.
+
+---
+
 ## Beyond the Peninsula [CONFIRMED]
 
 Not everything the Pact needs is in Corvid Cove — deliberate, given how much of the town's own
 record is either missing or wrong.
 
-**Notable NPC seed:** *Marguerite Colvin* — a Kellewa descendant, based off-peninsula, connected
-to a small "Remembering the Kellewa" cultural/history effort (a modest center, or a seat at a
-larger regional inter-tribal cultural office covering several dispersed peoples — exact shape
-TBD, can emerge organically). Holds family oral history that directly contradicts Corvid Cove's
+**Notable NPC seed:** *Marguerite Colvin* — a Kellewa descendant, based off-peninsula, working
+with **Remembering the Kellewa** (see *Factions of Corvid Cove*, above), a program of the Olympic
+Coast Heritage Center. Holds family oral history that directly contradicts Corvid Cove's
 official version of the 1818–19 disappearance, but has no particular reason to trust anyone from
 that town with it. Part of her ongoing work is actively correcting the record — on the record,
 the Kellewa did not do this — against a town that has never bothered to ask. Reaching her at all
@@ -588,11 +685,6 @@ Songah district.
 
 ## Open Questions [TBD]
 
-**Genuinely open — need a decision:**
-- **Population size / town scale** — leaning toward not-too-small year-round, with a real seasonal swell in tourist months so it can feel crowded at times. Exact numbers still TBD.
-- **Faction adaptation** — not a one-for-one port of Iron Country's ~25 factions; adapt what's useful, build the rest to town scale. Still needs a first pass.
-- **Exact form of the Kellewa remembrance effort** — standalone "Remembering the Kellewa" center vs. a seat at a larger regional inter-tribal office. Can emerge organically rather than being pre-decided.
-
 **Deliberately left open — by design, not oversight (don't resolve without the user):**
 - **What did Sable actually promise, and to what? Is the debt still outstanding? What is "the dark"?** All confirmed as intentionally unresolved even by the Keeper — Bump in the Dark is built around discovering the threat's shape through play, clues, and player theory, not pre-writing the answer. Update the *"The Dark"* section, above, as answers emerge in actual sessions; don't front-load them here.
 - **Was Crane's spree a "leak," or purely his own?** Same treatment — ambiguous on purpose.
@@ -603,3 +695,5 @@ Songah district.
 - **First hunt** — see *Season One — Episode Menu*, above: three ready options, plus a Town Ledger + end-of-session roll to keep generating more.
 - **Town name** — **Corvid Cove**, final. "Sable Cove" retained as the historical name (1817–~1903), still alive in Sable Pass, Sable Chapel, and Founders Hollow.
 - **Outdoor geography beyond Cutter's Bluff** — Alder Hollow and Greywood Trail (hikes), Old Baldy (mountain summit), Halfmoon Beach (second beach), plus a deliberately hidden, undeveloped cave system for later discovery.
+- **Faction adaptation** — see *Factions of Corvid Cove*, above: seven factions (Chamber of Commerce, the Fleet, Cormorant Historical Society, The Corvid Call, Forest Service, Sheriff's Department, Remembering the Kellewa) plus a lighter *Town Services* note (volunteer fire dept, community clinic, and Port Halsey as the nearest real hospital). Deliberately excludes any Iron-Country-style competing occult factions.
+- **Population size / town scale** — no exact number, and none is needed: it's a small coastal town whose population fluctuates hard with tourist season, and that fluctuation is the more useful fact than any headcount would be.
