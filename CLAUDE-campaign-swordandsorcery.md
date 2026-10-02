@@ -85,8 +85,45 @@ Low buildings, wide streets built for horses, a permanent market camp at the wal
 The wealthiest of the six settlements, and the most unsettling. The ruling lord — possibly the same person who has ruled for longer than any current record shows, possibly a dynasty maintaining a careful fiction — keeps the city prosperous, protected, and fed in a region that should support none of those things. There is a structure beneath the old palace that no one enters. There are disappearances among the poor that are officially migration. The city is clean, well-ordered, and subtly wrong in ways that take a few days to identify. The Ash Compact has a chapter house here and says nothing about the palace. That silence is informative.
 *The secret is [TBD] — something beneath the city that the lord contains and siphons. The city benefits; the cost is paid by someone.*
 
+**Working theory — leading candidate, not committed canon:** the lord is a sorcerer of vast age still pursuing the oldest ambition — true immortality, sought by tapping into elemental and arcane power channels rather than any one god's gift or Precursor artifact. What's beneath the palace may be the working itself: a channel, a captured source, a siphon he has maintained for longer than any current record shows. Consistent with the magic system's own rule that high practitioners grow "recognisably wrong... as if the body is being slowly rewritten" — a plausible answer to why he never seems to age or step down.
+
+If this direction is confirmed, three thread types can point toward it without spelling it out directly, per the bible's existing instruction to drop hints and rumors until players push to investigate:
+- **Elementals**, encountered independently out in the March — some seemingly bound to or working with him, others clearly suffering under whatever his attempts to control them and their power are doing to their kind. (Not yet in *Creatures of the March* — add there if this direction is confirmed.)
+- **Whispers among practitioners** — hedge-witches, Compact scholars, cult members — about "ripples": disturbances in how sorcery behaves, felt more than seen, growing more frequent. Nobody yet connects them to the sorcerer-lord's city specifically; that's for players to find.
+- **The disappearances among the poor**, already established as "officially migration," may be directly load-bearing here — the working needs feeding.
+
+*See also: Magic → "Material costs" for a possible mechanical tie-in — elemental shards as a real, tradeable resource he may be hoarding or force-harvesting at scale.*
+
 **4. The Port [TBD: Name]**
 Rich, cosmopolitan, corrupt. Several factions control different districts; the city nominally has a council; everyone with money has private soldiers. The docks run at night. This is where things that shouldn't be bought or sold get bought and sold — old-world artefacts, sorcery services, information, people. The Ash Compact burns things here periodically. The city rebuilds and returns to business.
+
+**The Sewer Cult [seed — simple, self-contained thread, deliberately not layered onto anything else]:**
+A small death/plague cult has been working in the Port's sewers, preparing to release a plague on
+the city. Doesn't need a grand cosmic reason — a plague cult in a corrupt, overcrowded port city
+is motive enough. Built as a straightforward faction clock (see *GM Structure → Faction Clocks*)
+that escalates cleanly with how long it's ignored:
+
+- **Caught early:** rats dying in unusual numbers, a sewer worker or two gone missing, a bad
+  smell nobody can place — the kind of thing that shows up as a Tavern Board *Leads & Rumors*
+  entry. If the company investigates now, it's a simple, contained dungeon crawl: find the nest in
+  the sewers, clear out a handful of cultists before the ritual completes. Low cost, low danger,
+  a good early or slow-week job.
+- **Left to fester:** the cult digs in, gains converts, and the ritual advances. A contained
+  "test" outbreak hits a slum district — ugly, but survivable, and easy for the city to
+  officially deny (echoes the Sorcerer-Lord's City's "officially migration" playbook — cover-ups
+  are a running texture of this world, not unique to one settlement). This is no longer a single
+  sewer room; it's a spreading undercity network. The job board reflects it: quarantine work,
+  bounties on cultists, a faction (city council, Compact chapter, a guild with docks exposure)
+  actively reacting.
+- **Ignored, or actively helped:** the plague releases in full. The Port is damned — mass death,
+  quarantine collapse, a refugee wave. Consistent with *The Reactive World* principles already in
+  this document: the map is the record, death has weight, consequences are visible and lasting.
+  A plausible destination for those refugees: the Delta Town, itself founded by refugees and
+  still being settled by them — one settlement's catastrophe becoming another's population.
+
+No new lore invented to support this — it plugs directly into the Port's existing corruption,
+the Job Board's Leads & Rumors → Open Contract pipeline, Faction Clocks, and the Reactive World
+consequence principles. Keep it that simple unless play pulls it somewhere bigger on its own.
 
 **5. The Mountain Fortress [TBD: Name]**
 Controls the only reliable pass through the range. Isolationist, heavily stone-built, strongly Ash Compact-aligned — the local chapter has more real authority than the lord. Sitting on rich iron deposits. Will trade and will not ask about your religion, but they watch. Arriving with a known practitioner of sorcery makes entry difficult.
@@ -127,6 +164,32 @@ Sorcery is real, costly, and dangerous. It does not come from study or divine fa
 **The Precursor connection.** Current sorcery is essentially attempting to use tools made by people who understood them, without that understanding. The Precursors built something into the world — a capacity, a channel, a wound, depending on whose account you believe — and practitioners are drawing from it. What that means for the long term is one of the questions the setting does not answer cleanly.
 
 **Magic on the battlefield.** The Last War saw sorcery used as a weapon at scale. The specific places where major workings were employed are still wrong: ground that won't grow crops, animals that avoid it, humans who feel it before they can see it. This is not the whole March — just those places. Concentrated, specific, and old enough that most people know to avoid them.
+
+**Material costs — a direction to consider [seed, not yet decided]:** inspired by *Dominions 6*'s
+resource system (astral pearls, elemental gems, blood slaves as separate currencies for
+different magics) — not ported one-to-one, the games are a different scale, but the underlying
+idea is worth keeping: gate the *biggest* workings behind rare physical components, not just
+personal sacrifice, so that low magic stays low because the fuel for high magic is genuinely
+scarce and has to be quested for, not because of an arbitrary rules ceiling. Three rough
+categories that already rhyme with existing lore rather than needing new invention:
+
+- **Precursor motes/shards** — crystallized fragments of whatever "capacity, channel, or wound"
+  the Precursors built into the world (see *The Precursor connection*, above). Found in ruins,
+  needed for the deep workings and the most reality-bending true sorcery. Turns ruin-delving loot
+  into magical fuel, not just coin.
+- **Elemental shards** — a physical resource harvested from elemental creatures or primordial
+  sites, for elemental-flavored workings specifically. Ties directly into the Sorcerer-Lord's
+  City's working theory (see *The Six Settlements*, above) — his hunger for "elemental power
+  channels" could literally mean he's hoarding or force-harvesting this resource at scale, which
+  gives the trade in it its own black market, its own villains, and its own quest hooks.
+- **Blood/life** — the darkest tier, already implied by True Sorcery's "real sacrifice" cost, but
+  darker still when the sacrifice isn't the caster's own: cults trading in captives or innocents
+  for raw magical fuel. Already consistent with Completion cults and Power cults as written.
+
+Specific mechanics (exact costs, exchange rates, how this interacts with the harm/advancement
+system) defer to ruleset choice, same as harm and advancement elsewhere in this document. The
+goal isn't a resource-management minigame — it's making the biggest magic feel rare because its
+fuel is rare, and making the hunt for that fuel its own kind of adventure.
 
 ---
 
@@ -578,6 +641,6 @@ None of these need answering in session one. They are questions the players carr
 - **All proper names:** World, continent, the March, three empires, six settlements, the Ash Compact, all non-human peoples, the company, the home base lord
 - **Ruleset:** Realms of Peril, Shadowdark, Knave 2e, Cairn 2e, Worlds Without Number, or other
 - **Map planning:** Dedicated session to sketch the node structure — what's local, mid-range, and far; what the first expedition options look like geographically
-- **Sorcerer-lord's secret:** Leave vague; drop hints and rumors until players push to that city and investigate
+- **Sorcerer-lord's secret:** Leave vague; drop hints and rumors until players push to that city and investigate. Leading working theory now sketched under *The Sorcerer-Lord's City* — an immortality-seeking sorcerer tapping elemental/arcane power channels, with elementals and practitioner "ripple" whispers as the surfacing threads. Not committed; still to be decided as players approach.
 - **Precursor endgame:** Multiple possibilities (entombed ancients, autonomous construct, released magical hazard); decide as players approach the ruins, informed by their investigation direction
 - **Advancement specifics:** Milestone-based confirmed; exact triggers and structure defer to system choice
