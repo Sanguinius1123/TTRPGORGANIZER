@@ -101,16 +101,30 @@ this section as answers emerge in actual play rather than deciding them in advan
 
 ## Time & Isolation [CONFIRMED]
 
-**Modern day**, but comms are unreliable by design:
-- **Cell service** comes from a single tower up on the pass. Storms, fog, and "equipment
-  trouble" take it down often enough that nobody's surprised anymore. Coverage inside town is
-  spotty at best; it's dead the moment you're in the trees or on the water.
-- **The only reliable internet and landline connection** in town runs through the **Cormorant
-  Historical Society & Public Library** (POI #5, below) — it has the town's one real uplink,
-  installed for the county records digitization grant a few years back. If the Pact needs to
-  actually look something up online, or call someone off-peninsula who'll pick up, this is where they go.
-- **During a hunt**, comms conveniently die — weather, a blown transformer, "the tower's down
-  again." Keepers should use this as a framing tool, not a hard rule: isolate the Pact when the scene calls for it. Over time, players may start to notice comms die *specifically* around void activity — that's intentional, and can pay off later as a Void Clue in its own right (see *"the dark,"* above).
+**The mid-1990s** — working default **1996**, easy to shift a year or two either direction. This
+isn't "modern but spotty" anymore; it's a genuinely different toolkit, and that's the point —
+no internet at home, no phone in every pocket, no way to just look something up.
+
+- **Cell phones exist, but they're a rarity out here** — a handful of out-of-towners and the
+  Chamber crowd carry the newer bag/flip models, more a status symbol than a working tool. There's
+  no real cellular infrastructure built out to a peninsula this remote yet, so even the phones
+  that exist are mostly dead weight the moment you're outside the very center of town.
+- **Landlines and payphones are how people actually communicate.** The town's phone lines run in
+  overland alongside the power lines, following the same route as Sable Pass — which means a bad
+  storm can take out both at once, and does, often enough that nobody blinks.
+- **The only real research resource** in town is the **Cormorant Historical Society & Public
+  Library** (POI #5, below) — a rare early internet connection, installed through a county
+  library technology grant of exactly the kind that was just starting to reach small rural
+  libraries around this time. If the Pact needs to actually look something up, or reach someone
+  off-peninsula who isn't already expecting the call, this is where they go — during library
+  hours, on a connection slow enough to make it feel like work.
+- **During a hunt, comms conveniently die** — the storm that took the lines down, a blown
+  transformer, "the phone company's working on it." Keepers should use this as a framing tool,
+  not a hard rule: isolate the Pact when the scene calls for it. This needs no justification at
+  all in 1996 the way it might have as a "modern but spotty" mechanic — phone lines just go down,
+  and everyone already knows it. Over time, players may start to notice it happens *specifically*
+  around void activity — that's intentional, and can pay off later as a Void Clue in its own
+  right (see *"the dark,"* above).
 
 ## Tone & Aesthetic [CONFIRMED]
 
@@ -378,9 +392,9 @@ the back, a cluster of unmarked or barely-marked mounds from the Grey Fever mass
 (1918–19), which is also roughly where the neglect problem started before it got total after
 the last groundskeeper quit.
 
-**Notable NPC seed:** *Eugene Marsh* — the retired groundskeeper, still alive, still local,
-insists he didn't quit so much as was quietly told to stop coming. Won't say by whom unless
-pushed hard.
+**Notable NPC seed:** *Eugene Marsh* — still tends to the grounds around his family plot.
+Insists others should avoid coming here at night. Won't say why, doesn't want people to think
+he's crazy.
 
 **Hook seeds:**
 - A headstone's name has been filed off, deliberately, and recently.
@@ -390,10 +404,15 @@ pushed hard.
 
 ### 4. Tide To Table Diner
 
-The Pact's natural home base — red vinyl booths, a bell over the door, coffee that's been on
-the burner too long and nobody minds. Open early, open late, open through most of what Corvid
-Cove considers a crisis. The back booth is unofficially reserved for whoever's dealing with
-something.
+The bell over the door has been announcing customers since before anyone working here today was
+born, and it still catches half the regulars off guard. Cracked red vinyl booths, a counter worn
+smooth by forearms, windows fogged from the inside half the year, looking out toward the harbor.
+The name's a joke that became the whole menu — whatever came off a boat that morning ends up on
+a plate by noon, "tide to table" hand-painted under the neon sign in letters nobody's ever
+bothered to touch up. Coffee's often a little too long on the burner, but locals know better than
+to complain to the woman who's run the counter longer than most of them have been alive — she
+doesn't miss much, and she doesn't let a complaint go unanswered. Elbow-to-elbow with tourists
+all summer; calm and quiet with locals the rest of the year.
 
 **Notable NPC seed:** *Marlene Okafor* — owner and the town's real information broker; she
 hears everything that gets said over her counter and remembers all of it. Feeds the Pact for
@@ -504,6 +523,20 @@ setting dressing. Tiers (I–V) use the book's scale (BID p. 97) but stay compre
 end: nothing here is bigger than Tier III. Notably absent on purpose: covens, courts, lodges, or
 any other competing supernatural power bloc — "the dark" stays singular and unclaimed by design,
 and stacking rival occult factions on top of it would blunt that.
+
+**A future cult [seed, still undeveloped]:** if a cult ever gets added, it should serve or revere
+"the dark" rather than compete with it — worshippers, appeasers, or people trying to hasten or
+feed it, not a rival power with its own agenda. That keeps it consistent with the "singular,
+unclaimed" rule above instead of undermining it.
+
+**Refinement:** the cult doesn't need to know that's what it's doing. The strongest version is a
+leader who believes he's made his own deal, is doing his own thing, wielding real power on his
+own terms — and is, underneath it, just a stooge the dark is using, whether he ever finds that
+out or not. This is deliberately the same shape as Josiah Sable's own arc (see *Founding &
+Layered History*, above) — someone who thinks he's the one bargaining, when the bargain was never
+really his to make. A modern echo of the founding deal, not a new mechanic. Still no name, no
+membership, no ritual specifics — just the shape of the thing, ready to build out whenever it's
+wanted.
 
 ### Corvid Cove Chamber of Commerce & Visitors Bureau (Tier III)
 
